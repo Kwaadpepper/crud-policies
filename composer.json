@@ -1,0 +1,47 @@
+{
+    "name": "kwaadpepper/crud-policies",
+    "description": "Makes CRUD easy, make policies easy and everyone happy",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jérémy Munsch",
+            "email": "github@jeremydev.ovh",
+            "homepage": "https://jeremydev.ovh"
+        }
+    ],
+    "homepage": "https://github.com/kwaadpepper/crud-policies",
+    "keywords": [
+        "Laravel",
+        "CRUD",
+        "Scafolding",
+        "Policies"
+    ],
+    "require": {
+        "illuminate/support": "~7|~8",
+        "laravel/framework": "~7|~8",
+        "kwaadpepper/enum": "^0.1.4",
+        "facade/flare-client-php": "^1.8"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~9.0",
+        "squizlabs/php_codesniffer": "^3.5",
+        "orchestra/testbench": "^6.13"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kwaadpepper\\CrudPolicies\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kwaadpepper\\CrudPolicies\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Kwaadpepper\\CrudPolicies\\CrudPoliciesServiceProvider"
+            ]
+        }
+    }
+}

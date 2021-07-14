@@ -1,0 +1,41 @@
+@php
+$readonly = is_callable($prop['readonly']) ? $prop['readonly']() : $prop['readonly'];
+@endphp
+@switch($prop['type'])
+    @case(CrudType::password())
+    @include('crud.formfields.password')
+    @break
+    @case(CrudType::boolean())
+    @include('crud.formfields.boolean')
+    @break
+    @case(CrudType::int())
+    @include('crud.formfields.int')
+    @break
+    @case(CrudType::float())
+    @include('crud.formfields.float')
+    @break
+    @case(CrudType::email())
+    @include('crud.formfields.email')
+    @break
+    @case(CrudType::text())
+    @include('crud.formfields.text')
+    @break
+    @case(CrudType::json())
+    @include('crud.formfields.json')
+    @break
+    @case(CrudType::image())
+    @include('crud.formfields.image')
+    @break
+    @case(CrudType::enum())
+    @include('crud.formfields.enum')
+    @break
+    @case(CrudType::belongsTo())
+    @include('crud.formfields.belongsTo')
+    @break
+    @case(CrudType::belongsToMany())
+    @include('crud.formfields.belongsToMany')
+    @break
+    @case(CrudType::string())
+    @default
+    @include('crud.formfields.string')
+@endswitch
