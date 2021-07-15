@@ -120,18 +120,18 @@ trait CrudController
             return response()->json(CrudResource::collection($models));
         } else {
             $models = $models->withQueryString();
-            return view('crud.index', compact('models'));
+            return view('crud-policies::crud.index', compact('models'));
         }
     }
 
     public function show(Model $model)
     {
-        return view('crud.show', ['model' => $model]);
+        return view('crud-policies::crud.show', ['model' => $model]);
     }
 
     public function create()
     {
-        return view('crud.create');
+        return view('crud-policies::crud.create');
     }
 
     public function store(StoreCrudModel $request)
@@ -143,13 +143,17 @@ trait CrudController
         $model->saveOrFail();
         $model->saveRelations($request);
         $this->storedModel($model);
-        return \redirect()->route(sprintf('bo.%s.edit', $model->getTable()), $model)
+        return \redirect()->route(sprintf(
+            '%s%s.edit',
+            self::getRoutePrefix() ? self::getRoutePrefix() . '.' : '',
+            $model->getTable()
+        ), $model)
             ->with('success', trans(':model a bien été enregistré.', ['model' => $model->getModelName()]));
     }
 
     public function edit(Model $model)
     {
-        return view('crud.edit', ['model' => $model]);
+        return view('crud-policies::crud.edit', ['model' => $model]);
     }
 
     public function update(UpdateCrudModel $request, Model $model)
@@ -159,7 +163,11 @@ trait CrudController
         $model->saveOrFail();
         $model->saveRelations($request);
         $this->updatedModel($model);
-        return \redirect()->route(sprintf('bo.%s.edit', $model->getTable()), $model)
+        return \redirect()->route(sprintf(
+            '%s%s.edit',
+            self::getRoutePrefix() ? self::getRoutePrefix() . '.' : '',
+            $model->getTable()
+        ), $model)
             ->with('success', trans(':model a bien été enregistré.', ['model' => $model->getModelName()]));
     }
 
@@ -179,7 +187,11 @@ trait CrudController
                 ));
         }
         if ($model->delete()) {
-            return \redirect()->route(sprintf('bo.%s.index', $model->getTable()))
+            return \redirect()->route(sprintf(
+                '%s%s.index',
+                self::getRoutePrefix() ? self::getRoutePrefix() . '.' : '',
+                $model->getTable()
+            ))
                 ->with('warning', trans(':model a bien été supprimé.', ['model' => $model->getModelName()]));
         } else {
             return redirect()->back()
@@ -187,9 +199,40 @@ trait CrudController
         }
     }
 
-    public function getModelClass()
+    /**
+     * Get the current controller crud model class name
+     *
+     * @return string
+     */
+    public function getModelClass(): string
     {
         return static::${'modelClass'};
+    }
+
+    /**
+     * Get the current route prefix
+     *
+     * @return string|null
+     */
+    public static function getRoutePrefix()
+    {
+        /** @var \Illuminate\Routing\Route */
+        $route = request()->route();
+        return $route->getPrefix();
+    }
+
+    /**
+     * Get the route url with prefix if needed
+     *
+     * @param string $route
+     * @param array $parameters
+     * @param boolean $absolute
+     * @return string
+     */
+    public static function getRoutePrefixed(string $route, $parameters = [], bool $absolute = true): string
+    {
+        $prefix = self::getRoutePrefix();
+        return route($prefix ? "$prefix.$route" : $route, $parameters, $absolute);
     }
 
     /**

@@ -1,4 +1,4 @@
-@extends('layouts.backend')
+@extends('crud-policies::crud.layout')
 
 @section('title', sprintf('%s - Editer', trans(Str::plural(class_basename($modelClass)))))
 @section('description', sprintf('Editer un %s', trans(class_basename($modelClass))))
@@ -6,19 +6,19 @@
 
 @section('content')
 <div class="card">
-    @include('modules.flashMessage')
+    @include('crud-policies::crud.modules.flashMessage')
     <div class="card-header">
         @can('viewAny', $modelClass)
-        <a href="{{route("bo.$modelTable.index")}}">{{ trans(Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('Editer') }}
+        <a href="{{ CrudController::getRoutePrefixed("$modelTable.index") }}">{{ trans(Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('Editer') }}
         @else
         {{ trans(Str::plural(class_basename($modelClass))) }}&nbsp;-&nbsp;{{ __('Editer') }}
         @endcan
         <div class="btn-group float-end" role="group" aria-label="{{ __('Actions') }}">
             @can('view', $model)
-            <a href="{{route("bo.$modelTable.show", $model)}}" class="btn btn-primary ">{{ __('Voir') }}</a>
+            <a href="{{ CrudController::getRoutePrefixed("$modelTable.show", $model) }}" class="btn btn-primary ">{{ __('Voir') }}</a>
             @endcan
             @can('delete', $model)
-            <form action="{{route("bo.$modelTable.destroy", $model)}}" method="POST" onsubmit="__CRUD.confirmDelete(event)">
+            <form action="{{ CrudController::getRoutePrefixed("$modelTable.destroy", $model) }}" method="POST" onsubmit="__CRUD.confirmDelete(event)">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-danger">{{ __('Supprimer') }}</button>
@@ -27,7 +27,7 @@
         </div>
     </div>
     <div class="card-body">
-        <form action="{{ route("bo.$modelTable.update", $model) }}" method="POST" @if($hasImage) enctype="multipart/form-data" @endif>
+        <form action="{{ CrudController::getRoutePrefixed("$modelTable.update", $model) }}" method="POST" @if($hasImage) enctype="multipart/form-data" @endif>
             @method('put')
             @csrf
             <table class="table table-sm table-bordered border-primary align-middle table-striped text-center">
@@ -41,7 +41,7 @@
                     @foreach ($modelClass::getEditableProperties() as $fieldName => $prop)
                     @if(in_array(CrudAction::update(), $prop['actions']))
                     <tr>
-                    @include('crud.formfield')
+                    @include('crud-policies::crud.formfield')
                     </tr>
                     @endif
                     @endforeach

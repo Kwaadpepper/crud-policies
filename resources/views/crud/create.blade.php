@@ -1,4 +1,4 @@
-@extends('layouts.backend')
+@extends('crud-policies::crud.layout')
 
 @section('title', sprintf('%s - Ajouter', Str::plural(class_basename($modelClass))))
 @section('description', sprintf('Ajouter un %s', class_basename($modelClass)))
@@ -6,16 +6,16 @@
 
 @section('content')
 <div class="card">
-    @include('modules.flashMessage')
+    @include('crud-policies::crud.modules.flashMessage')
     <div class="card-header">
         @can('viewAny', $modelClass)
-        <a href="{{route("bo.$modelTable.index")}}">{{ trans(Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('Ajouter') }}
+        <a href="{{ CrudController::getRoutePrefixed("$modelTable.index") }}">{{ trans(Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('Ajouter') }}
         @else
         {{ Str::plural(class_basename($modelClass)) }}&nbsp;-&nbsp;{{ __('Ajouter') }}
         @endcan
     </div>
     <div class="card-body">
-        <form action="{{ route("bo.$modelTable.store") }}" method="POST" @if($hasImage) enctype="multipart/form-data" @endif>
+        <form action="{{ CrudController::getRoutePrefixed("$modelTable.store") }}" method="POST" @if($hasImage) enctype="multipart/form-data" @endif>
             @csrf
             <table class="table table-sm table-bordered border-primary align-middle table-striped text-center">
                 <thead class="thead-dark">
@@ -32,7 +32,7 @@
                     @endphp
                     @if(in_array(CrudAction::create(), $prop['actions']))
                     <tr>
-                    @include('crud.formfield')
+                    @include('crud-policies::crud.formfield')
                     </tr>
                     @endif
                     @endforeach

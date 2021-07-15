@@ -24,7 +24,7 @@
     window._translations = @json(cache(sprintf('translations.%s', app()->getLocale())));
     window._asset = '{{ asset('') }}';
     window._routes = {
-        'model.index': '{{ route('bo.'.(new $props[$fieldName]['belongsTo'])->getTable().'.index') }}'
+        'model.index': '{{ CrudController::getRoutePrefixed((new $props[$fieldName]['belongsTo'])->getTable().'.index') }}'
     };
 </script>
 @endpush

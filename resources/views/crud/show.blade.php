@@ -1,4 +1,4 @@
-@extends('layouts.backend')
+@extends('crud-policies::crud.layout')
 
 @section('title', sprintf('%s - Voir', trans(Str::plural(class_basename($modelClass)))))
 @section('description', sprintf('Voir un %s', trans(class_basename($modelClass))))
@@ -6,19 +6,19 @@
 
 @section('content')
 <div class="card">
-    @include('modules.flashMessage')
+    @include('crud-policies::crud.modules.flashMessage')
     <div class="card-header">
         @can('viewAny', $modelClass)
-        <a href="{{route("bo.$modelTable.index")}}">{{ trans(Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('Voir') }}
+        <a href="{{ CrudController::getRoutePrefixed("$modelTable.index")}}">{{ trans(Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('Voir') }}
         @else
         {{ trans(Str::plural(class_basename($modelClass))) }}&nbsp;-&nbsp;{{ __('Voir') }}
         @endcan
         <div class="btn-group float-end" role="group" aria-label="{{ __('Actions') }}">
             @can('update', $model)
-            <a href="{{route("bo.$modelTable.edit", $model)}}" class="btn btn-info ">{{ __('Modifier') }}</a>
+            <a href="{{ CrudController::getRoutePrefixed("$modelTable.edit", $model)}}" class="btn btn-info ">{{ __('Modifier') }}</a>
             @endcan
             @can('delete', $model)
-            <form action="{{route("bo.$modelTable.destroy", $model)}}" method="POST" onsubmit="__CRUD.confirmDelete(event)">
+            <form action="{{ CrudController::getRoutePrefixed("$modelTable.destroy", $model)}}" method="POST" onsubmit="__CRUD.confirmDelete(event)">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-danger">{{ __('Supprimer') }}</button>
@@ -44,7 +44,7 @@
                     @default
                     <tr>
                         <td>{{ $prop['label'] }}</td>
-                        <td>@include('crud.printfield', [
+                        <td>@include('crud-policies::crud.printfield', [
                             'action' => CrudAction::view(),
                             'field' => $model->{$fieldName},
                             'props' => $prop

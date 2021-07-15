@@ -3,39 +3,39 @@ $readonly = is_callable($prop['readonly']) ? $prop['readonly']() : $prop['readon
 @endphp
 @switch($prop['type'])
     @case(CrudType::password())
-    @include('crud.formfields.password')
+    @include('crud-policies::crud.formfields.password')
     @break
     @case(CrudType::boolean())
-    @include('crud.formfields.boolean')
+    @include('crud-policies::crud.formfields.boolean')
     @break
     @case(CrudType::int())
-    @include('crud.formfields.int')
+    @include('crud-policies::crud.formfields.int')
     @break
     @case(CrudType::float())
-    @include('crud.formfields.float')
+    @include('crud-policies::crud.formfields.float')
     @break
     @case(CrudType::email())
-    @include('crud.formfields.email')
+    @include('crud-policies::crud.formfields.email')
     @break
     @case(CrudType::text())
-    @include('crud.formfields.text')
+    @include('crud-policies::crud.formfields.text')
     @break
     @case(CrudType::json())
     @include('crud.formfields.json')
     @break
     @case(CrudType::image())
-    @include('crud.formfields.image')
+    @include('crud-policies::crud.formfields.image')
     @break
     @case(CrudType::enum())
-    @include('crud.formfields.enum')
+    @include('crud-policies::crud.formfields.enum')
     @break
     @case(CrudType::belongsTo())
-    @include('crud.formfields.belongsTo')
+    @include('crud-policies::crud.formfields.belongsTo')
     @break
     @case(CrudType::belongsToMany())
-    @include('crud.formfields.belongsToMany')
+    @include('crud-policies::crud.formfields.belongsToMany')
     @break
     @case(CrudType::string())
     @default
-    @include('crud.formfields.string')
+    @include('crud-policies::crud.formfields.string')
 @endswitch
