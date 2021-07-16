@@ -21,13 +21,16 @@ $readonly = is_callable($prop['readonly']) ? $prop['readonly']() : $prop['readon
     @include('crud-policies::crud.formfields.text')
     @break
     @case(CrudType::json())
-    @include('crud.formfields.json')
+    @include('crud-policies::crud.formfields.json')
     @break
     @case(CrudType::image())
     @include('crud-policies::crud.formfields.image')
     @break
     @case(CrudType::enum())
     @include('crud-policies::crud.formfields.enum')
+    @break
+    @case(CrudType::order())
+    @include('crud-policies::crud.formfields.order')
     @break
     @case(CrudType::belongsTo())
     @include('crud-policies::crud.formfields.belongsTo')

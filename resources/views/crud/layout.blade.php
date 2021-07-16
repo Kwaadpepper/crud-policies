@@ -60,10 +60,6 @@
                                     @can('create', $crudModel)
                                     <li class="nav-item"><a class="nav-link" href="{{ CrudController::getRoutePrefixed(sprintf('%s.create', $crudModel->getTable())) }}">{{ __('Ajouter') }}</a></li>
                                     @endcan
-                                    @if (get_class($crudModel) == \App\Models\Employee::class)
-                                    <li class="nav-item"><a class="nav-link" href="{{ CrudController::getRoutePrefixed('employees.import') }}">{{ __('Importer') }}</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{ CrudController::getRoutePrefixed('employees.importExit') }}">{{ __('Importer Sortie') }}</a></li>
-                                    @endif
                                 </ul>
                                 <hr>
                                 @endcan

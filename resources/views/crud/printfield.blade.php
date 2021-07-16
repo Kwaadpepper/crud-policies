@@ -8,7 +8,12 @@
                 {{ $model->{$fieldName}->label }}
                 @break
             @case(CrudType::belongsTo())
-                {{ $prop['belongsTo']::find($model->{$fieldName})->{$model->crudLabelColumn} }}
+            @php
+                $obj = null;
+                $obj = $model->{Str::singular((new $prop['belongsTo']())->getTable())} ??
+                    $prop['belongsTo']::find($model->{$fieldName});
+            @endphp
+                {{ $obj->{$model->crudLabelColumn} }}
                 @break
             @case(CrudType::belongsToMany())
                 {{ $model->{$fieldName}->implode($prop['belongsToManyLabel'], ',') }}
@@ -18,6 +23,50 @@
                 @break
             @case(CrudType::image())
                 <img class="img-responsive" src="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" alt="{{ sprintf('/storage/%s', $model->{$fieldName}) }}">
+                @break
+            @case(CrudType::order())
+                @if(
+                    Session::get("crud.$modelTable.sort_col") === $fieldName and
+                    Session::get("crud.$modelTable.sort_way") === 'asc'
+                )
+                <span>
+                    @if($model->{$fieldName} - 1 >= 0)
+                    <form class="d-inline" action="{{ route('crud-policies.models.changeOrder', [
+                        'modelTable' => $modelTable,
+                        'modelId' => $model->id,
+                        'colName' => $fieldName,
+                        'newOrder' => $model->{$fieldName} - 1,
+                        'oldUrl' => base64_encode(request()->getRequestUri())
+                    ]) }}" method="POST">
+                        @csrf
+                        @method('put')
+                        <button class="col_sort btn btn-xs btn-primary text-decoration-none fw-bold lead desc">↑</button>
+                    </form>
+                    &nbsp;
+                    @else
+                    <span class="ms-2 me-3">&nbsp;</span>
+                    @endif
+                    {{ $model->{$fieldName} }}
+                    @if(${"$modelTable$fieldName"} !== $model->{$fieldName})
+                    &nbsp;
+                    <form class="d-inline" action="{{ route('crud-policies.models.changeOrder', [
+                        'modelTable' => $modelTable,
+                        'modelId' => $model->id,
+                        'colName' => $fieldName,
+                        'newOrder' => $model->{$fieldName} + 1,
+                        'oldUrl' => base64_encode(request()->getRequestUri())
+                    ]) }}" method="POST">
+                        @csrf
+                        @method('put')
+                        <button class="col_sort btn btn-xs btn-primary text-decoration-none fw-bold lead asc">↓</button>
+                    </form>
+                    @else
+                    <span class="ms-2 me-3">&nbsp;</span>
+                    @endif
+                </span>
+                @else
+                {{ $model->{$fieldName} }}
+                @endif
                 @break
             @default
                 {{ $field }}
@@ -40,6 +89,9 @@
                 @break
             @case(CrudType::image())
                 <img class="img-responsive" src="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" alt="{{ sprintf('/storage/%s', $model->{$fieldName}) }}">
+                @break
+            @case(CrudType::order())
+                {{ $model->{$fieldName} }}
                 @break
             @case(CrudType::belongsTo())
                 {{ $prop['belongsTo']::find($model->{$fieldName})->{$model->crudLabelColumn} }}

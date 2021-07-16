@@ -10,3 +10,9 @@ select[readonly],input[type='checkbox'][readonly]{
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
+
+.btn-xs {
+    padding: .12rem .25rem;
+    font-size: 1rem;
+    border-radius: .2rem;
+}

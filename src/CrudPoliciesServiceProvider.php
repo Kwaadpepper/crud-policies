@@ -4,6 +4,7 @@ namespace Kwaadpepper\CrudPolicies;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Kwaadpepper\CrudPolicies\Enums\CrudAction;
 use Kwaadpepper\CrudPolicies\Enums\CrudType;
 use Kwaadpepper\CrudPolicies\Traits\CrudController;
@@ -45,6 +46,7 @@ class CrudPoliciesServiceProvider extends ServiceProvider
         $this->app->booting(function () {
             $loader = AliasLoader::getInstance();
             // Alias for Classes
+            $loader->alias('Str', Str::class);
             $loader->alias('CrudType', CrudType::class);
             $loader->alias('CrudAction', CrudAction::class);
             $loader->alias('CrudController', CrudController::class);

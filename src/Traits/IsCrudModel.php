@@ -70,7 +70,7 @@ trait IsCrudModel
                 isset(static::$editableProperties[$k]['setAttribute']) and
                 is_callable(static::$editableProperties[$k]['setAttribute'])
             ) {
-                $this->{$k} = $attribute;
+                return $this::$editableProperties[$k]['setAttribute']($this, $attribute);
             }
             if (\is_object($this->{$k}) and \get_class($this->{$k}) === UploadedFile::class) {
                 $this->moveUploadedFile($k, $this->{$k});

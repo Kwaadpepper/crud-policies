@@ -15,6 +15,7 @@ use Kwaadpepper\Enum\BaseEnum;
  * @method static self password()
  * @method static self float()
  * @method static self enum()
+ * @method static self order()
  * @method static self belongsTo()
  * @method static self belongsToMany()
  */
@@ -34,8 +35,9 @@ class CrudType extends BaseEnum
             'password' => 7,
             'float' => 8,
             'enum' => 9,
-            'belongsTo' => 10,
-            'belongsToMany' => 11
+            'order' => 10,
+            'belongsTo' => 21,
+            'belongsToMany' => 22
         ];
     }
 
@@ -52,6 +54,7 @@ class CrudType extends BaseEnum
             'password' => trans('Password'),
             'float' => trans('Float number'),
             'enum' => trans('Enumeration'),
+            'order' => trans('Order'),
             'belongsTo' => trans('Foreign key'),
             'belongsToMany' => trans('Belongs To Many relation')
         ];

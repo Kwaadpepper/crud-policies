@@ -5,6 +5,8 @@ namespace Kwaadpepper\CrudPolicies\Traits;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
@@ -89,17 +91,15 @@ trait CrudController
 
         // Sort columns
         $tableName = (new static::${'modelClass'}())->getTable();
-        if ($request->rst) {
-            Session::remove("crud.$tableName.sort_col");
-            Session::remove("crud.$tableName.sort_way");
-        }
         if ($request->sort_col) {
             Session::put("crud.$tableName.sort_col", $request->sort_col);
-            Session::save();
+        } else {
+            Session::remove("crud.$tableName.sort_col", $request->sort_col);
         }
         if ($request->sort_way) {
             Session::put("crud.$tableName.sort_way", $request->sort_way);
-            Session::save();
+        } else {
+            Session::remove("crud.$tableName.sort_way", $request->sort_way);
         }
 
         if (
@@ -114,6 +114,25 @@ trait CrudController
         }
 
         $models = $this->indexQuery($models);
+
+        // Auto orderBy first column of type order
+        if (!$models->getQuery()->orders) {
+            $modelClass = static::${'modelClass'};
+            $orderProp = collect((new $modelClass())->getEditableProperties())
+                ->filter(function ($prop) {
+                    return $prop['type']->equals(CrudType::order());
+                })->take(1);
+            $propName = $orderProp->keys()->first();
+            $orderProp = $orderProp->first();
+            if ($orderProp) {
+                Session::put("crud.$tableName.sort_col", $propName);
+                Session::put("crud.$tableName.sort_way", 'asc');
+                $models = $models->orderBy($propName);
+            }
+        }
+
+        Session::save();
+
         /** @var \Illuminate\Pagination\AbstractPaginator */
         $models = $models->paginate(config('crud.paginate', 15));
         if ($request->ajax()) {
@@ -141,6 +160,7 @@ trait CrudController
         $model->fill($request->validated());
         $this->storeModel($model);
         $model->saveOrFail();
+        static::afterSave($model);
         $model->saveRelations($request);
         $this->storedModel($model);
         return \redirect()->route(sprintf(
@@ -161,6 +181,7 @@ trait CrudController
         $model->fill($request->validated());
         $this->updateModel($model);
         $model->saveOrFail();
+        static::afterSave($model);
         $model->saveRelations($request);
         $this->updatedModel($model);
         return \redirect()->route(sprintf(
@@ -200,6 +221,74 @@ trait CrudController
     }
 
     /**
+     * After save hook
+     * For now used to handle order columns
+     *
+     * @param Model $model
+     * @return void
+     */
+    public static function afterSave(Model $model): void
+    {
+        $modelClass = \get_class($model);
+        $props = collect((new $modelClass())->getEditableProperties());
+        DB::beginTransaction();
+        foreach ($props as $propName => $prop) {
+            if (
+                !$model->wasRecentlyCreated and
+                !in_array($propName, array_keys($model->getChanges()))
+            ) {
+                continue;
+            }
+            if ($prop['type']->equals(CrudType::order())) {
+                $ids = $modelClass::orderBy($propName)->pluck('id');
+                $i = 0;
+                $values = $ids->mapWithKeys(function ($id) use (&$i) {
+                    return [$id => $i++];
+                })->all();
+                static::massUpdate($modelClass, $propName, $values);
+            }
+        }
+        DB::commit();
+    }
+
+    private static function massUpdate(string $modelClass, string $propName, array $values)
+    {
+        $counter = 0;
+        $tableName = $modelClass::getModel()->getTable();
+        $chunks = collect($values)->chunk(100);
+
+        foreach ($chunks as $chunkValues) {
+            $cases = [];
+            $ids = [];
+            $params = [];
+
+            foreach ($chunkValues as $id => $value) {
+                $id = (int)$id;
+                $cases[] = "WHEN {$id} then ?";
+                $params[] = $value;
+                $ids[] = $id;
+            }
+
+            $ids = implode(',', $ids);
+            $cases = implode(' ', $cases);
+            $params[] = Carbon::now();
+
+            $q = "UPDATE `{$tableName}` SET `{$propName}` = CASE `id` {$cases} END";
+
+            if (Schema::hasColumn($tableName, 'updated_at')) {
+                $q .= ',`updated_at` = ?';
+            }
+            $q .= " WHERE `id` in ({$ids})";
+
+            $counter += DB::update(
+                $q,
+                $params
+            );
+        }
+        return $counter;
+    }
+
+    /**
      * Get the current controller crud model class name
      *
      * @return string
@@ -236,11 +325,11 @@ trait CrudController
     }
 
     /**
-     * Get the current model class
+     * Get All Crud Models
      *
-     * @return void
+     * @return array
      */
-    public static function shareCrudModelsClassesToView(): void
+    public static function getCrudModels(): array
     {
         $models = [];
         /** @var \Symfony\Component\Finder\SplFileInfo */
@@ -256,6 +345,17 @@ trait CrudController
                 $models[] = $class::${'modelClass'};
             }
         }
+        return $models;
+    }
+
+    /**
+     * Get the current model class
+     *
+     * @return void
+     */
+    public static function shareCrudModelsClassesToView(): void
+    {
+        $models = static::getCrudModels();
         View::share('modelsClasses', $models);
     }
 

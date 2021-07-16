@@ -24,7 +24,7 @@
                         <input type="search" name="search" class="form-control" value="{{ request()->search }}"/>
                         <input type="text" name="sort_col" class="d-none" value="{{ request()->sort_col }}"/>
                         <input type="text" name="sort_way" class="d-none" value="{{ request()->sort_way }}"/>
-                        <a class="btn btn-danger" href="{{ url()->current() }}">Réinitialiser</a>
+                        <a class="btn btn-danger" href="{{ url()->current() }}">{{ __('Réinitialiser') }}</a>
                         <button type="submit" class="btn btn-primary">
                             {{ __('Recherche') }}
                         </button>
@@ -35,25 +35,25 @@
         </div>
         <table class="table text-center">
             <thead class="thead-dark">
-            <tr>
-                @foreach ($modelClass::getEditableProperties() as $fieldName => $prop)
-                @if(in_array(CrudAction::viewAny(), $prop['actions']))
-                @switch($prop['type'])
-                    @case(CrudType::password())
-                        {{-- Ignore --}}
-                        @break
-                    @default
-                        <th scope="col">
-                            {{ $prop['label'] }}
-                            @include('crud-policies::crud.modules.sorter', ['colname' => $fieldName])
-                        </th>
-                @endswitch
-                @endif
-                @endforeach
-            </tr>
+            @include('crud-policies::crud.modules.sorter')
             </thead>
             <tbody>
             @if(count($models))
+
+            {{-- INIT QUERIES for OPTIMIZING --}}
+            @foreach ($modelClass::getEditableProperties() as $fieldName => $prop)
+            @if($prop['type']->equals(CrudType::order()))
+            @php ${"$modelTable$fieldName"} = $modelClass::max($fieldName); @endphp
+            @endif
+            @if($prop['type']->equals(CrudType::belongsTo()))
+            @php try { $models->load(Str::singular((new $prop['belongsTo']())->getTable())); } catch(\Exception $e) {} @endphp
+            @endif
+            @if($prop['type']->equals(CrudType::belongsToMany()))
+            @php $models->load("$fieldName"); @endphp
+            @endif
+            @endforeach
+
+            {{-- DISPLAY MODELS --}}
             @foreach($models as $model)
             <tr>
                 @foreach ($modelClass::getEditableProperties() as $fieldName => $prop)
@@ -66,11 +66,14 @@
                         <td>@include('crud-policies::crud.printfield', [
                             'action' => CrudAction::viewAny(),
                             'field' => $model->{$fieldName},
-                            'props' => $prop
+                            'props' => $prop,
+                            "$modelTable$fieldName" => ${"$modelTable$fieldName"} ?? null
                         ])</td>
                 @endswitch
                 @endif
                 @endforeach
+
+                {{-- MODEL ACTIONS --}}
                 <td>
                     <div class="btn-group" role="group" aria-label="{{ __('Actions') }}">
                         @can('view', $model)
@@ -93,7 +96,7 @@
             @else
             <tr>
                 <td colspan="{{ count($modelClass::getEditableProperties()) }}">
-                Rien à afficher
+                {{ __('Rien à afficher') }}
                 </td>
             </tr>
             @endif
