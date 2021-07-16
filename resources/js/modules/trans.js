@@ -1,7 +1,7 @@
 export default {
     data() {
         return {
-            locale: window._locale
+            locale: window.__CRUD._locale
         };
     },
     methods: {
@@ -12,16 +12,15 @@ export default {
             let translation, translationNotFound = true, vars;
 
             try {
-                translation = key.split('.').reduce((t, i) => t[i] || null, window._translations.php)
+                translation = key.split('.').reduce((t, i) => t[i] || null, window.__CRUD._translations.php)
                 if (translation) {
                     translationNotFound = false;
                 }
             } catch (e) {
                 translation = key;
             }
-
-            if (translationNotFound) {
-                translation = window._translations['json'][key] ? window._translations['json'][key] : key;
+            if (translationNotFound && window.__CRUD._translations['json']) {
+                translation = window.__CRUD._translations['json'][key] ? window.__CRUD._translations['json'][key] : key;
             }
             vars = translation.match(/:[0-9A-Za-z_]*/g);
             if (vars) {

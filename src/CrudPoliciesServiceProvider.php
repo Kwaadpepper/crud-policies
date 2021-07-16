@@ -3,6 +3,8 @@
 namespace Kwaadpepper\CrudPolicies;
 
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Kwaadpepper\CrudPolicies\Enums\CrudAction;
@@ -19,8 +21,18 @@ class CrudPoliciesServiceProvider extends ServiceProvider
         $this->configLoadIfNeeded();
 
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang/', 'crud-policies');
         $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'crud-policies');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang/', 'crud-policies');
+        $translations = collect();
+        foreach ($this->collectLocalesStrings() as $locale) { // suported locales
+            Cache::rememberForever(sprintf('crud-policies.translations.%s', $locale), function () use ($locale) {
+                $translations = [
+                    'php' => $this->phpTranslations($locale),
+                    'json' => $this->jsonTranslations($locale),
+                ];
+                return $translations;
+            });
+        }
 
         $this->publishes([
             __DIR__ . '/../config' => config_path(),
@@ -59,5 +71,32 @@ class CrudPoliciesServiceProvider extends ServiceProvider
             $config = require __DIR__ . '/../config/crud-policies.php';
             config(['crud-policies' => $config]);
         }
+    }
+
+    private function collectLocalesStrings()
+    {
+        return collect(File::allFiles(__DIR__ . '/../resources/lang'))->flatMap(function ($file) {
+            if ($file->getRelativePath()) {
+                return [$file->getRelativePath() => ''];
+            }
+        })->keys();
+    }
+
+    private function phpTranslations($locale)
+    {
+        $path = __DIR__ . "/../resources/lang/$locale";
+        return collect(File::allFiles($path))->flatMap(function ($file) {
+            $key = $file->getBasename('.php');
+            return [$key => include $file];
+        });
+    }
+
+    private function jsonTranslations($locale)
+    {
+        $path = "/../resources/lang/$locale.json";
+        if (is_string($path) && is_readable($path)) {
+            return json_decode(file_get_contents($path), true);
+        }
+        return [];
     }
 }

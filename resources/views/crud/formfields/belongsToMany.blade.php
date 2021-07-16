@@ -12,6 +12,7 @@
 <td>
     <belongs-to-many
         readonly="{{ $readonly }}"
+        tablename="{{ $modelTable }}"
         name="{{ $fieldName }}"
         db-value='@json($related)'>
     </belongs-to-many>
@@ -19,11 +20,12 @@
 
 @push('scriptsConstants')
 <script>
-    window._locale = '{{ app()->getLocale() }}';
-    window._translations = @json(cache(sprintf('translations.%s', app()->getLocale())));
-    window._asset = '{{ asset('') }}';
-    window._routes = {
-        'model.index': '{{ CrudController::getRoutePrefixed((new $props[$fieldName]['belongsToMany'])->getTable().'.index') }}'
-    };
+    if (!window.__CRUD) {
+        window.__CRUD = {};
+    }
+    if(!window.__CRUD._routes) {
+        window.__CRUD._routes = {};
+    }
+    window.__CRUD._routes['{{$modelTable}}.{{$fieldName}}.model.index'] = '{{ CrudController::getRoutePrefixed((new $props[$fieldName]['belongsToMany'])->getTable().'.index') }}';
 </script>
 @endpush

@@ -16,11 +16,11 @@
                 <button
                     @click="$event.preventDefault(); page -= 1"
                     :disabled="!hasPrevPage"
-                    class="btn btn-sm btn-primary mt-2 mb-2 ms-2 me-2">{{ __('Précédent') }}</button>
+                    class="btn btn-sm btn-primary mt-2 mb-2 ms-2 me-2">{{ __('crud.previous') }}</button>
                 <button
                     @click="$event.preventDefault(); page += 1"
                     :disabled="!hasNextPage"
-                    class="btn btn-sm btn-primary mt-2 mb-2">{{ __('Suivant') }}</button>
+                    class="btn btn-sm btn-primary mt-2 mb-2">{{ __('crud.next') }}</button>
             </li>
         </v-select>
         <input type="hidden" v-model="value.value" :name="name" />
@@ -44,6 +44,7 @@ export default {
     props: [
         'disabled',
         'readonly',
+        'tablename',
         'name',
         'dbValue'
     ],
@@ -90,7 +91,7 @@ export default {
                 this.searchText = search
             }
             let init = search === false ? true : false
-            let route = this.route('model.index')
+            let route = this.route(this.tablename + '.' + this.name + '.model.index')
             route += '?page='+this.page
             route += '&s='+this.searchText
             this.loading = true

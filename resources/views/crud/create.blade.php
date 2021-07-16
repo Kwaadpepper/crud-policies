@@ -1,7 +1,7 @@
 @extends('crud-policies::crud.layout')
 
-@section('title', sprintf('%s - Ajouter', Str::plural(class_basename($modelClass))))
-@section('description', sprintf('Ajouter un %s', class_basename($modelClass)))
+@section('title', sprintf('%s - %s', Str::plural(class_basename($modelClass)), __('crud-policies::crud.create')))
+@section('description', sprintf('%s %s', __('crud-policies::crud.create'), class_basename($modelClass)))
 @section('metaIndex', 'noindex,nofollow')
 
 @section('content')
@@ -9,9 +9,9 @@
     @include('crud-policies::crud.modules.flashMessage')
     <div class="card-header">
         @can('viewAny', $modelClass)
-        <a href="{{ CrudController::getRoutePrefixed("$modelTable.index") }}">{{ trans(Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('Ajouter') }}
+        <a href="{{ CrudController::getRoutePrefixed("$modelTable.index") }}">{{ trans(Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('crud-policies::crud.create') }}
         @else
-        {{ Str::plural(class_basename($modelClass)) }}&nbsp;-&nbsp;{{ __('Ajouter') }}
+        {{ Str::plural(class_basename($modelClass)) }}&nbsp;-&nbsp;{{ __('crud-policies::crud.create') }}
         @endcan
     </div>
     <div class="card-body">
@@ -20,8 +20,8 @@
             <table class="table table-sm table-bordered border-primary align-middle table-striped text-center">
                 <thead class="thead-dark">
                 <tr>
-                    <th scope="col" class="w-25">{{ __('Propriété') }}</th>
-                    <th scope="col" class="w-75">{{ __('Valeur') }}</th>
+                    <th scope="col" class="w-25">{{ __('crud-policies::crud.property') }}</th>
+                    <th scope="col" class="w-75">{{ __('crud-policies::crud.value') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -39,9 +39,10 @@
                 </tbody>
             </table>
             <div class="col text-center">
-                <button class="btn btn-info" type="submit">{{ __('Créer') }}</button>
+                <button class="btn btn-info" type="submit">{{ __('crud-policies::crud.create') }}</button>
             </div>
         </form>
     </div>
 </div>
+@include('crud-policies::crud.modules.scriptConstants')
 @endsection

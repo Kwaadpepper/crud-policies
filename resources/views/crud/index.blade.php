@@ -1,16 +1,16 @@
 @extends('crud-policies::crud.layout')
 
-@section('title', sprintf('%s - Liste', trans(Str::plural(class_basename($modelClass)))))
-@section('description', sprintf('Liste des %s', trans(Str::plural(class_basename($modelClass)))))
+@section('title', sprintf('%s - %s', trans(Str::plural(class_basename($modelClass))), __('crud-policies::crud.viewAny')))
+@section('description', sprintf('%s %s', __('crud-policies::crud.viewAny'), trans(Str::plural(class_basename($modelClass)))))
 @section('metaIndex', 'noindex,nofollow')
 
 @section('content')
 <div class="card">
     @include('crud-policies::crud.modules.flashMessage')
     <div class="card-header">
-        <a href="{{ CrudController::getRoutePrefixed("$modelTable.index") }}">{{ trans(Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('Liste') }}
+        <a href="{{ CrudController::getRoutePrefixed("$modelTable.index") }}">{{ trans(Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('crud-policies::crud.viewAny') }}
         @can('create', $modelClass)
-        <a href="{{ CrudController::getRoutePrefixed("$modelTable.create") }}" class="btn btn-primary float-end">{{ __('Ajouter') }}</a>
+        <a href="{{ CrudController::getRoutePrefixed("$modelTable.create") }}" class="btn btn-primary float-end">{{ __('crud-policies::crud.create') }}</a>
         @endcan
     </div>
     <div class="card-body">
@@ -24,9 +24,9 @@
                         <input type="search" name="search" class="form-control" value="{{ request()->search }}"/>
                         <input type="text" name="sort_col" class="d-none" value="{{ request()->sort_col }}"/>
                         <input type="text" name="sort_way" class="d-none" value="{{ request()->sort_way }}"/>
-                        <a class="btn btn-danger" href="{{ url()->current() }}">{{ __('Réinitialiser') }}</a>
+                        <a class="btn btn-danger" href="{{ url()->current() }}">{{ __('crud-policies::crud.reset') }}</a>
                         <button type="submit" class="btn btn-primary">
-                            {{ __('Recherche') }}
+                            {{ __('crud-policies::crud.search') }}
                         </button>
                     </div>
                     </div>
@@ -75,18 +75,18 @@
 
                 {{-- MODEL ACTIONS --}}
                 <td>
-                    <div class="btn-group" role="group" aria-label="{{ __('Actions') }}">
+                    <div class="btn-group" role="group" aria-label="{{ Str::plural(__('crud-policies::crud.action')) }}">
                         @can('view', $model)
-                        <a href="{{ CrudController::getRoutePrefixed("$modelTable.show", $model) }}" class="btn btn-sm btn-primary">{{ __('Voir') }}</a>
+                        <a href="{{ CrudController::getRoutePrefixed("$modelTable.show", $model) }}" class="btn btn-sm btn-primary">{{ __('crud-policies::crud.view') }}</a>
                         @endcan
                         @can('update', $model)
-                        <a href="{{ CrudController::getRoutePrefixed("$modelTable.edit", $model) }}" class="btn btn-sm btn-info">{{ __('Éditer') }}</a>
+                        <a href="{{ CrudController::getRoutePrefixed("$modelTable.edit", $model) }}" class="btn btn-sm btn-info">{{ __('crud-policies::crud.edit') }}</a>
                         @endcan
                         @can('delete', $model)
                         <form action="{{ CrudController::getRoutePrefixed("$modelTable.destroy", $model) }}" method="POST" onsubmit="__CRUD.confirmDelete(event)">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger">{{ __('Supprimer') }}</button>
+                            <button type="submit" class="btn btn-sm btn-danger">{{ __('crud-policies::crud.delete') }}</button>
                         </form>
                         @endcan
                     </div>
@@ -96,7 +96,7 @@
             @else
             <tr>
                 <td colspan="{{ count($modelClass::getEditableProperties()) }}">
-                {{ __('Rien à afficher') }}
+                {{ __('crud-policies::crud.nothingtoshow') }}
                 </td>
             </tr>
             @endif
@@ -105,4 +105,5 @@
         {{ $models->links() }}
     </div>
 </div>
+@include('crud-policies::crud.modules.scriptConstants')
 @endsection

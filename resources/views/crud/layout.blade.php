@@ -55,10 +55,10 @@
                                 @endphp
                                 <ul class="nav flex-column mb-2">
                                     @can('viewAny', $crudModel)
-                                    <li class="nav-item"><a class="nav-link" href="{{ CrudController::getRoutePrefixed(sprintf('%s.index', $crudModel->getTable())) }}">{{ __('Liste') }}</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ CrudController::getRoutePrefixed(sprintf('%s.index', $crudModel->getTable())) }}">{{ __('crud-policies::crud.viewAny') }}</a></li>
                                     @endcan
                                     @can('create', $crudModel)
-                                    <li class="nav-item"><a class="nav-link" href="{{ CrudController::getRoutePrefixed(sprintf('%s.create', $crudModel->getTable())) }}">{{ __('Ajouter') }}</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ CrudController::getRoutePrefixed(sprintf('%s.create', $crudModel->getTable())) }}">{{ __('crud-policies::crud.create') }}</a></li>
                                     @endcan
                                 </ul>
                                 <hr>
