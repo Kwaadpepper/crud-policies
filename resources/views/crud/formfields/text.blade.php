@@ -8,15 +8,6 @@
         }}</textarea>
     </div>
 </td>
-@push('scripts')
-<script src="https://cdn.ckeditor.com/ckeditor5/27.1.0/classic/ckeditor.js"></script>
-<script>
-    ClassicEditor
-        .create(
-            document.querySelector( '#{{ $fieldName }}' )
-        )
-        .catch( error => {
-            console.error( error );
-        } );
-</script>
-@endpush
+@include('crud-policies::crud.modules.ckeditor', [
+    'fieldName' => $fieldName
+])
