@@ -24,7 +24,9 @@
     @endif
     @endforeach
     <th scope="col">
+        @if(session("crud.$modelTable.sort_way") and session("crud.$modelTable.sort_col"))
         <a href="{{ request()->fullUrlWithQuery(['sort_col' => '', 'sort_way' => '']) }}" class="btn btn-small btn-danger">&#9003;</a>
+        @endif
     </th>
 </tr>
 
