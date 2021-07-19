@@ -17,6 +17,6 @@ return [
     'update' => 'Update',
     'viewAny' => 'Liste',
     'reset' => 'Réinitialiser',
-    'search' => 'Rien à afficher',
+    'search' => 'Chercher',
     'nothingtoshow' => 'Rien à afficher',
 ];
