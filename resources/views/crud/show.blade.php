@@ -1,4 +1,4 @@
-@extends('crud-policies::crud.layout')
+@extends($viewLayout)
 
 @section('title', sprintf('%s - %s', trans(Str::plural(class_basename($modelClass))), __('crud-policies::crud.view')))
 @section('description', sprintf('%s %s', __('crud-policies::crud.view'), trans(class_basename($modelClass))))

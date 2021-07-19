@@ -23,14 +23,12 @@ class CrudPoliciesServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
         $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'crud-policies');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang/', 'crud-policies');
-        $translations = collect();
         foreach ($this->collectLocalesStrings() as $locale) { // suported locales
             Cache::rememberForever(sprintf('crud-policies.translations.%s', $locale), function () use ($locale) {
-                $translations = [
+                return [
                     'php' => $this->phpTranslations($locale),
                     'json' => $this->jsonTranslations($locale),
                 ];
-                return $translations;
             });
         }
 
@@ -48,9 +46,14 @@ class CrudPoliciesServiceProvider extends ServiceProvider
 
         $publicPath = config('crud-policies.assetPath');
         $this->publishes([
-            __DIR__ . '/../resources/js' => public_path($publicPath . '/js'),
-            __DIR__ . '/../resources/css' => public_path($publicPath . '/css')
-        ], 'assets');
+            __DIR__ . '/../resources/js' => resource_path($publicPath . '/js'),
+            __DIR__ . '/../resources/sass' => resource_path($publicPath . '/css')
+        ], 'assetsSource');
+
+        $this->publishes([
+            __DIR__ . '/../public/js' => public_path($publicPath . '/js'),
+            __DIR__ . '/../public/css' => public_path($publicPath . '/css')
+        ], 'assetsCompiled');
     }
 
     public function register()

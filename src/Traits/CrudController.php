@@ -21,7 +21,8 @@ use Kwaadpepper\CrudPolicies\Http\Resources\CrudResource;
 
 /**
  * You need to define $modelClass with a Model::class
- * @var static $modelClass
+ * @var public static $modelClass
+ * @var public static $layout
  */
 trait CrudController
 {
@@ -69,7 +70,8 @@ trait CrudController
             ));
         }
         if (!request()->ajax() and !app()->runningInConsole()) {
-            self::shareCrudModelsClassesToView();
+            $this->shareViewLayout();
+            $this->shareCrudModelsClassesToView();
             $this->shareModelClassToView();
             $this->shareModelHasImageToView();
             $this->shareModelTableToView();
@@ -348,12 +350,20 @@ trait CrudController
         return $models;
     }
 
+    private function shareViewLayout(): void
+    {
+        View::share(
+            'viewLayout',
+            static::${'layout'} ?? \config('crud-policies.viewLayout', 'crud-policies::crud.layout')
+        );
+    }
+
     /**
      * Get the current model class
      *
      * @return void
      */
-    public static function shareCrudModelsClassesToView(): void
+    private function shareCrudModelsClassesToView(): void
     {
         $models = static::getCrudModels();
         View::share('modelsClasses', $models);
