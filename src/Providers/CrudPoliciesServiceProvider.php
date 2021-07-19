@@ -1,8 +1,9 @@
 <?php
 
-namespace Kwaadpepper\CrudPolicies;
+namespace Kwaadpepper\CrudPolicies\Providers;
 
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
@@ -14,15 +15,17 @@ use Kwaadpepper\CrudPolicies\Traits\CrudController;
 class CrudPoliciesServiceProvider extends ServiceProvider
 {
 
+    protected const ROOTPATH = __DIR__ . '/../../';
+
     protected $commands = [];
 
     public function boot()
     {
         $this->configLoadIfNeeded();
 
-        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
-        $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'crud-policies');
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang/', 'crud-policies');
+        $this->loadRoutesFrom(static::ROOTPATH . 'routes/web.php');
+        $this->loadViewsFrom(static::ROOTPATH . 'resources/views/', 'crud-policies');
+        $this->loadTranslationsFrom(static::ROOTPATH . 'resources/lang/', 'crud-policies');
         foreach ($this->collectLocalesStrings() as $locale) { // suported locales
             Cache::rememberForever(sprintf('crud-policies.translations.%s', $locale), function () use ($locale) {
                 return [
@@ -33,27 +36,53 @@ class CrudPoliciesServiceProvider extends ServiceProvider
         }
 
         $this->publishes([
-            __DIR__ . '/../config' => config_path(),
+            static::ROOTPATH . 'config' => config_path(),
         ], 'config');
 
         $this->publishes([
-            __DIR__ . '/../resources/views' => resource_path('views/vendor/crud-policies/')
+            static::ROOTPATH . 'resources/views' => resource_path('views/vendor/crud-policies/')
         ], 'views');
 
         $this->publishes([
-            __DIR__ . '/../resources/lang/' => resource_path('lang/vendor/crud-policies/')
+            static::ROOTPATH . 'resources/lang/' => resource_path('lang/vendor/crud-policies/')
         ], 'lang');
 
         $publicPath = config('crud-policies.assetPath');
         $this->publishes([
-            __DIR__ . '/../resources/js' => resource_path($publicPath . '/js'),
-            __DIR__ . '/../resources/sass' => resource_path($publicPath . '/css')
+            static::ROOTPATH . 'resources/js' => resource_path($publicPath . '/js'),
+            static::ROOTPATH . 'resources/sass' => resource_path($publicPath . '/css')
         ], 'assetsSource');
 
         $this->publishes([
-            __DIR__ . '/../public/js' => public_path($publicPath . '/js'),
-            __DIR__ . '/../public/css' => public_path($publicPath . '/css')
+            static::ROOTPATH . 'public/js' => public_path($publicPath . '/js'),
+            static::ROOTPATH . 'public/css' => public_path($publicPath . '/css')
         ], 'assetsCompiled');
+
+        // Directives for assets
+        Blade::directive(
+            'crudPoliciesCSS',
+            function () {
+                return sprintf(
+                    '<link rel="stylesheet" href=\'%s\'></link>',
+                    route('crud-policies.httpFileSend.asset', [
+                        'type' => 'css',
+                        'fileUri' => 'crud.css'
+                    ])
+                );
+            }
+        );
+        Blade::directive(
+            'crudPoliciesJS',
+            function () {
+                return sprintf(
+                    '<script src=\'%s\'></script>',
+                    route('crud-policies.httpFileSend.asset', [
+                        'type' => 'js',
+                        'fileUri' => 'crud.js'
+                    ])
+                );
+            }
+        );
     }
 
     public function register()
@@ -71,23 +100,24 @@ class CrudPoliciesServiceProvider extends ServiceProvider
     private function configLoadIfNeeded()
     {
         if (!config('crud-policies.isLoaded')) {
-            $config = require __DIR__ . '/../config/crud-policies.php';
+            $config = require static::ROOTPATH . 'config/crud-policies.php';
             config(['crud-policies' => $config]);
         }
     }
 
     private function collectLocalesStrings()
     {
-        return collect(File::allFiles(__DIR__ . '/../resources/lang'))->flatMap(function ($file) {
-            if ($file->getRelativePath()) {
-                return [$file->getRelativePath() => ''];
-            }
-        })->keys();
+        return collect(File::allFiles(static::ROOTPATH . 'resources/lang'))
+            ->flatMap(function ($file) {
+                if ($file->getRelativePath()) {
+                    return [$file->getRelativePath() => ''];
+                }
+            })->keys();
     }
 
     private function phpTranslations($locale)
     {
-        $path = __DIR__ . "/../resources/lang/$locale";
+        $path = static::ROOTPATH . "resources/lang/$locale";
         return collect(File::allFiles($path))->flatMap(function ($file) {
             $key = $file->getBasename('.php');
             return [$key => include $file];
@@ -96,7 +126,7 @@ class CrudPoliciesServiceProvider extends ServiceProvider
 
     private function jsonTranslations($locale)
     {
-        $path = "/../resources/lang/$locale.json";
+        $path = static::ROOTPATH . "resources/lang/$locale.json";
         if (is_string($path) && is_readable($path)) {
             return json_decode(file_get_contents($path), true);
         }

@@ -40,7 +40,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Kwaadpepper\\CrudPolicies\\CrudPoliciesServiceProvider"
+                "Kwaadpepper\\CrudPolicies\\Providers\\CrudPoliciesServiceProvider"
             ]
         }
     }
