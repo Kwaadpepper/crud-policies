@@ -13,3 +13,6 @@ First version, tried to separate code from portail S.
 - translations are sets
 - configuration is now possible
 - It is possible to overload the layout only
+
+## Version 0.1.1
+- Fix FR translation

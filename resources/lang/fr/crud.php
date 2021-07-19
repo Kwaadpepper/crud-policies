@@ -14,7 +14,7 @@ return [
     'edit' => 'Editer',
     'action' => 'Action',
     'view' => 'Voir',
-    'update' => 'Update',
+    'update' => 'Mettre à jour',
     'viewAny' => 'Liste',
     'reset' => 'Réinitialiser',
     'search' => 'Chercher',
