@@ -16,3 +16,9 @@ First version, tried to separate code from portail S.
 
 ## Version 0.1.1
 - Fix FR translation
+
+## Version 0.1.2
+- Fix remove route home from default layout
+- Fix issue in crud request
+- Added input type color
+- Added missing translations in enumerations

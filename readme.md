@@ -61,6 +61,8 @@ You can find an example of rules in [examples/UserRoleRules.php](examples/UserRo
 
 ---
 ## **NOTE: Artisan make commands yet has to be developped**
+## Notes:
+- For crud type images, you must do ```php artisan storage:link```
 
 ---
 
