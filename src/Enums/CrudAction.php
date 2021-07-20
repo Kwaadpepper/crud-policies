@@ -39,11 +39,11 @@ class CrudAction extends BaseEnum
     protected static function labels(): array
     {
         return [
-            'viewAny' => trans('List'),
-            'view' => trans('View'),
-            'create' => trans('Create'),
-            'update' => trans('Edit'),
-            'delete' => trans('Delete'),
+            'viewAny' => trans('crud-policies::crud.viewAny'),
+            'view' => trans('crud-policies::crud.view'),
+            'create' => trans('crud-policies::crud.create'),
+            'update' => trans('crud-policies::crud.update'),
+            'delete' => trans('crud-policies::crud.delete'),
         ];
     }
 }

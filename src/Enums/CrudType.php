@@ -16,6 +16,7 @@ use Kwaadpepper\Enum\BaseEnum;
  * @method static self float()
  * @method static self enum()
  * @method static self order()
+ * @method static self color()
  * @method static self belongsTo()
  * @method static self belongsToMany()
  */
@@ -36,6 +37,7 @@ class CrudType extends BaseEnum
             'float' => 8,
             'enum' => 9,
             'order' => 10,
+            'color' => 11,
             'belongsTo' => 21,
             'belongsToMany' => 22
         ];
@@ -44,19 +46,20 @@ class CrudType extends BaseEnum
     protected static function labels(): array
     {
         return [
-            'boolean' => trans('Boolean'),
-            'int' => trans('Number'),
-            'string' => trans('Simple string'),
-            'text' => trans('Text'),
-            'json' => trans('Json'),
-            'image' => trans('Image'),
-            'email' => trans('Email string'),
-            'password' => trans('Password'),
-            'float' => trans('Float number'),
-            'enum' => trans('Enumeration'),
-            'order' => trans('Order'),
-            'belongsTo' => trans('Foreign key'),
-            'belongsToMany' => trans('Belongs To Many relation')
+            'boolean' => trans('crud-policies::crud.boolean'),
+            'int' => trans('crud-policies::crud.int'),
+            'string' => trans('crud-policies::crud.string'),
+            'text' => trans('crud-policies::crud.text'),
+            'json' => trans('crud-policies::crud.json'),
+            'image' => trans('crud-policies::crud.image'),
+            'email' => trans('crud-policies::crud.email'),
+            'password' => trans('crud-policies::crud.password'),
+            'float' => trans('crud-policies::crud.float'),
+            'enum' => trans('crud-policies::crud.enum'),
+            'order' => trans('crud-policies::crud.order'),
+            'color' => trans('crud-policies::crud.color'),
+            'belongsTo' => trans('crud-policies::crud.belongsTo'),
+            'belongsToMany' => trans('crud-policies::crud.belongsToMany')
         ];
     }
 }

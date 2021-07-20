@@ -19,4 +19,18 @@ return [
     'reset' => 'Reset',
     'search' => 'Search',
     'nothingtoshow' => 'Nothing to show',
+    'boolean' => 'Boolean',
+    'int' => 'Integer number',
+    'float' => 'Floating point number',
+    'string' => 'String',
+    'text' => 'Text',
+    'json' => 'Json',
+    'image' => 'Image',
+    'email' => 'Email',
+    'password' => 'Password',
+    'enum' => 'Enumeration',
+    'order' => 'Sort order',
+    'color' => 'Color',
+    'belongsTo' => 'Belongs to relation',
+    'belongsToMany' => 'Belongs to many relation'
 ];

@@ -32,6 +32,9 @@ $readonly = is_callable($prop['readonly']) ? $prop['readonly']() : $prop['readon
     @case(CrudType::order())
     @include('crud-policies::crud.formfields.order')
     @break
+    @case(CrudType::color())
+    @include('crud-policies::crud.formfields.color')
+    @break
     @case(CrudType::belongsTo())
     @include('crud-policies::crud.formfields.belongsTo')
     @break

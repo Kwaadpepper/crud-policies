@@ -19,4 +19,18 @@ return [
     'reset' => 'Réinitialiser',
     'search' => 'Chercher',
     'nothingtoshow' => 'Rien à afficher',
+    'boolean' => 'Booléen',
+    'int' => 'Nombre entier',
+    'float' => 'Nombre à virgule flottante',
+    'string' => 'Chaîne de caractères',
+    'text' => 'Texte',
+    'json' => 'Json',
+    'image' => 'Image',
+    'email' => 'E-mail',
+    'password' => 'Mot de passe',
+    'enum' => 'Énumération',
+    'order' => 'Ordre de classement',
+    'color' => 'Couleur',
+    'belongsTo' => 'Relation `Appartient à`',
+    'belongsToMany' => 'Relation `Appartient à plusieurs`'
 ];
