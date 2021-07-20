@@ -1,6 +1,6 @@
 @push('scripts')
 @if(!isset($ckeditorInput))
-{{ View::share('ckeditorInput', true) }}
+@php View::share('ckeditorInput', true) @endphp
 <script src="https://cdn.ckeditor.com/ckeditor5/27.1.0/classic/ckeditor.js"></script>
 @endif
 <script>

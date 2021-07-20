@@ -29,9 +29,4 @@
         @if($prop['required'] or (!$prop['required'] and !$prop['nullable']))required @endif>
     @endif
 </td>
-@push('scripts')
-@if(!isset($CrudColorLib))
-@php View::share('CrudColorLib', true) @endphp
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.4.5/jscolor.min.js"></script>
-@endif
-@endpush
+@include('crud-policies::crud.modules.color')
