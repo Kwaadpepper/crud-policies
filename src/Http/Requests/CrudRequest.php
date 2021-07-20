@@ -28,7 +28,7 @@ class CrudRequest extends FormRequest
         foreach ($this->getCurrentModel()::getRules() as $k => $rules) {
             $propsRules[$k] = [];
             foreach ($rules as $rule) {
-                $this->handleRule($action, $props[$k], $rule, $k, $propsRules[$k]);
+                $this->handleRule($action, $props[$k], $rule, $k, $propsRules);
             }
         }
         return $propsRules;
@@ -44,12 +44,14 @@ class CrudRequest extends FormRequest
             return;
         }
         if (!in_array($rule, $out)) {
-            $out[] = $rule;
+            $out[$ruleName][] = $rule;
         }
         // handle password
         if (
             $prop['type']->equals(CrudType::password()) and
-            !$this->{$ruleName} or (is_string($this->{$ruleName}) and !\strlen($this->{$ruleName}))
+            (!$this->{$ruleName} or
+                (is_string($this->{$ruleName}) and
+                    !\strlen($this->{$ruleName})))
         ) {
             $this->offsetUnset($ruleName);
         }
@@ -60,9 +62,9 @@ class CrudRequest extends FormRequest
         // handle image
         if ($prop['type']->equals(CrudType::image())) {
             $tableName = Str::singular((new $model())->getTable());
-            if ($this->{$tableName}) {
-                $i = array_search('required', $out);
-                unset($propsRules[$ruleName][$i]);
+            if ($this->{$tableName} and $action->equals(CrudAction::update())) {
+                $i = array_search('required', $out[$ruleName]);
+                unset($out[$ruleName][$i]);
             }
         }
         // handle belongsToMany
