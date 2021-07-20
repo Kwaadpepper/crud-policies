@@ -29,7 +29,6 @@
                             {{ __('crud-policies::crud.search') }}
                         </button>
                     </div>
-                    </div>
                 </form>
             </div>
         </div>
