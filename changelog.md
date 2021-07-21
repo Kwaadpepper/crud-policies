@@ -24,8 +24,9 @@ First version, tried to separate code from portail S.
 - Added missing translations in enumerations
 
 ## Version 0.1.3
-- Model names can be translated under models.classes.ModelClass with its plural version
-- added function helper transFb (translate with fallback)
-- added unsigned int type
-- added unsigned float type
-- added json editor
+- Added Model names can be translated under models.classes.ModelClass with its plural version
+- Added function helper transFb (translate with fallback)
+- Added unsigned int type
+- Added unsigned float type
+- Added json editor
+- Fixed some html on crud.index view
