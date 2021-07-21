@@ -22,9 +22,12 @@ trait IsCrudModel
     private static $schemaCrud = [
         'label' => null,
         'placeholder' => '',
+        'default' => null,
         'type' => null,
         'enum' => null,
         'nullable' => false,
+        'mode' => 'code',
+        'modes' => ['form', 'code', 'text'],
         'readonly' => false,
         'disabled' => false,
         'required' => false,

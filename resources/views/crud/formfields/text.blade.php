@@ -4,7 +4,7 @@
 <td>
     <div class="mb-3">
         <textarea id="{{ $fieldName }}" name="{{ $fieldName }}" rows="3" class="form-control" @if($readonly) readonly @endif>{{
-            old($fieldName) ?? $model->{$fieldName} ?? ''
+            old($fieldName) ?? $model->{$fieldName} ?? $prop['default'] ?? ''
         }}</textarea>
     </div>
 </td>

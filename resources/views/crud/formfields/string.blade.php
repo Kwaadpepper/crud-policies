@@ -9,7 +9,7 @@
             name="{{ $fieldName }}"
             type="text"
             class="form-control"
-            value="{{ old($fieldName) ?? $model->{$fieldName} ?? '' }}"
+            value="{{ old($fieldName) ?? $model->{$fieldName} ?? $prop['default'] ?? '' }}"
             @if(isset($prop['rules']['max']))maxlength="{{ $prop['rules']['max'] }}"@endif
             @if(isset($prop['rules']['min']))minlength="{{ $prop['rules']['min'] }}"@endif
             @if($prop['disabled'])disabled @endif
@@ -23,7 +23,7 @@
         name="{{ $fieldName }}"
         type="text"
         class="form-control"
-        value="{{ old($fieldName) ?? $model->{$fieldName} ?? '' }}"
+        value="{{ old($fieldName) ?? $model->{$fieldName} ?? $prop['default'] ?? '' }}"
         @if(isset($prop['rules']['max']))maxlength="{{ $prop['rules']['max'] }}"@endif
         @if(isset($prop['rules']['min']))minlength="{{ $prop['rules']['min'] }}"@endif
         @if($prop['disabled'])disabled @endif

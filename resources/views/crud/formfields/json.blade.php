@@ -4,7 +4,7 @@ $jsonValue = old($fieldName) ?? (
     (
         is_array($model->{$fieldName}) ?
         json_encode($model->{$fieldName}) : $model->{$fieldName}
-    ) : ''
+    ) : $prop['default']
 );
 @endphp
 <td>
@@ -18,5 +18,6 @@ $jsonValue = old($fieldName) ?? (
 </td>
 @include('crud-policies::crud.modules.jsoneditor', [
     'fieldName' => $fieldName,
-    'value' => $jsonValue
+    'value' => $jsonValue,
+    'prop' => $prop
 ])
