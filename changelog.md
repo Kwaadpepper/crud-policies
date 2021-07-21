@@ -22,3 +22,7 @@ First version, tried to separate code from portail S.
 - Fix issue in crud request
 - Added input type color
 - Added missing translations in enumerations
+
+## Version 0.1.3
+- Model names can be translated under models.classes.ModelClass with its plural version
+- added function helper transFb (translate with fallback)

@@ -14,6 +14,12 @@ $readonly = is_callable($prop['readonly']) ? $prop['readonly']() : $prop['readon
     @case(CrudType::float())
     @include('crud-policies::crud.formfields.float')
     @break
+    @case(CrudType::unsignedint())
+    @include('crud-policies::crud.formfields.int', ['unsigned' => true])
+    @break
+    @case(CrudType::unsignedfloat())
+    @include('crud-policies::crud.formfields.float', ['unsigned' => true])
+    @break
     @case(CrudType::email())
     @include('crud-policies::crud.formfields.email')
     @break

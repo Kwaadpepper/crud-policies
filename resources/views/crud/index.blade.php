@@ -1,6 +1,6 @@
 @extends($viewLayout)
 
-@section('title', sprintf('%s - %s', trans(Str::plural(class_basename($modelClass))), __('crud-policies::crud.viewAny')))
+@section('title', sprintf('%s - %s', transFb(sprintf('models.classes.%s', strtolower(Str::plural(class_basename($modelClass)))), Str::plural(class_basename($modelClass))), __('crud-policies::crud.viewAny')))
 @section('description', sprintf('%s %s', __('crud-policies::crud.viewAny'), trans(Str::plural(class_basename($modelClass)))))
 @section('metaIndex', 'noindex,nofollow')
 
@@ -8,7 +8,7 @@
 <div class="card">
     @include('crud-policies::crud.modules.flashMessage')
     <div class="card-header">
-        <a href="{{ CrudController::getRoutePrefixed("$modelTable.index") }}">{{ trans(Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('crud-policies::crud.viewAny') }}
+        <a href="{{ CrudController::getRoutePrefixed("$modelTable.index") }}">{{ transFb(sprintf('models.classes.%s', strtolower(Str::plural(class_basename($modelClass)))), Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('crud-policies::crud.viewAny') }}
         @can('create', $modelClass)
         <a href="{{ CrudController::getRoutePrefixed("$modelTable.create") }}" class="btn btn-primary float-end">{{ __('crud-policies::crud.create') }}</a>
         @endcan

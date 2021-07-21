@@ -21,6 +21,7 @@ class CrudPoliciesServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        require_once static::ROOTPATH . 'src/helpers.php';
         $this->configLoadIfNeeded();
 
         $this->loadRoutesFrom(static::ROOTPATH . 'routes/web.php');

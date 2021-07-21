@@ -1,6 +1,6 @@
 @extends($viewLayout)
 
-@section('title', sprintf('%s - %s', Str::plural(class_basename($modelClass)), __('crud-policies::crud.create')))
+@section('title', sprintf('%s - %s', transFb(sprintf('models.classes.%s', strtolower(Str::plural(class_basename($modelClass)))), Str::plural(class_basename($modelClass))), __('crud-policies::crud.create')))
 @section('description', sprintf('%s %s', __('crud-policies::crud.create'), class_basename($modelClass)))
 @section('metaIndex', 'noindex,nofollow')
 
@@ -9,7 +9,7 @@
     @include('crud-policies::crud.modules.flashMessage')
     <div class="card-header">
         @can('viewAny', $modelClass)
-        <a href="{{ CrudController::getRoutePrefixed("$modelTable.index") }}">{{ trans(Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('crud-policies::crud.create') }}
+        <a href="{{ CrudController::getRoutePrefixed("$modelTable.index") }}">{{ transFb(sprintf('models.classes.%s', strtolower(Str::plural(class_basename($modelClass)))), Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('crud-policies::crud.create') }}
         @else
         {{ Str::plural(class_basename($modelClass)) }}&nbsp;-&nbsp;{{ __('crud-policies::crud.create') }}
         @endcan
