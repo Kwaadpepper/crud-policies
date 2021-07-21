@@ -26,3 +26,6 @@ First version, tried to separate code from portail S.
 ## Version 0.1.3
 - Model names can be translated under models.classes.ModelClass with its plural version
 - added function helper transFb (translate with fallback)
+- added unsigned int type
+- added unsigned float type
+- added json editor

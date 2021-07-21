@@ -188,6 +188,10 @@ trait IsCrudModel
                 case CrudType::email():
                     $defaultRules[] = 'email:rfc,dns';
                     break;
+                case CrudType::unsignedfloat():
+                    $defaultRules[] = 'min:0';
+                    break;
+                case CrudType::unsignedint():
                 case CrudType::belongsTo():
                     $defaultRules[] = 'integer';
                     $defaultRules[] = 'min:0';
@@ -240,8 +244,19 @@ trait IsCrudModel
      */
     public static function getEditableProperties(): array
     {
+        $rules = self::getRules();
         static::assertEditablePropertiesIsCorrect();
-        return  static::$editableProperties;
+        return \collect(static::$editableProperties)->mapWithKeys(function ($prop, $key) use ($rules) {
+            if (isset($rules[$key])) {
+                if (is_array($rules[$key])) {
+                    $prop['rules'] = \array_merge($rules[$key], $prop['rules']);
+                }
+                if (is_string($rules[$key])) {
+                    $prop['rules'] = $rules[$key];
+                }
+            }
+            return [$key => $prop];
+        })->all();
     }
 
     /**
