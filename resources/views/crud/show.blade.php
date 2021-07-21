@@ -57,4 +57,5 @@
         </table>
     </div>
 </div>
+@include('crud-policies::crud.modules.scriptConstants')
 @endsection
