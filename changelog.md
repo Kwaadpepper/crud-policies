@@ -30,3 +30,7 @@ First version, tried to separate code from portail S.
 - Added unsigned float type
 - Added json editor
 - Fixed some html on crud.index view
+
+## Version 0.1.4
+- Added modes to json fields
+- Added default values option
