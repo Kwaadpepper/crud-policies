@@ -196,16 +196,41 @@ trait CrudController
 
     public function destroy(Model $model)
     {
+        $restrict = $model->gotHasManyRelationWithRestrictOnDelete();
+        $restrictedModel = '';
+        try {
+            if (is_array($restrict)) {
+                foreach ($restrict as $res) {
+                    $restrictedModel = $res['className'];
+                    $model->load($res['relation']);
+                    if (
+                        (\is_countable($model->{$res['relation']}) and
+                            count($model->{$res['relation']})) or
+                        (!is_null($model->{$res['relation']}) and
+                            !\is_countable($model->{$res['relation']}))
+                    ) {
+                        throw new CrudException('retrict delete');
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            $restrict = true;
+        } finally {
+            $restrict = is_array($restrict) ? false : $restrict;
+        }
         if (
             !in_array(SoftDeletes::class, class_uses_recursive($model), true) and
-            $restrict = $model->gotHasManyRelationWithRestrictOnDelete()
+            $restrict
         ) {
-            return redirect()->back()
-                ->with('error', trans(
+            return redirect()->route(sprintf(
+                '%s%s.edit',
+                self::getRoutePrefix() ? self::getRoutePrefix() . '.' : '',
+                $model->getTable()
+            ), $model)->with('error', trans(
                     ':model n\'as pas pu être supprimé car il est encore associé avec des :associated',
                     [
                         'model' => $model->getModelName(),
-                        'associated' => Str::plural($restrict)
+                    'associated' => Str::plural($restrictedModel)
                     ]
                 ));
         }
@@ -214,11 +239,13 @@ trait CrudController
                 '%s%s.index',
                 self::getRoutePrefix() ? self::getRoutePrefix() . '.' : '',
                 $model->getTable()
-            ))
-                ->with('warning', trans(':model a bien été supprimé.', ['model' => $model->getModelName()]));
+            ))->with('warning', trans(':model a bien été supprimé.', ['model' => $model->getModelName()]));
         } else {
-            return redirect()->back()
-                ->with('error', trans(':model n\'as pas pu être supprimé', ['model' => $model->getModelName()]));
+            return redirect()->route(sprintf(
+                '%s%s.edit',
+                self::getRoutePrefix() ? self::getRoutePrefix() . '.' : '',
+                $model->getTable()
+            ), $model)->with('error', trans(':model n\'as pas pu être supprimé', ['model' => $model->getModelName()]));
         }
     }
 

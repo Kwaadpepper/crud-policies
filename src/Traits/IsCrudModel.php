@@ -99,6 +99,7 @@ trait IsCrudModel
      */
     public function gotHasManyRelationWithRestrictOnDelete()
     {
+        $relations = [];
         $sm = DB::getDoctrineSchemaManager();
         foreach (self::getRelationships() as $relation => $type) {
             if ($type[0] === 'HasMany') {
@@ -110,11 +111,14 @@ trait IsCrudModel
                         // allow only CASCADE action, otherwise it would break the app
                         continue;
                     }
-                    return class_basename($type[1]);
+                    $relations[] = [
+                        'relation' => $relation,
+                        'className' => class_basename($type[1])
+                    ];
                 }
             }
         }
-        return false;
+        return count($relations) ? $relations : false;
     }
 
     /**

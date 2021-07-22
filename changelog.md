@@ -34,3 +34,9 @@ First version, tried to separate code from portail S.
 ## Version 0.1.4
 - Added modes to json fields
 - Added default values option
+
+## Version 0.1.5
+- Fixed crud.view delete button
+
+## Version 0.1.6
+- Fixed check if relation has member before delete, otherwise allow delete
