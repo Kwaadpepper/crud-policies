@@ -7,7 +7,7 @@
     }) : [];
 @endphp
 <td>
-    <label for="{{ $fieldName }}" class="form-label">{{ $prop['label'] }}</label>
+    <label class="form-label">{{ $prop['label'] }}</label>
 </td>
 <td>
     <belongs-to-many

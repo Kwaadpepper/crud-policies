@@ -64,7 +64,7 @@ class CrudPoliciesServiceProvider extends ServiceProvider
             'crudPoliciesCSS',
             function () {
                 return sprintf(
-                    '<link rel="stylesheet" href=\'%s\'></link>',
+                    '<link rel="stylesheet" href=\'%s\'/>',
                     route('crud-policies.httpFileSend.asset', [
                         'type' => 'css',
                         'fileUri' => 'crud.css'

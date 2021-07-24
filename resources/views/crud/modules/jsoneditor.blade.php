@@ -10,18 +10,20 @@
 
 @push('scripts')
 <script>
-let container = document.getElementById('{{ $fieldName.'jsoneditor' }}');
-let input = document.getElementById('{{ $fieldName }}');
-window.editor = new JSONEditor(container, {
-    mode: '{{ $prop['mode'] }}',
-    modes: {!! json_encode($prop['modes']) !!},
-    indentation: 2,
-    onError: function(error) {
-        console.log(error);
-    },
-    onChange: function() {
-        input.value = JSON.stringify(editor.getText());
-    }
-}, {!! $jsonValue !!})
+document.addEventListener("DOMContentLoaded", function(event) {
+    let container = document.getElementById('{{ $fieldName.'jsoneditor' }}');
+    let input = document.getElementById('{{ $fieldName }}');
+    window.editor = new JSONEditor(container, {
+        mode: '{{ $prop['mode'] }}',
+        modes: {!! json_encode($prop['modes']) !!},
+        indentation: 2,
+        onError: function(error) {
+            console.log(error);
+        },
+        onChange: function() {
+            input.value = JSON.stringify(editor.getText());
+        }
+    }, {!! $jsonValue !!});
+});
 </script>
 @endpush
