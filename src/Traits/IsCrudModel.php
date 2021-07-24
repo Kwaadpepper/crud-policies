@@ -67,13 +67,24 @@ trait IsCrudModel
     // OVERLOAD MODEL FUNCTION
     public function fill(array $attributes)
     {
-        parent::fill($attributes);
+        $cpAttributes = [];
         foreach ($attributes as $k => $attribute) {
+            if (
+                isset(static::$editableProperties[$k]['type']) and
+                (static::$editableProperties[$k]['type']->equals(CrudType::belongsTo()) or
+                    static::$editableProperties[$k]['type']->equals(CrudType::belongsToMany()))
+            ) {
+                continue;
+            }
+            $cpAttributes[$k] = $attribute;
+        }
+        parent::fill($cpAttributes);
+        foreach ($cpAttributes as $k => $attribute) {
             if (
                 isset(static::$editableProperties[$k]['setAttribute']) and
                 is_callable(static::$editableProperties[$k]['setAttribute'])
             ) {
-                return $this::$editableProperties[$k]['setAttribute']($this, $attribute);
+                $this::$editableProperties[$k]['setAttribute']($this, $attribute);
             }
             if (\is_object($this->{$k}) and \get_class($this->{$k}) === UploadedFile::class) {
                 $this->moveUploadedFile($k, $this->{$k});
