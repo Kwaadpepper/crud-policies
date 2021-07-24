@@ -515,9 +515,6 @@ trait IsCrudModel
 
     private static function assertBelongsToIsCorrect(array $prop): void
     {
-        if (is_null($prop['belongsTo'])) {
-            return;
-        }
         if (
             $prop['type']->equals(CrudType::belongsTo()) and
             (!\is_string($prop['belongsTo']) or
@@ -534,9 +531,6 @@ trait IsCrudModel
 
     private static function assertBelongsToManyIsCorrect(array $prop): void
     {
-        if (is_null($prop['belongsToMany'])) {
-            return;
-        }
         if (
             $prop['type']->equals(CrudType::belongsToMany()) and
             (!\is_string($prop['belongsToMany']) or
