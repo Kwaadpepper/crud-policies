@@ -48,6 +48,14 @@ trait CrudController
     {
     }
 
+    public function deleteModel(Model &$model)
+    {
+    }
+
+    public function deletedModel(Model &$model)
+    {
+    }
+
     public function __construct()
     {
         // AUTH CONTROL TO ROOT POLICY
@@ -234,7 +242,9 @@ trait CrudController
                     ]
                 ));
         }
+        $this->deleteModel($model);
         if ($model->delete()) {
+            $this->deletedModel($model);
             return \redirect()->route(sprintf(
                 '%s%s.index',
                 self::getRoutePrefix() ? self::getRoutePrefix() . '.' : '',
