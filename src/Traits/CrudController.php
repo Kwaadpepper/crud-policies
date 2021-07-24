@@ -153,8 +153,9 @@ trait CrudController
         }
     }
 
-    public function show(Model $model)
+    public function show(...$params)
     {
+        $model = $this->getLastModelParam($params);
         return view('crud-policies::crud.show', ['model' => $model]);
     }
 
@@ -173,37 +174,32 @@ trait CrudController
         static::afterSave($model);
         $model->saveRelations($request);
         $this->storedModel($model);
-        return \redirect()->route(sprintf(
-            '%s%s.edit',
-            self::getRoutePrefix() ? self::getRoutePrefix() . '.' : '',
-            $model->getTable()
-        ), $model)
+        return \redirect()->to(self::getRoutePrefixed(sprintf('%s.edit', $model->getTable()), $model))
             ->with('success', trans(':model a bien été enregistré.', ['model' => $model->getModelName()]));
     }
 
-    public function edit(Model $model)
+    public function edit(...$params)
     {
+        $model = $this->getLastModelParam($params);
         return view('crud-policies::crud.edit', ['model' => $model]);
     }
 
-    public function update(UpdateCrudModel $request, Model $model)
+    public function update(UpdateCrudModel $request, ...$params)
     {
+        $model = $this->getLastModelParam($params);
         $model->fill($request->validated());
         $this->updateModel($model);
         $model->saveOrFail();
         static::afterSave($model);
         $model->saveRelations($request);
         $this->updatedModel($model);
-        return \redirect()->route(sprintf(
-            '%s%s.edit',
-            self::getRoutePrefix() ? self::getRoutePrefix() . '.' : '',
-            $model->getTable()
-        ), $model)
-            ->with('success', trans(':model a bien été enregistré.', ['model' => $model->getModelName()]));
+        return \redirect()->to(self::getRoutePrefixed(sprintf('%s.edit', $model->getTable()), $model))
+        ->with('success', trans(':model a bien été enregistré.', ['model' => $model->getModelName()]));
     }
 
-    public function destroy(Model $model)
+    public function destroy(...$params)
     {
+        $model = $this->getLastModelParam($params);
         $restrict = $model->gotHasManyRelationWithRestrictOnDelete();
         $restrictedModel = '';
         try {
@@ -230,11 +226,8 @@ trait CrudController
             !in_array(SoftDeletes::class, class_uses_recursive($model), true) and
             $restrict
         ) {
-            return redirect()->route(sprintf(
-                '%s%s.edit',
-                self::getRoutePrefix() ? self::getRoutePrefix() . '.' : '',
-                $model->getTable()
-            ), $model)->with('error', trans(
+            return redirect()->to(self::getRoutePrefixed(sprintf('%s.edit', $model->getTable()), $model))
+                ->with('error', trans(
                     ':model n\'as pas pu être supprimé car il est encore associé avec des :associated',
                     [
                         'model' => $model->getModelName(),
@@ -245,17 +238,11 @@ trait CrudController
         $this->deleteModel($model);
         if ($model->delete()) {
             $this->deletedModel($model);
-            return \redirect()->route(sprintf(
-                '%s%s.index',
-                self::getRoutePrefix() ? self::getRoutePrefix() . '.' : '',
-                $model->getTable()
-            ))->with('warning', trans(':model a bien été supprimé.', ['model' => $model->getModelName()]));
+            return \redirect()->to(self::getRoutePrefixed(sprintf('%s.index', $model->getTable()), $model))
+            ->with('warning', trans(':model a bien été supprimé.', ['model' => $model->getModelName()]));
         } else {
-            return redirect()->route(sprintf(
-                '%s%s.edit',
-                self::getRoutePrefix() ? self::getRoutePrefix() . '.' : '',
-                $model->getTable()
-            ), $model)->with('error', trans(':model n\'as pas pu être supprimé', ['model' => $model->getModelName()]));
+            return redirect()->to(self::getRoutePrefixed(sprintf('%s.edit', $model->getTable()), $model))
+                ->with('error', trans(':model n\'as pas pu être supprimé', ['model' => $model->getModelName()]));
         }
     }
 
@@ -355,12 +342,53 @@ trait CrudController
      * @param string $route
      * @param array $parameters
      * @param boolean $absolute
+     * @param int $minus to remove a parameter from the end
      * @return string
      */
-    public static function getRoutePrefixed(string $route, $parameters = [], bool $absolute = true): string
+    public static function getRoutePrefixed(
+        string $route,
+        $parameters = [],
+        bool $absolute = true,
+        int $minus = 0
+    ): string
     {
+        $currentRouteName = request()->route()->getName();
+        $currentAction = collect(explode('.', $currentRouteName))->last();
+        $key = is_array($parameters) ? null : $parameters;
+        $parameters = array_merge(request()->route()->parameters, is_array($parameters) ? $parameters : []);
         $prefix = self::getRoutePrefix();
-        return route($prefix ? "$prefix.$route" : $route, $parameters, $absolute);
+        $prefix = $prefix ? "$prefix." : '';
+        $routePrepend = '';
+
+        // remove last parameter if we are not on a .index route
+        if ($currentAction !== 'index') {
+            \array_pop($parameters);
+        }
+
+        foreach ($parameters as $parameter) {
+            if (
+                is_object($parameter) and
+                in_array(Model::class, class_parents($parameter))
+            ) {
+                /** @var \Illuminate\Database\Eloquent\Model $parameter */
+                $routePrepend .= sprintf('%s.', $parameter->getTable());
+            }
+        }
+        if ($key) {
+            $parameters[] = $key;
+        }
+
+        $route = explode('.', "$prefix$routePrepend$route");
+        $action = array_pop($route);
+
+        for ($i = 0; $i < $minus; $i++) {
+            array_pop($route);
+            array_pop($parameters);
+        }
+
+        $route = implode('.', $route);
+
+        return route("$route.$action", $parameters, $absolute);
     }
 
     /**
@@ -385,6 +413,23 @@ trait CrudController
             }
         }
         return $models;
+    }
+
+    /**
+     * Get the last model from the url params
+     *
+     * @param array $urlParams
+     * @return Model
+     */
+    private function getLastModelParam(array $urlParams): Model
+    {
+        $urlParams = \array_reverse($urlParams);
+        foreach ($urlParams as $param) {
+            if (is_object($param) and in_array(Model::class, class_parents($param))) {
+                return $param;
+            }
+        }
+        throw new CrudException('no model found in url params');
     }
 
     private function shareViewLayout(): void

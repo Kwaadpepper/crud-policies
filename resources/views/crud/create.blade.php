@@ -8,11 +8,7 @@
 <div class="card">
     @include('crud-policies::crud.modules.flashMessage')
     <div class="card-header">
-        @can('viewAny', $modelClass)
-        <a href="{{ CrudController::getRoutePrefixed("$modelTable.index") }}">{{ transFb(sprintf('models.classes.%s', strtolower(Str::plural(class_basename($modelClass)))), Str::plural(class_basename($modelClass))) }}</a>&nbsp;-&nbsp;{{ __('crud-policies::crud.create') }}
-        @else
-        {{ Str::plural(class_basename($modelClass)) }}&nbsp;-&nbsp;{{ __('crud-policies::crud.create') }}
-        @endcan
+        @include('crud-policies::crud.modules.breadcrumb', ['action' => 'create'])
     </div>
     <div class="card-body">
         <form action="{{ CrudController::getRoutePrefixed("$modelTable.store") }}" method="POST" @if($hasImage) enctype="multipart/form-data" @endif>
