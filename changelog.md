@@ -40,3 +40,11 @@ First version, tried to separate code from portail S.
 
 ## Version 0.1.6
 - Fixed check if relation has member before delete, otherwise allow delete
+
+## Version 0.1.7
+- Added some support for nested resources
+- Added delete and deleted model hook on controller trait
+- Fixed belongsTo and belongstoMany validation
+- Fixed ckeditor issue (document loaded check)
+- Fixed invalid html
+- Fixed fill method crash when belongsTo and belongsToMany are in fillable array
