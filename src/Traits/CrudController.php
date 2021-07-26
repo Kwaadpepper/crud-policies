@@ -238,7 +238,7 @@ trait CrudController
         $this->deleteModel($model);
         if ($model->delete()) {
             $this->deletedModel($model);
-            return \redirect()->to(self::getRoutePrefixed(sprintf('%s.index', $model->getTable()), $model))
+            return \redirect()->to(self::getRoutePrefixed(sprintf('%s.index', $model->getTable())))
             ->with('warning', trans(':model a bien été supprimé.', ['model' => $model->getModelName()]));
         } else {
             return redirect()->to(self::getRoutePrefixed(sprintf('%s.edit', $model->getTable()), $model))
@@ -339,6 +339,8 @@ trait CrudController
     /**
      * Get the route url with prefix if needed
      *
+     * Cette fonction est à retravailler
+     *
      * @param string $route
      * @param array $parameters
      * @param boolean $absolute
@@ -361,7 +363,7 @@ trait CrudController
         $routePrepend = '';
 
         // remove last parameter if we are not on a .index route
-        if ($currentAction !== 'index') {
+        if (!in_array($currentAction, ['index', 'create', 'store'])) {
             \array_pop($parameters);
         }
 
@@ -377,9 +379,17 @@ trait CrudController
         if ($key) {
             $parameters[] = $key;
         }
-
         $route = explode('.', "$prefix$routePrepend$route");
         $action = array_pop($route);
+
+        // Handle special cases
+        if ($currentAction !== 'index') {
+            $minus--;
+        }
+
+        if ($currentAction === 'create') {
+            $minus++;
+        }
 
         for ($i = 0; $i < $minus; $i++) {
             array_pop($route);
