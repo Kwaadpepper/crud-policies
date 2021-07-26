@@ -103,13 +103,14 @@ trait CrudController
         $tableName = (new static::${'modelClass'}())->getTable();
         if ($request->sort_col) {
             Session::put("crud.$tableName.sort_col", $request->sort_col);
-        } else {
-            Session::remove("crud.$tableName.sort_col", $request->sort_col);
         }
         if ($request->sort_way) {
             Session::put("crud.$tableName.sort_way", $request->sort_way);
-        } else {
-            Session::remove("crud.$tableName.sort_way", $request->sort_way);
+        }
+
+        if ($request->rst) {
+            Session::remove("crud.$tableName.sort_way");
+            Session::remove("crud.$tableName.sort_col");
         }
 
         if (
@@ -140,8 +141,6 @@ trait CrudController
                 $models = $models->orderBy($propName);
             }
         }
-
-        Session::save();
 
         /** @var \Illuminate\Pagination\AbstractPaginator */
         $models = $models->paginate(config('crud.paginate', 15));
