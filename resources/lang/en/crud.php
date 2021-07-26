@@ -31,6 +31,8 @@ return [
     'enum' => 'Enumeration',
     'order' => 'Sort order',
     'color' => 'Color',
+    'file' => 'File',
+    'uri' => 'Uri',
     'belongsTo' => 'Belongs to relation',
     'belongsToMany' => 'Belongs to many relation'
 ];

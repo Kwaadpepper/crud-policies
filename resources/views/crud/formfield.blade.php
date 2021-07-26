@@ -32,6 +32,9 @@ $readonly = is_callable($prop['readonly']) ? $prop['readonly']() : $prop['readon
     @case(CrudType::image())
     @include('crud-policies::crud.formfields.image')
     @break
+    @case(CrudType::file())
+    @include('crud-policies::crud.formfields.file')
+    @break
     @case(CrudType::enum())
     @include('crud-policies::crud.formfields.enum')
     @break

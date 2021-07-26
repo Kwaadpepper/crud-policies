@@ -81,7 +81,7 @@ trait CrudController
             $this->shareViewLayout();
             $this->shareCrudModelsClassesToView();
             $this->shareModelClassToView();
-            $this->shareModelHasImageToView();
+            $this->shareModelHasFileToView();
             $this->shareModelTableToView();
             $this->shareModelPropsToView();
         }
@@ -475,13 +475,13 @@ trait CrudController
      *
      * @return void
      */
-    private function shareModelHasImageToView(): void
+    private function shareModelHasFileToView(): void
     {
         /** @var \Illuminate\Database\Eloquent\Model $model */
         $model = static::${'modelClass'};
 
-        View::share('hasImage', (bool)collect((new $model())->getEditableProperties())->filter(function ($prop) {
-            return $prop['type']->equals(CrudType::image());
+        View::share('hasFile', (bool)collect((new $model())->getEditableProperties())->filter(function ($prop) {
+            return $prop['type']->equals(CrudType::image()) or $prop['type']->equals(CrudType::file());
         })->count());
     }
 

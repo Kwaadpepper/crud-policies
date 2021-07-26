@@ -31,6 +31,8 @@ return [
     'enum' => 'Énumération',
     'order' => 'Ordre de classement',
     'color' => 'Couleur',
+    'file' => 'Fichier',
+    'uri' => 'Uri',
     'belongsTo' => 'Relation `Appartient à`',
     'belongsToMany' => 'Relation `Appartient à plusieurs`'
 ];

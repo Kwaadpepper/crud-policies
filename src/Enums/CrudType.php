@@ -17,6 +17,8 @@ use Kwaadpepper\Enum\BaseEnum;
  * @method static self enum()
  * @method static self order()
  * @method static self color()
+ * @method static self file()
+ * @method static self uri()
  * @method static self unsignedint()
  * @method static self unsignedfloat()
  * @method static self belongsTo()
@@ -42,6 +44,8 @@ class CrudType extends BaseEnum
             'color' => 11,
             'unsignedint' => 12,
             'unsignedfloat' => 13,
+            'file' => 14,
+            'uri' => 15,
             'belongsTo' => 21,
             'belongsToMany' => 22
         ];
@@ -62,6 +66,8 @@ class CrudType extends BaseEnum
             'enum' => trans('crud-policies::crud.enum'),
             'order' => trans('crud-policies::crud.order'),
             'color' => trans('crud-policies::crud.color'),
+            'file' => trans('crud-policies::crud.file'),
+            'uri' => trans('crud-policies::crud.uri'),
             'unsignedint' => trans('crud-policies::crud.unsignedint'),
             'unsignedfloat' => trans('crud-policies::crud.unsignedfloat'),
             'belongsTo' => trans('crud-policies::crud.belongsTo'),

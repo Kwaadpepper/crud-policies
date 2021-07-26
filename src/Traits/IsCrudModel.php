@@ -200,6 +200,7 @@ trait IsCrudModel
                 case CrudType::boolean():
                     $defaultRules[] = 'boolean';
                     break;
+                case CrudType::file():
                 case CrudType::image():
                     $defaultRules[] = 'file';
                     break;

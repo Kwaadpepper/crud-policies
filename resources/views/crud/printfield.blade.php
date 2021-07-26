@@ -24,6 +24,12 @@
             @case(CrudType::image())
                 <img class="img-responsive" src="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" alt="{{ sprintf('/storage/%s', $model->{$fieldName}) }}">
                 @break
+            @case(CrudType::file())
+                <a href="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" target="_blank">{{ sprintf('/storage/%s', $model->{$fieldName}) }}</a>
+                @break
+            @case(CrudType::uri())
+                <a href="{{ $model->{$fieldName} }}" target="_blank">{{ $model->{$fieldName} }}</a>
+                @break
             @case(CrudType::order())
                 @if(
                     Session::get("crud.$modelTable.sort_col") === $fieldName and
@@ -89,6 +95,12 @@
                 @break
             @case(CrudType::image())
                 <img class="img-responsive" src="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" alt="{{ sprintf('/storage/%s', $model->{$fieldName}) }}">
+                @break
+            @case(CrudType::file())
+                <a href="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" target="_blank">{{ pathinfo($model->{$fieldName} ?? '', PATHINFO_BASENAME) }}</a>
+                @break
+            @case(CrudType::uri())
+                <a href="{{ $model->{$fieldName} }}" target="_blank">{{ pathinfo($model->{$fieldName} ?? '', PATHINFO_BASENAME) }}</a>
                 @break
             @case(CrudType::order())
                 {{ $model->{$fieldName} }}

@@ -59,8 +59,8 @@ class CrudRequest extends FormRequest
         if ($prop['type']->equals(CrudType::boolean())) {
             $this->merge([$ruleName => $this->{$ruleName} ? 1 : 0]);
         }
-        // handle image
-        if ($prop['type']->equals(CrudType::image())) {
+        // handle image and file
+        if ($prop['type']->equals(CrudType::image()) or $prop['type']->equals(CrudType::file())) {
             $tableName = Str::singular((new $model())->getTable());
             if ($this->{$tableName} and $action->equals(CrudAction::update())) {
                 $i = array_search('required', $out[$ruleName]);

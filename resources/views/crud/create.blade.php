@@ -11,7 +11,7 @@
         @include('crud-policies::crud.modules.breadcrumb', ['action' => 'create'])
     </div>
     <div class="card-body">
-        <form action="{{ CrudController::getRoutePrefixed("$modelTable.store") }}" method="POST" @if($hasImage) enctype="multipart/form-data" @endif>
+        <form action="{{ CrudController::getRoutePrefixed("$modelTable.store") }}" method="POST" @if($hasFile) enctype="multipart/form-data" @endif>
             @csrf
             <table class="table table-sm table-bordered border-primary align-middle table-striped text-center">
                 <thead class="thead-dark">

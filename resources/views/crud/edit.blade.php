@@ -23,7 +23,7 @@
         </div>
     </div>
     <div class="card-body">
-        <form action="{{ CrudController::getRoutePrefixed("$modelTable.update", $model) }}" method="POST" @if($hasImage) enctype="multipart/form-data" @endif>
+        <form action="{{ CrudController::getRoutePrefixed("$modelTable.update", $model) }}" method="POST" @if($hasFile) enctype="multipart/form-data" @endif>
             @method('put')
             @csrf
             <table class="table table-sm table-bordered border-primary align-middle table-striped text-center">
