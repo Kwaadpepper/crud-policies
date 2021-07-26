@@ -48,3 +48,7 @@ First version, tried to separate code from portail S.
 - Fixed ckeditor issue (document loaded check)
 - Fixed invalid html
 - Fixed fill method crash when belongsTo and belongsToMany are in fillable array
+
+## Version 0.1.8
+- Fixed breadcrumb nested resources
+- Fixed sorter reset btn + destroy alert
