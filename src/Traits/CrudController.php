@@ -2,6 +2,7 @@
 
 namespace Kwaadpepper\CrudPolicies\Traits;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -173,8 +174,16 @@ trait CrudController
         static::afterSave($model);
         $model->saveRelations($request);
         $this->storedModel($model);
-        return \redirect()->to(self::getRoutePrefixed(sprintf('%s.edit', $model->getTable()), $model))
-            ->with('success', trans(':model a bien été enregistré.', ['model' => $model->getModelName()]));
+
+        // Try to redirect
+        if ($this->can('update', $model)) {
+            $return = \redirect()->to(self::getRoutePrefixed(sprintf('%s.edit', $model->getTable()), $model));
+        } elseif (($this->can('view', $model))) {
+            $return = \redirect()->to(self::getRoutePrefixed(sprintf('%s.show', $model->getTable()), $model));
+        } else {
+            $return = \redirect()->to(self::getRoutePrefixed(sprintf('%s.index', $model->getTable())));
+        }
+        return $return->with('success', trans(':model a bien été enregistré.', ['model' => $model->getModelName()]));
     }
 
     public function edit(...$params)
@@ -192,6 +201,7 @@ trait CrudController
         static::afterSave($model);
         $model->saveRelations($request);
         $this->updatedModel($model);
+
         return \redirect()->to(self::getRoutePrefixed(sprintf('%s.edit', $model->getTable()), $model))
         ->with('success', trans(':model a bien été enregistré.', ['model' => $model->getModelName()]));
     }
@@ -221,12 +231,17 @@ trait CrudController
         } finally {
             $restrict = is_array($restrict) ? false : $restrict;
         }
+
+        // Try to redirect
+        $return = \redirect()->to(self::getRoutePrefixed(sprintf('%s.index', $model->getTable())));
+
         if (
             !in_array(SoftDeletes::class, class_uses_recursive($model), true) and
             $restrict
         ) {
-            return redirect()->to(self::getRoutePrefixed(sprintf('%s.edit', $model->getTable()), $model))
-                ->with('error', trans(
+            return $return->with(
+                'error',
+                trans(
                     ':model n\'as pas pu être supprimé car il est encore associé avec des :associated',
                     [
                         'model' => $model->getModelName(),
@@ -237,11 +252,15 @@ trait CrudController
         $this->deleteModel($model);
         if ($model->delete()) {
             $this->deletedModel($model);
-            return \redirect()->to(self::getRoutePrefixed(sprintf('%s.index', $model->getTable())))
-            ->with('warning', trans(':model a bien été supprimé.', ['model' => $model->getModelName()]));
+            return $return->with('warning', trans(
+                ':model a bien été supprimé.',
+                ['model' => $model->getModelName()]
+            ));
         } else {
-            return redirect()->to(self::getRoutePrefixed(sprintf('%s.edit', $model->getTable()), $model))
-                ->with('error', trans(':model n\'as pas pu être supprimé', ['model' => $model->getModelName()]));
+            return $return->with('error', trans(
+                ':model n\'as pas pu être supprimé',
+                ['model' => $model->getModelName()]
+            ));
         }
     }
 
@@ -422,6 +441,35 @@ trait CrudController
             }
         }
         return $models;
+    }
+
+    /**
+     * Check if an action is autorized
+     *
+     * @param string $action something in 'viewAny', 'view', 'create', 'update', 'destroy'
+     * @param string|\Illuminate\Database\Eloquent\Model $model Class name or a Model object
+     * @return boolean
+     */
+    private function can(string $action, $model): bool
+    {
+        $actions = [
+            'index' => 'viewAny', 'show' => 'view', 'store' => 'create', 'edit' => 'update', 'destroy' => 'delete'
+        ];
+        if (!in_array(
+            $action,
+            $actions
+        )) {
+            throw new CrudException("$action is not in list : " . implode(', ', $actions));
+        }
+        try {
+            if (request()->user()) {
+                return $this->authorizeForUser(request()->user(), $action, $model)->allowed();
+            }
+            return $this->authorize($action, $model)->allowed();
+        } catch (AuthorizationException $e) {
+            return false;
+        }
+        return true;
     }
 
     /**
