@@ -8,10 +8,8 @@
 <div class="card">
     @include('crud-policies::crud.modules.flashMessage')
     <div class="card-header">
-        @include('crud-policies::crud.modules.breadcrumb', ['action' => 'viewAny'])
-        @can('create', $modelClass)
-        <a href="{{ CrudController::getRoutePrefixed("$modelTable.create") }}" class="btn btn-primary float-end">{{ __('crud-policies::crud.create') }}</a>
-        @endcan
+        @include('crud-policies::crud.modules.breadcrumb', ['action' => CrudAction::viewAny()])
+        @include('crud-policies::crud.modules.actionbar.bar', ['action' => CrudAction::viewAny()])
     </div>
     <div class="card-body">
         <div class="row justify-content-center">

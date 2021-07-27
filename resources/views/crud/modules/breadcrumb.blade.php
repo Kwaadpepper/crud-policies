@@ -22,7 +22,7 @@
         </li>
         @endif
         @endforeach
-        @if(in_array($action, ['viewAny', 'create']))
+        @if(in_array($action, [CrudAction::viewAny(), CrudAction::create()]))
         @can('viewAny', $modelClass)
         <li class="breadcrumb-item">
             <a href="{{ CrudController::getRoutePrefixed("$modelTable.index") }}">{{
@@ -43,6 +43,6 @@
         </li>
         @endcan
         @endif
-        <li class="breadcrumb-item active" aria-current="page">{{ __("crud-policies::crud.$action") }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ __('crud-policies::crud.'.$action->getDefinition()) }}</li>
     </ol>
 </nav>

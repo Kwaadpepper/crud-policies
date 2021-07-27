@@ -8,7 +8,8 @@
 <div class="card">
     @include('crud-policies::crud.modules.flashMessage')
     <div class="card-header">
-        @include('crud-policies::crud.modules.breadcrumb', ['action' => 'create'])
+        @include('crud-policies::crud.modules.breadcrumb', ['action' => CrudAction::create()])
+        @include('crud-policies::crud.modules.actionbar.bar', ['action' => CrudAction::create()])
     </div>
     <div class="card-body">
         <form action="{{ CrudController::getRoutePrefixed("$modelTable.store") }}" method="POST" @if($hasFile) enctype="multipart/form-data" @endif>

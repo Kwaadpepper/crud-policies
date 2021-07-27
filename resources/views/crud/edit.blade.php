@@ -8,19 +8,8 @@
 <div class="card">
     @include('crud-policies::crud.modules.flashMessage')
     <div class="card-header">
-        @include('crud-policies::crud.modules.breadcrumb', ['action' => 'edit'])
-        <div class="btn-group float-end" role="group" aria-label="{{ __('crud-policies::crud.action') }}">
-            @can('view', $model)
-            <a href="{{ CrudController::getRoutePrefixed("$modelTable.show", $model) }}" class="btn btn-primary ">{{ __('crud-policies::crud.view') }}</a>
-            @endcan
-            @can('delete', $model)
-            <form action="{{ CrudController::getRoutePrefixed("$modelTable.destroy", $model) }}" method="POST" onsubmit="__CRUD.confirmDelete(event)">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger">{{ __('crud-policies::crud.delete') }}</button>
-            </form>
-            @endcan
-        </div>
+        @include('crud-policies::crud.modules.breadcrumb', ['action' => CrudAction::update()])
+        @include('crud-policies::crud.modules.actionbar.bar', ['action' => CrudAction::update()])
     </div>
     <div class="card-body">
         <form action="{{ CrudController::getRoutePrefixed("$modelTable.update", $model) }}" method="POST" @if($hasFile) enctype="multipart/form-data" @endif>
