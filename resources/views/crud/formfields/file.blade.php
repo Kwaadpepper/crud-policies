@@ -11,6 +11,7 @@
             type="file"
             class="form-control"
             value="{{ old($fieldName) ?? $model->{$fieldName} ?? $prop['default'] ?? '' }}"
+            @if($prop['accept'])accept="{{ $prop['accept'] }}" @endif
             @if($prop['disabled'])disabled @endif
             @if($readonly)readonly @endif
             @if(($prop['required'] or (!$prop['required'] and !$prop['nullable'])) and !(isset($model) and $model->{$fieldName}))required @endif>

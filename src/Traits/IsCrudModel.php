@@ -31,6 +31,7 @@ trait IsCrudModel
         'readonly' => false,
         'disabled' => false,
         'required' => false,
+        'accept' => '',
         'validate' => [],
         'rules' => [],
         'actions' => [],
@@ -376,6 +377,7 @@ trait IsCrudModel
                     }
                     break;
             }
+            self::assertAcceptIscorrect($prop);
             self::assertNullableIscorrect($prop);
             self::assertReadonlyIscorrect($prop);
             self::assertDisabledIscorrect($prop);
@@ -390,6 +392,12 @@ trait IsCrudModel
         }
     }
 
+    private static function assertAcceptIscorrect(array $prop): void
+    {
+        if (!isset($prop['accept']) or !is_string($prop['accept'])) {
+            throw new CrudException('$editableProperties[\'accept\'] array value must be a string');
+        }
+    }
     private static function assertLabelIscorrect(array $prop): void
     {
         if (!isset($prop['label']) or !is_string($prop['label'])) {
