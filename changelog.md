@@ -52,3 +52,9 @@ First version, tried to separate code from portail S.
 ## Version 0.1.8
 - Fixed breadcrumb nested resources
 - Fixed sorter reset btn + destroy alert
+
+## Version 0.1.9
+- Added type file and uri
+- Fixed redirections using autorisations
+- Changed breadcrumb rework with inline-flex
+- Changed actionbar refactor
