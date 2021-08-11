@@ -1,19 +1,15 @@
-window.Vue = require('vue').default;
+window.__VueCRUD = require('vue').default;
 import vSelect from "vue-select"
-Vue.component('v-select', vSelect)
-
-let vueOptions = {
-    el: "#app"
-};
+__VueCRUD.component('v-select', vSelect)
 
 // register modules
 const modules = require.context("./modules", true, /\.js$/i);
-modules.keys().map(key => Vue.mixin(modules(key).default));
+modules.keys().map(key => __VueCRUD.mixin(modules(key).default));
 
 // Register components
 const vues = require.context("./components", true, /\.vue$/i);
 vues.keys().map(key =>
-    Vue.component(
+    __VueCRUD.component(
         key
             .split("/")
             .pop()
@@ -27,9 +23,16 @@ vues.keys().map(key =>
     )
 );
 
-const app = new Vue(vueOptions);
+const vuejsModules = [];
 
-Vue.filter('str_limit', function (value, size) {
+document.getElementsByClassName('crud-vuesjs').forEach(element => {
+    vuejsModules.push(new __VueCRUD({
+        el: element
+    }));
+});
+
+
+__VueCRUD.filter('str_limit', function (value, size) {
     if (!value) return '';
     value = value.toString();
     if (value.length <= size) {

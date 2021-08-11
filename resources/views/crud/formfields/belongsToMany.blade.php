@@ -9,7 +9,7 @@
 <td>
     <label class="form-label">{{ $prop['label'] }}</label>
 </td>
-<td>
+<td class="crud-vuesjs">
     <belongs-to-many
         readonly="{{ $readonly }}"
         tablename="{{ $modelTable }}"
