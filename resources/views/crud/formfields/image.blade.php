@@ -19,6 +19,6 @@
     </div>
     @endif
     @if(isset($model) and $model->{$fieldName})
-    <img class="img-responsive" src="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" alt="{{ sprintf('/storage/%s', $model->{$fieldName}) }}">
+    <img class="img-fluid" src="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" alt="{{ sprintf('/storage/%s', $model->{$fieldName}) }}">
     @endif
 </td>

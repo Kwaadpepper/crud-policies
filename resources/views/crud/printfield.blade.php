@@ -22,7 +22,7 @@
                 @if($model->{$fieldName})OUI @else NON @endif
                 @break
             @case(CrudType::image())
-                <img class="img-responsive" src="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" alt="{{ sprintf('/storage/%s', $model->{$fieldName}) }}">
+                <img class="img-fluid" src="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" alt="{{ sprintf('/storage/%s', $model->{$fieldName}) }}">
                 @break
             @case(CrudType::file())
                 <a href="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" target="_blank">{{ sprintf('/storage/%s', $model->{$fieldName}) }}</a>
@@ -94,7 +94,7 @@
                 @if($model->{$fieldName})OUI @else NON @endif
                 @break
             @case(CrudType::image())
-                <img class="img-responsive" src="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" alt="{{ sprintf('/storage/%s', $model->{$fieldName}) }}">
+                <img class="img-fluid" src="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" alt="{{ sprintf('/storage/%s', $model->{$fieldName}) }}">
                 @break
             @case(CrudType::file())
                 <a href="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" target="_blank">{{ pathinfo($model->{$fieldName} ?? '', PATHINFO_BASENAME) }}</a>
