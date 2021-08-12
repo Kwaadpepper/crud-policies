@@ -72,8 +72,7 @@ trait IsCrudModel
         foreach ($attributes as $k => $attribute) {
             if (
                 isset(static::$editableProperties[$k]['type']) and
-                (static::$editableProperties[$k]['type']->equals(CrudType::belongsTo()) or
-                    static::$editableProperties[$k]['type']->equals(CrudType::belongsToMany()))
+                static::$editableProperties[$k]['type']->equals(CrudType::belongsToMany())
             ) {
                 continue;
             }
