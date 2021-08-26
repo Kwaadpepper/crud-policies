@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "21fd5329f0f5a1c266cdd6b17b243c20",
+    "content-hash": "6e439726b4f0f463bdf20f7695102768",
     "packages": [
         {
             "name": "brick/math",
@@ -552,21 +552,17 @@
         },
         {
             "name": "kwaadpepper/enum",
-            "version": "0.1.4",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Kwaadpepper/enum.git",
-                "reference": "f9e2b960d86ceea45c905f11c0c5699529e32848"
+                "reference": "036cc602c05d9b2d141def57620f73d7190a60f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Kwaadpepper/enum/zipball/f9e2b960d86ceea45c905f11c0c5699529e32848",
-                "reference": "f9e2b960d86ceea45c905f11c0c5699529e32848",
+                "url": "https://api.github.com/repos/Kwaadpepper/enum/zipball/036cc602c05d9b2d141def57620f73d7190a60f2",
+                "reference": "036cc602c05d9b2d141def57620f73d7190a60f2",
                 "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "~7|~8",
-                "laravel/framework": "~7|~8"
             },
             "require-dev": {
                 "orchestra/testbench": "^6.13",
@@ -605,9 +601,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Kwaadpepper/enum/issues",
-                "source": "https://github.com/Kwaadpepper/enum/tree/0.1.4"
+                "source": "https://github.com/Kwaadpepper/enum/tree/2.0.0"
             },
-            "time": "2021-04-06T14:35:59+00:00"
+            "time": "2021-08-13T10:11:43+00:00"
         },
         {
             "name": "laravel/framework",

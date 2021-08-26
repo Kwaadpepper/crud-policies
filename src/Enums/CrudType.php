@@ -2,7 +2,7 @@
 
 namespace Kwaadpepper\CrudPolicies\Enums;
 
-use Kwaadpepper\Enum\BaseEnum;
+use Kwaadpepper\Enum\BaseEnumRoutable;
 
 /**
  * @method static self boolean()
@@ -24,8 +24,7 @@ use Kwaadpepper\Enum\BaseEnum;
  * @method static self belongsTo()
  * @method static self belongsToMany()
  */
-
-class CrudType extends BaseEnum
+class CrudType extends BaseEnumRoutable
 {
     protected static function values(): array
     {

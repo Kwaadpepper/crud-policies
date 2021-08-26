@@ -2,7 +2,7 @@
 
 namespace Kwaadpepper\CrudPolicies\Enums;
 
-use Kwaadpepper\Enum\BaseEnum;
+use Kwaadpepper\Enum\BaseEnumRoutable;
 
 /**
  *
@@ -22,8 +22,7 @@ use Kwaadpepper\Enum\BaseEnum;
  * @method static self update()
  * @method static self delete()
  */
-
-class CrudAction extends BaseEnum
+class CrudAction extends BaseEnumRoutable
 {
     protected static function values(): array
     {

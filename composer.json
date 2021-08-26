@@ -19,7 +19,7 @@
     "require": {
         "illuminate/support": "~7|~8",
         "laravel/framework": "~7|~8",
-        "kwaadpepper/enum": "^0.1.4",
+        "kwaadpepper/enum": "^2.0",
         "facade/flare-client-php": "^1.8"
     },
     "require-dev": {
