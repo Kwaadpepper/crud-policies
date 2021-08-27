@@ -19,7 +19,7 @@
             <div class="col">
                 <form action="{{ url()->current() }}">
                     <div class="input-group mb-3">
-                        <input type="search" name="search" class="form-control" value="{{ request()->search }}"/>
+                        <input type="search" name="search" class="form-control" value="{{ request()->search }}" placeholder="Recherche.."/>
                         <input type="text" name="sort_col" class="d-none" value="{{ request()->sort_col }}"/>
                         <input type="text" name="sort_way" class="d-none" value="{{ request()->sort_way }}"/>
                         <a class="btn btn-danger" href="{{ url()->current() }}">{{ __('crud-policies::crud.reset') }}</a>
