@@ -13,7 +13,7 @@
                 $obj = $model->{Str::singular((new $prop['belongsTo']())->getTable())} ??
                     $prop['belongsTo']::find($model->{$fieldName});
             @endphp
-                {{ $obj->{$model->crudLabelColumn} }}
+                {{ $obj->{(new $prop['belongsTo']())->crudLabelColumn} }}
                 @break
             @case(CrudType::belongsToMany())
                 {{ $model->{$fieldName}->implode($prop['belongsToManyLabel'], ',') }}
@@ -106,7 +106,7 @@
                 {{ $model->{$fieldName} }}
                 @break
             @case(CrudType::belongsTo())
-                {{ $prop['belongsTo']::find($model->{$fieldName})->{$model->crudLabelColumn} }}
+                {{ $prop['belongsTo']::find($model->{$fieldName})->{(new $prop['belongsTo']())->crudLabelColumn} }}
                 @break
             @case(CrudType::belongsToMany())
                 {{ $model->{$fieldName}->implode($prop['belongsToManyLabel'], ',') }}
