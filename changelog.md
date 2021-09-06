@@ -58,3 +58,27 @@ First version, tried to separate code from portail S.
 - Fixed redirections using autorisations
 - Changed breadcrumb rework with inline-flex
 - Changed actionbar refactor
+
+# Version 0.1.11
+- Fixed vuejs specific
+- Fixed css class formfield input type image
+- Fixed css class formfield input type image
+
+# Version 0.1.12
+-  Fixed belongsTo not saving
+
+# Version 0.1.13
+- Changed kwaadpepper/enum to 2.0.0
+
+# Version 0.1.14
+- Fixed print field belongsTo Filedname
+
+# Version 0.1.15
+- Added place holder on search index
+- Changed simplify sorter url build
+
+# version 0.1.16
+- Added phpcs slevomat/coding-standard
+- Changed bump squizlabs/php_codesniffer to 3.6.0
+- Fixed Json editor error
+- Fixed phpcs errors
