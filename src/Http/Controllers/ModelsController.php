@@ -27,11 +27,13 @@ class ModelsController extends Controller
         if (is_null($model->{$colName}) or !is_int($model->{$colName})) {
             abort(404);
         }
-        if ($switchModel = $modelClass::where(
-            $colName,
-            ($model->{$colName} - $newOrder < 0) ? '=' : '>',
-            $newOrder
-        )->orderBy($colName)->first()) {
+        if (
+            $switchModel = $modelClass::where(
+                $colName,
+                ($model->{$colName} - $newOrder < 0) ? '=' : '>',
+                $newOrder
+            )->orderBy($colName)->first()
+        ) {
             $switchModel->{$colName} = $model->{$colName};
             $switchModel->saveOrFail();
         }

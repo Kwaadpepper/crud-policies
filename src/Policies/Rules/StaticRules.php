@@ -3,7 +3,6 @@
 namespace Kwaadpepper\CrudPolicies\Policies\Rules;
 
 use Exception;
-use Closure;
 use Illuminate\Database\Eloquent\Model;
 
 /**

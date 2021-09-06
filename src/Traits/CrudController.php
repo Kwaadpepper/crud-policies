@@ -247,7 +247,8 @@ trait CrudController
                         'model' => $model->getModelName(),
                     'associated' => Str::plural($restrictedModel)
                     ]
-                ));
+                )
+            );
         }
         $this->deleteModel($model);
         if ($model->delete()) {
@@ -370,8 +371,7 @@ trait CrudController
         $parameters = [],
         bool $absolute = true,
         int $minus = 0
-    ): string
-    {
+    ): string {
         $currentRouteName = request()->route()->getName();
         $currentAction = collect(explode('.', $currentRouteName))->last();
         $key = is_array($parameters) ? null : $parameters;
@@ -455,10 +455,12 @@ trait CrudController
         $actions = [
             'index' => 'viewAny', 'show' => 'view', 'store' => 'create', 'edit' => 'update', 'destroy' => 'delete'
         ];
-        if (!in_array(
-            $action,
-            $actions
-        )) {
+        if (
+            !in_array(
+                $action,
+                $actions
+            )
+        ) {
             throw new CrudException("$action is not in list : " . implode(', ', $actions));
         }
         try {
