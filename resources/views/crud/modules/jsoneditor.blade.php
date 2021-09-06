@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
             console.log(error);
         },
         onChange: function() {
-            input.value = JSON.stringify(editor.getText());
+            input.value = editor.getText();
         }
     }, {!! $jsonValue !!});
 });
