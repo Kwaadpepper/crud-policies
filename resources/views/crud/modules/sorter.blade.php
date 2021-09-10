@@ -20,7 +20,7 @@
     @endforeach
     <th scope="col">
         @if(session("crud.$modelTable.sort_way") and session("crud.$modelTable.sort_col"))
-        <a href="{{ request()->fullUrlWithQuery(['rst' => 'true']) }}" class="btn btn-small btn-danger">&#9003;</a>
+        <a href="{{ request()->fullUrlWithQuery(['rst' => 'true','sort_col' => null, 'sort_way' => null]) }}" class="btn btn-small btn-danger">&#9003;</a>
         @endif
     </th>
 </tr>
