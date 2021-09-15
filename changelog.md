@@ -82,3 +82,6 @@ First version, tried to separate code from portail S.
 - Changed bump squizlabs/php_codesniffer to 3.6.0
 - Fixed Json editor error
 - Fixed phpcs errors
+
+# version 0.1.18
+- Fixed column sorter not using url generation parameters when forced
