@@ -43,6 +43,10 @@ class CrudRequest extends FormRequest
         if (!$propIsAllowedOnUpdateAction and is_string($rule) and $rule == 'required') {
             return;
         }
+        // handle nullable
+        if ($prop['nullable'] and !in_array('nullable', $out[$ruleName])) {
+            $out[$ruleName][] = 'nullable';
+        }
         if (!in_array($rule, $out[$ruleName])) {
             $out[$ruleName][] = $rule;
         }
