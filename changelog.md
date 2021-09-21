@@ -2,6 +2,9 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.1.19
+- Fixed duplicated rules in validate CrudRequest
+- Fixed handle nullable in CrudRequest
 
 # version 0.1.18
 - Fixed column sorter not using url generation parameters when forced
