@@ -43,7 +43,7 @@ class CrudRequest extends FormRequest
         if (!$propIsAllowedOnUpdateAction and is_string($rule) and $rule == 'required') {
             return;
         }
-        if (!in_array($rule, $out)) {
+        if (!in_array($rule, $out[$ruleName])) {
             $out[$ruleName][] = $rule;
         }
         // handle password
