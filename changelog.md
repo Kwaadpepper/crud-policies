@@ -2,6 +2,9 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.1.20
+- Added model.show route now returns a resource when and ajax call is made
+
 # version 0.1.19
 - Fixed duplicated rules in validate CrudRequest
 - Fixed handle nullable in CrudRequest

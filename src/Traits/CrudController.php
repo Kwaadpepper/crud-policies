@@ -6,6 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -153,9 +154,12 @@ trait CrudController
         }
     }
 
-    public function show(...$params)
+    public function show(Request $request, ...$params)
     {
         $model = $this->getLastModelParam($params);
+        if ($request->ajax()) {
+            return response()->json(new CrudResource($model));
+        }
         return view('crud-policies::crud.show', ['model' => $model]);
     }
 
