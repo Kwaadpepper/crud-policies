@@ -9,10 +9,10 @@
             <th scope="col">
                 {{ $prop['label'] }}
                 @if(!session("crud.$modelTable.sort_way") or session("crud.$modelTable.sort_col") !== $colname or (session("crud.$modelTable.sort_way") === 'desc' and session("crud.$modelTable.sort_col") === $colname))
-                <a class="col_sort text-secondary lead asc" href="{{ request()->fullUrlWithQuery(['sort_col' => $colname, 'sort_way' => 'asc']) }}">&nbsp;&darr;&nbsp;</a>
+                <a class="col_sort text-secondary lead asc" href="{{ request()->fullUrlWithQuery(['sort_col' => $colname, 'sort_way' => 'asc', 'rst' => null]) }}">&nbsp;&darr;&nbsp;</a>
                 @endif
                 @if(!session("crud.$modelTable.sort_way") or session("crud.$modelTable.sort_col") !== $colname or (session("crud.$modelTable.sort_way") === 'asc' and session("crud.$modelTable.sort_col") === $colname))
-                <a class="col_sort text-secondary lead desc" href="{{ request()->fullUrlWithQuery(['sort_col' => $colname, 'sort_way' => 'desc']) }}">&nbsp;&uarr;&nbsp;</a>
+                <a class="col_sort text-secondary lead desc" href="{{ request()->fullUrlWithQuery(['sort_col' => $colname, 'sort_way' => 'desc', 'rst' => null]) }}">&nbsp;&uarr;&nbsp;</a>
                 @endif
             </th>
     @endswitch
