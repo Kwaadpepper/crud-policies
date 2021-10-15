@@ -9,7 +9,8 @@ class ModelsController extends Controller
 {
     public function changeOrder(string $modelTable, int $modelId, string $colName, int $newOrder, string $oldUrl)
     {
-        $oldUrl = \base64_decode($oldUrl);
+        $oldUrl = \base64_decode(str_replace(array('-', '_'), array('+', '/'), $oldUrl));
+
         if (!$oldUrl) {
             abort(404);
         }

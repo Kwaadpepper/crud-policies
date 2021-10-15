@@ -42,7 +42,7 @@
                         'modelId' => $model->id,
                         'colName' => $fieldName,
                         'newOrder' => $model->{$fieldName} - 1,
-                        'oldUrl' => base64_encode(request()->getRequestUri())
+                        'oldUrl' => str_replace(array('+', '/'), array('-', '_'), base64_encode(request()->getRequestUri()))
                     ]) }}" method="POST">
                         @csrf
                         @method('put')
@@ -60,7 +60,7 @@
                         'modelId' => $model->id,
                         'colName' => $fieldName,
                         'newOrder' => $model->{$fieldName} + 1,
-                        'oldUrl' => base64_encode(request()->getRequestUri())
+                        'oldUrl' => str_replace(array('+', '/'), array('-', '_'), base64_encode(request()->getRequestUri()))
                     ]) }}" method="POST">
                         @csrf
                         @method('put')
