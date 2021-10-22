@@ -9,7 +9,7 @@ return [
     'cancel' => 'Annuler',
     'close' => 'Fermer',
     'create' => 'Ajouter',
-    'property' => 'Popriété',
+    'property' => 'Propriété',
     'value' => 'Valeur',
     'edit' => 'Editer',
     'action' => 'Action',
