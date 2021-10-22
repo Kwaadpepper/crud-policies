@@ -2,6 +2,10 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.1.22
+- Fixed "Propriété" string
+- Fixed sort urls + reset button
+
 # version 0.1.21
 - Fixed column sorter reset button
 
