@@ -2,6 +2,16 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.2.0
+- Reworked text input with CKeditor to allow image upload
+- Fixed Internal packages route could not be secured
+  So you can add middlewares to secure your route, for example if
+  you wish to use default session authenticate you may add the following middlewares
+    \App\Http\Middleware\EncryptCookies::class,
+    \Illuminate\Session\Middleware\StartSession::class,
+    'auth:web'
+
+
 # version 0.1.22
 - Fixed "Propriété" string
 - Fixed sort urls + reset button

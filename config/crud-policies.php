@@ -10,6 +10,15 @@ return [
     'urlPrefix' => 'crud-policies',
 
     /**
+     * You shall protect routes
+     * These are applied to crud routes directly as middlewares
+     */
+    'middlewares' => [
+        \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class
+    ],
+
+    /**
      * The public path where are stored
      * crud-policies asset files
      *

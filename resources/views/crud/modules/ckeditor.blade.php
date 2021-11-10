@@ -1,15 +1,17 @@
-@push('scripts')
 @if(!isset($ckeditorInput))
-@php View::share('ckeditorInput', true) @endphp
-<script src="https://cdn.ckeditor.com/ckeditor5/29.0.0/classic/ckeditor.js"></script>
-@endif
+@php
+    View::share('ckeditorInput', true);
+    Session::push('key.subArray', 'value');
+@endphp
+@push('scriptsConstants')
 <script>
-document.addEventListener("DOMContentLoaded", function(event) {
-    ClassicEditor
-    .create(document.querySelector('#{{ $fieldName }}'))
-    .catch(function(error) {
-        console.error( error );
-    });
-});
+    if (!window.__CRUD) {
+        window.__CRUD = {};
+    }
+    if(!window.__CRUD._routes) {
+        window.__CRUD._routes = {};
+    }
+    window.__CRUD._routes['crud-policies.upload'] = '{{ route('crud-policies.upload') }}';
 </script>
 @endpush
+@endif

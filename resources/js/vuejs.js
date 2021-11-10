@@ -4,7 +4,7 @@ __VueCRUD.component('v-select', vSelect)
 
 // register modules
 const modules = require.context("./modules", true, /\.js$/i);
-modules.keys().map(key => __VueCRUD.mixin(modules(key).default));
+modules.keys().map(key => __VueCRUD.mixin(modules(key).default ?? modules(key)))
 
 // Register components
 const vues = require.context("./components", true, /\.vue$/i);
@@ -25,11 +25,14 @@ vues.keys().map(key =>
 
 const vuejsModules = [];
 
-document.getElementsByClassName('crud-vuesjs').forEach(element => {
-    vuejsModules.push(new __VueCRUD({
-        el: element
-    }));
-});
+let vuesDom = document.getElementsByClassName('crud-vuesjs')
+if (vuesDom) {
+    for (let vueDom of vuesDom) {
+        vuejsModules.push(new __VueCRUD({
+            el: vueDom
+        }));
+    }
+}
 
 
 __VueCRUD.filter('str_limit', function (value, size) {
