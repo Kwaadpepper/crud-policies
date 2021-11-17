@@ -2,6 +2,11 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.2.1
+- Changed Now displays color field type with its css color
+- Fixed Properly load config files
+- Added mews/purifier dependecy (htmlpurifier) to display text fields
+
 # version 0.2.0
 - Reworked text input with CKeditor to allow image upload
 - Fixed Internal packages route could not be secured
