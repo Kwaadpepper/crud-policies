@@ -22,7 +22,6 @@ class CrudPoliciesServiceProvider extends ServiceProvider
     public function boot()
     {
         require_once static::ROOTPATH . 'src/helpers.php';
-        $this->configLoadIfNeeded();
 
         $this->loadRoutesFrom(static::ROOTPATH . 'routes/web.php');
         $this->loadViewsFrom(static::ROOTPATH . 'resources/views/', 'crud-policies');
@@ -95,15 +94,11 @@ class CrudPoliciesServiceProvider extends ServiceProvider
             $loader->alias('CrudType', CrudType::class);
             $loader->alias('CrudAction', CrudAction::class);
             $loader->alias('CrudController', CrudController::class);
+            $this->mergeConfigFrom(
+                static::ROOTPATH . 'config/crud-policies.php',
+                'crud-policies'
+            );
         });
-    }
-
-    private function configLoadIfNeeded()
-    {
-        if (!config('crud-policies.isLoaded')) {
-            $config = require static::ROOTPATH . 'config/crud-policies.php';
-            config(['crud-policies' => $config]);
-        }
     }
 
     private function collectLocalesStrings()

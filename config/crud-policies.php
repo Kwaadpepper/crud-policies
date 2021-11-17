@@ -35,8 +35,5 @@ return [
      * You can publish views to know what sections it
      * has to display
      */
-    'viewLayout' => 'crud-policies::crud.layout',
-
-    // Dont touch this
-    'isLoaded' => true
+    'viewLayout' => 'crud-policies::crud.layout'
 ];
