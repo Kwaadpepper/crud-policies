@@ -1,6 +1,10 @@
 @switch($action)
     @case(CrudAction::viewAny())
         @switch($props['type'])
+            @case(CrudType::color())
+                <span class="colorize badge">{{ $field }}</span>
+                @include('crud-policies::crud.modules.color', ['crudColorShow' => true])
+                @break
             @case(CrudType::email())
                 <a href="mailto:$field">{{ $field }}</a>
                 @break
@@ -81,6 +85,10 @@
 
     @case(CrudAction::view())
         @switch($props['type'])
+            @case(CrudType::color())
+                <span class="colorize badge">{{ $field }}</span>
+                @include('crud-policies::crud.modules.color', ['crudColorShow' => true])
+                @break
             @case(CrudType::email())
                 <a href="mailto:$field">{{ $field }}</a>
                 @break
