@@ -1,6 +1,9 @@
 @switch($action)
     @case(CrudAction::viewAny())
         @switch($props['type'])
+            @case(CrudType::text())
+                <div class="ck-content">{!! clean($field) !!}</div>
+                @break
             @case(CrudType::color())
                 <span class="colorize badge">{{ $field }}</span>
                 @include('crud-policies::crud.modules.color', ['crudColorShow' => true])
@@ -85,6 +88,9 @@
 
     @case(CrudAction::view())
         @switch($props['type'])
+            @case(CrudType::text())
+                <div class="ck-content">{!! clean($field) !!}</div>
+                @break
             @case(CrudType::color())
                 <span class="colorize badge">{{ $field }}</span>
                 @include('crud-policies::crud.modules.color', ['crudColorShow' => true])

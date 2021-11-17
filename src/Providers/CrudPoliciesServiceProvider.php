@@ -98,6 +98,10 @@ class CrudPoliciesServiceProvider extends ServiceProvider
                 static::ROOTPATH . 'config/crud-policies.php',
                 'crud-policies'
             );
+            $this->mergeConfigFrom(
+                static::ROOTPATH . 'config/purifier.php',
+                'purifier'
+            );
         });
     }
 
