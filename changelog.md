@@ -2,6 +2,10 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.3.0
+- Changed !! IMPORTANT Drop support for laravel 7
+- Added missing doctrine/dbal dependency
+
 # version 0.2.1
 - Changed Now displays color field type with its css color
 - Fixed Properly load config files
