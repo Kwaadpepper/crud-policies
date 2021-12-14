@@ -34,11 +34,23 @@ trait CrudController
         return $query;
     }
 
+    public function showModel(Model &$model)
+    {
+    }
+
+    public function createModel()
+    {
+    }
+
     public function storeModel(Model &$model)
     {
     }
 
     public function storedModel(Model &$model)
+    {
+    }
+
+    public function editModel(Model &$model)
     {
     }
 
@@ -158,6 +170,7 @@ trait CrudController
     public function show(Request $request, ...$params)
     {
         $model = $this->getLastModelParam($params);
+        $this->showModel($model);
         if ($request->ajax()) {
             return response()->json(new CrudResource($model));
         }
@@ -166,6 +179,7 @@ trait CrudController
 
     public function create()
     {
+        $this->createModel();
         return view('crud-policies::crud.create');
     }
 
@@ -194,6 +208,7 @@ trait CrudController
     public function edit(...$params)
     {
         $model = $this->getLastModelParam($params);
+        $this->editModel($model);
         return view('crud-policies::crud.edit', ['model' => $model]);
     }
 
@@ -208,7 +223,7 @@ trait CrudController
         $this->updatedModel($model);
 
         return \redirect()->to(self::getRoutePrefixed(sprintf('%s.edit', $model->getTable()), $model))
-        ->with('success', trans(':model a bien été enregistré.', ['model' => $model->getModelName()]));
+            ->with('success', trans(':model a bien été enregistré.', ['model' => $model->getModelName()]));
     }
 
     public function destroy(...$params)
@@ -250,7 +265,7 @@ trait CrudController
                     ':model n\'as pas pu être supprimé car il est encore associé avec des :associated',
                     [
                         'model' => $model->getModelName(),
-                    'associated' => Str::plural($restrictedModel)
+                        'associated' => Str::plural($restrictedModel)
                     ]
                 )
             );
