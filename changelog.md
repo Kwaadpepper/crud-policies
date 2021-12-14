@@ -2,6 +2,9 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.3.2
+- Added CrudController callbacks showModel, createModel, editModel
+
 # version 0.3.1
 - Fixed CrudController trait : call parent::_construct
 # version 0.3.0
