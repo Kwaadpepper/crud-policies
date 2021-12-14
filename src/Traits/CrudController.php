@@ -87,6 +87,7 @@ trait CrudController
             $this->shareModelTableToView();
             $this->shareModelPropsToView();
         }
+        parent::__construct();
     }
 
     public function index(CrudIndexRequest $request)
