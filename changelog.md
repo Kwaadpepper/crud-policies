@@ -2,6 +2,8 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.3.1
+- Fixed CrudController trait : call parent::_construct
 # version 0.3.0
 - Changed !! IMPORTANT Drop support for laravel 7
 - Added missing doctrine/dbal dependency
