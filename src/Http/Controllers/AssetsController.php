@@ -12,7 +12,7 @@ class AssetsController extends Controller
     {
         $data = null;
         try {
-            $data = File::get(__DIR__ . "/../../../public/$type/$fileUri");
+            $data = File::get(__DIR__ . "/../../../crud-policies/$type/$fileUri");
         } catch (FileNotFoundException $e) {
             abort(404);
         }

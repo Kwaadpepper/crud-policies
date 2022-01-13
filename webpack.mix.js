@@ -4,6 +4,9 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 require('laravel-mix-polyfill');
 
 mix.webpackConfig({
+    output: {
+        publicPath: '/crud-policies/vendor/',
+    },
     plugins: [
         new CleanWebpackPlugin({
             cleanOnceBeforeBuildPatterns: [
@@ -22,8 +25,8 @@ mix.options({
     ]
 });
 
-mix.js("resources/js/crud.js", "public/js/crud.js")
-    .sass("resources/sass/crud.scss", "public/css/crud.css")
+mix.js("resources/js/crud.js", "crud-policies/js/crud.js")
+    .sass("resources/sass/crud.scss", "crud-policies/css/crud.css")
     .vue()
     .polyfill({
         enabled: true,

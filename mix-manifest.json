@@ -1,4 +1,4 @@
 {
-    "/public/js/crud.js": "/public/js/crud.js",
-    "/public/css/crud.css": "/public/css/crud.css"
+    "/crud-policies/js/crud.js": "/crud-policies/js/crud.js",
+    "/crud-policies/css/crud.css": "/crud-policies/css/crud.css"
 }
