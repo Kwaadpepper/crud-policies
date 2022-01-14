@@ -35,5 +35,13 @@ return [
      * You can publish views to know what sections it
      * has to display
      */
+    'viewLayout' => 'crud-policies::crud.layout',
+
+    /**
+     * Controls whether to display flash messages
+     * on actions such as create, update or delete.
+     */
+    'displayAlerts' => true,
+
     'viewLayout' => 'crud-policies::crud.layout'
 ];

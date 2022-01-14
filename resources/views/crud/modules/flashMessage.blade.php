@@ -1,3 +1,4 @@
+@if(config('crud-policies.displayAlerts', true))
 @if ($message = Session::get('success'))
     <div class="alert alert-success alert-dismissible fade show">
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ __('crud-policies::crud.close') }}"></button>
@@ -41,4 +42,5 @@
         </ul>
         @endif
     </div>
+@endif
 @endif
