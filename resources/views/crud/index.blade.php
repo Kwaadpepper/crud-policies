@@ -79,7 +79,7 @@
                         @can('update', $model)
                         <a href="{{ CrudController::getRoutePrefixed("$modelTable.edit", $model) }}" class="btn btn-sm btn-info">{{ __('crud-policies::crud.edit') }}</a>
                         @endcan
-                        @can('delete', $model)
+                        @if(config('crud-policies.deleteOnIndex') and Auth::user()->can('delete', $model))
                         <form action="{{ CrudController::getRoutePrefixed("$modelTable.destroy", $model) }}" method="POST" onsubmit="__CRUD.confirmDelete(event)">
                             @csrf
                             @method('DELETE')

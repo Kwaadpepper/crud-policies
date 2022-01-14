@@ -43,5 +43,8 @@ return [
      */
     'displayAlerts' => true,
 
-    'viewLayout' => 'crud-policies::crud.layout'
+    /**
+     * Controls whether to show delete button on index routes
+     */
+    'deleteOnIndex' => true
 ];
