@@ -2,6 +2,15 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.3.3
+ - Added option to show delete action on index or hide
+ - Added option to display or hide flash messages
+ - Added missing ckeditor source build 
+ - Changed update npm deps
+ - Changed update ckeditor build
+ - Changed conditionnal loading of CKEDITOR to prevent errors using multiple builds
+ - Fix color pad
+
 # version 0.3.2
 - Added CrudController callbacks showModel, createModel, editModel
 
