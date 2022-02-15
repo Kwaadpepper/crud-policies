@@ -35,7 +35,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
         g = (255 - g).toString(16);
         b = (255 - b).toString(16);
         // pad each with zeros and return
-        return "#" + padZero(r) + padZero(g) + padZero(b);
+        return "#" + r.padStart(1, '0') + g.padStart(1, '0') + b.padStart(1, '0');
     }
     let colorSpans = document.getElementsByClassName('colorize');
     if(colorSpans.length) {
