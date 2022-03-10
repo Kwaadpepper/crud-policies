@@ -2,6 +2,10 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.3.4
+- Added missing assets from previous release
+- Fix potential getPrefix() from laravel adding forward slash
+
 # version 0.3.3
  - Added option to show delete action on index or hide
  - Added option to display or hide flash messages
