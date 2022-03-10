@@ -1,5 +1,7 @@
-window.axios = require('axios');
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+if (!window.axios) {
+    window.axios = require('axios');
+    window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+}
 if (!window.__CRUD) {
     window.__CRUD = {}
 }
