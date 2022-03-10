@@ -54,8 +54,8 @@ class CrudPoliciesServiceProvider extends ServiceProvider
         ], 'assetsSource');
 
         $this->publishes([
-            static::ROOTPATH . 'public/js' => public_path($publicPath . '/js'),
-            static::ROOTPATH . 'public/css' => public_path($publicPath . '/css')
+            static::ROOTPATH . 'crud-policies/js' => public_path($publicPath . '/js'),
+            static::ROOTPATH . 'crud-policies/css' => public_path($publicPath . '/css')
         ], 'assetsCompiled');
 
         // Directives for assets
