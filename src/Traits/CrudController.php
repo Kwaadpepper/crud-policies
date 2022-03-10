@@ -372,7 +372,7 @@ trait CrudController
     {
         /** @var \Illuminate\Routing\Route */
         $route = request()->route();
-        return $route->getPrefix();
+        return trim($route->getPrefix() ?? '', '/');
     }
 
     /**
