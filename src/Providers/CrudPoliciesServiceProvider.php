@@ -17,8 +17,14 @@ class CrudPoliciesServiceProvider extends ServiceProvider
 
     protected const ROOTPATH = __DIR__ . '/../../';
 
+    /** @var array */
     protected $commands = [];
 
+    /**
+     * CrudPoliciesServiceProvider boot
+     *
+     * @return void
+     */
     public function boot()
     {
         require_once static::ROOTPATH . 'src/helpers.php';
@@ -26,11 +32,12 @@ class CrudPoliciesServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(static::ROOTPATH . 'routes/web.php');
         $this->loadViewsFrom(static::ROOTPATH . 'resources/views/', 'crud-policies');
         $this->loadTranslationsFrom(static::ROOTPATH . 'resources/lang/', 'crud-policies');
-        foreach ($this->collectLocalesStrings() as $locale) { // suported locales
+        foreach ($this->collectLocalesStrings() as $locale) {
+            // * Suported locales
             Cache::rememberForever(sprintf('crud-policies.translations.%s', $locale), function () use ($locale) {
                 return [
-                    'php' => $this->phpTranslations($locale),
-                    'json' => $this->jsonTranslations($locale),
+                    'php' => $this->phpTranslations($locale)->all(),
+                    'json' => $this->jsonTranslations($locale)->all(),
                 ];
             });
         }
@@ -58,7 +65,7 @@ class CrudPoliciesServiceProvider extends ServiceProvider
             static::ROOTPATH . 'crud-policies/css' => public_path($publicPath . '/css')
         ], 'assetsCompiled');
 
-        // Directives for assets
+        // * Directives for assets
         Blade::directive(
             'crudPoliciesCSS',
             function () {
@@ -85,11 +92,16 @@ class CrudPoliciesServiceProvider extends ServiceProvider
         );
     }
 
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
     public function register()
     {
         $this->app->booting(function () {
             $loader = AliasLoader::getInstance();
-            // Alias for Classes
+            // * Alias for Classes
             $loader->alias('Str', Str::class);
             $loader->alias('CrudType', CrudType::class);
             $loader->alias('CrudAction', CrudAction::class);
@@ -105,7 +117,12 @@ class CrudPoliciesServiceProvider extends ServiceProvider
         });
     }
 
-    private function collectLocalesStrings()
+    /**
+     * Get all available locales name
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function collectLocalesStrings(): \Illuminate\Support\Collection
     {
         return collect(File::allFiles(static::ROOTPATH . 'resources/lang'))
             ->flatMap(function ($file) {
@@ -115,7 +132,13 @@ class CrudPoliciesServiceProvider extends ServiceProvider
             })->keys();
     }
 
-    private function phpTranslations($locale)
+    /**
+     * Get all php translations
+     *
+     * @param string $locale
+     * @return \Illuminate\Support\Collection
+     */
+    private function phpTranslations(string $locale): \Illuminate\Support\Collection
     {
         $path = static::ROOTPATH . "resources/lang/$locale";
         return collect(File::allFiles($path))->flatMap(function ($file) {
@@ -124,12 +147,18 @@ class CrudPoliciesServiceProvider extends ServiceProvider
         });
     }
 
-    private function jsonTranslations($locale)
+    /**
+     * Get all json translations
+     *
+     * @param string $locale
+     * @return \Illuminate\Support\Collection
+     */
+    private function jsonTranslations(string $locale): \Illuminate\Support\Collection
     {
         $path = static::ROOTPATH . "resources/lang/$locale.json";
         if (is_string($path) && is_readable($path)) {
-            return json_decode(file_get_contents($path), true);
+            return collect(json_decode(file_get_contents($path), true));
         }
-        return [];
+        return collect([]);
     }
 }

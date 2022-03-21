@@ -4,10 +4,10 @@ if (!function_exists('transFb')) {
     /**
      * Makes translation fall back to specified value if definition does not exist
      *
-     * @param string $key
+     * @param string      $key
      * @param null|string $fallback
      * @param null|string $locale
-     * @param array|null $replace
+     * @param array|null  $replace
      *
      * @return array|\Illuminate\Contracts\Translation\Translator|null|string
      */

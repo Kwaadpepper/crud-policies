@@ -7,6 +7,16 @@ use Kwaadpepper\CrudPolicies\Traits\CrudController;
 
 class ModelsController extends Controller
 {
+    /**
+     * Provides ordering function for model
+     *
+     * @param string  $modelTable
+     * @param integer $modelId
+     * @param string  $colName
+     * @param integer $newOrder
+     * @param string  $oldUrl
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function changeOrder(string $modelTable, int $modelId, string $colName, int $newOrder, string $oldUrl)
     {
         $oldUrl = \base64_decode(str_replace(array('-', '_'), array('+', '/'), $oldUrl));
@@ -28,11 +38,13 @@ class ModelsController extends Controller
         if (is_null($model->{$colName}) or !is_int($model->{$colName})) {
             abort(404);
         }
-        //on cherche le model qui doit échanger sa position avec notre model selectionné
-        //si ($model->{$colName} - $newOrder < 0) alors on descend
-        //alors on va chercher le premier model qui est après le model selectionné
-        //si ($model->{$colName} - $newOrder > 0) alors on monte
-        //alors on va chercher le premier model qui a l'order cible
+        /**
+         * On cherche le model qui doit échanger sa position avec notre model selectionné
+         * si ($model->{$colName} - $newOrder < 0) alors on descend
+         * alors on va chercher le premier model qui est après le model selectionné
+         * si ($model->{$colName} - $newOrder > 0) alors on monte
+         * alors on va chercher le premier model qui a l'order cible.
+         */
         if (
             $switchModel = $modelClass::where(
                 $colName,

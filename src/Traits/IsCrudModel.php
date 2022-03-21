@@ -16,9 +16,18 @@ use Kwaadpepper\Enum\BaseEnum;
  */
 trait IsCrudModel
 {
-
+    /**
+     * Contain all crud configuration for this model.
+     *
+     * @var array
+     */
     protected static $editableProperties = [];
 
+    /**
+     * The base schema of available properties.
+     *
+     * @var array
+     */
     private static $schemaCrud = [
         'label' => null,
         'placeholder' => '',
@@ -41,7 +50,12 @@ trait IsCrudModel
         'setAttribute' => null
     ];
 
-    // OVERLOAD MODEL FUNCTION
+    /**
+     * OVERLOAD MODEL FUNCTION getter
+     *
+     * @param mixed $key
+     * @return mixed
+     */
     public function __get($key)
     {
         if (
@@ -53,7 +67,13 @@ trait IsCrudModel
         return parent::__get($key);
     }
 
-    // OVERLOAD MODEL FUNCTION
+    /**
+     * OVERLOAD MODEL FUNCTION setter
+     *
+     * @param mixed $key
+     * @param mixed $value
+     * @return mixed
+     */
     public function __set($key, $value)
     {
         if (
@@ -65,7 +85,12 @@ trait IsCrudModel
         return parent::__set($key, $value);
     }
 
-    // OVERLOAD MODEL FUNCTION
+    /**
+     * OVERLOAD MODEL FUNCTION Laravel fill method
+     *
+     * @param array $attributes
+     * @return void
+     */
     public function fill(array $attributes)
     {
         $cpAttributes = [];
@@ -92,10 +117,16 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Save model relations
+     *
+     * @param CrudRequest $request
+     * @return void
+     */
     public function saveRelations(CrudRequest $request)
     {
         $validated = $request->validated();
-        $props = self::getEditableProperties();
+        $props     = self::getEditableProperties();
         foreach ($props as $k => $prop) {
             if ($prop['belongsToMany']) {
                 $this->{$k}()->sync(is_array($validated[$k]) ? $validated[$k] : []);
@@ -106,12 +137,12 @@ trait IsCrudModel
     /**
      * Has this model Has many relations with delete restrict ?
      *
-     * @return bool|string
+     * @return boolean|string
      */
     public function gotHasManyRelationWithRestrictOnDelete()
     {
         $relations = [];
-        $sm = DB::getDoctrineSchemaManager();
+        $sm        = DB::getDoctrineSchemaManager();
         foreach (self::getRelationships() as $relation => $type) {
             if ($type[0] === 'HasMany') {
                 $table = (new $type[1]())->getTable();
@@ -119,7 +150,7 @@ trait IsCrudModel
                 foreach ($sm->listTableForeignKeys($table) as $foreignKey) {
                     // /vendor/doctrine/dbal/src/Schema/ForeignKeyConstraint.php onEvent()
                     if ($foreignKey->onDelete() === 'CASCADE') {
-                        // allow only CASCADE action, otherwise it would break the app
+                        // Allow only CASCADE action, otherwise it would break the app .
                         continue;
                     }
                     $relations[] = [
@@ -134,6 +165,8 @@ trait IsCrudModel
 
     /**
      * Get the crud label
+     *
+     * @return mixed
      */
     public function getCrudLabelAttribute()
     {
@@ -142,6 +175,9 @@ trait IsCrudModel
 
     /**
      * Get the crud value
+     *
+     * @return mixed
+     * @throws CrudException If belongsTo property is not set.
      */
     public function getCrudValueAttribute()
     {
@@ -157,6 +193,9 @@ trait IsCrudModel
 
     /**
      * Get the crud label column
+     *
+     * @return mixed
+     * @throws CrudException If belongsTo property is not set.
      */
     public function getCrudLabelColumnAttribute()
     {
@@ -172,6 +211,8 @@ trait IsCrudModel
 
     /**
      * Get the crud value column
+     *
+     * @return mixed
      */
     public function getCrudValueColumnAttribute()
     {
@@ -182,12 +223,12 @@ trait IsCrudModel
      * Get the model validation rules
      *
      * @return array
+     * @phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
      */
-    // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
     public static function getRules(): array
     {
         return collect(static::$editableProperties)->mapWithKeys(function ($item, $key) {
-            $item = \array_merge(self::$schemaCrud, $item);
+            $item         = \array_merge(self::$schemaCrud, $item);
             $defaultRules = [];
             if (!$item['nullable'] === true) {
                 $defaultRules[] = 'required';
@@ -230,7 +271,7 @@ trait IsCrudModel
                 default:
                     $defaultRules[] = 'string';
                     break;
-            }
+            }//end switch
             return [$key => array_merge($defaultRules, $item['validate'] ?? self::$schemaCrud['validate'])];
         })->all();
     }
@@ -245,10 +286,17 @@ trait IsCrudModel
         return class_basename(get_class($this));
     }
 
+    /**
+     * moveUploadedFile helper
+     *
+     * @param string       $propName
+     * @param UploadedFile $file
+     * @return void
+     */
     private function moveUploadedFile(string $propName, UploadedFile &$file): void
     {
         /** @var \Illuminate\Database\Eloquent\Model */
-        $self = $this;
+        $self              = $this;
         $this->{$propName} = $file->storePubliclyAs(
             $self->getTable(),
             $file->hashName(),
@@ -289,16 +337,19 @@ trait IsCrudModel
     {
         $instance = new static();
 
-        // Get public methods declared without parameters and non inherited
-        $class = get_class($instance);
+        // Get public methods declared without parameters and non inherited.
+        $class      = get_class($instance);
         $allMethods = (new \ReflectionClass($class))->getMethods(\ReflectionMethod::IS_PUBLIC);
-        $methods = array_filter(
+        $methods    = array_filter(
             $allMethods,
             function ($method) use ($class) {
                 return $method->class === $class
-                    && !$method->getParameters()                  // relationships have no parameters
-                    && $method->getName() !== 'getRelationships' // prevent infinite recursion
-                    && $method->getName() !== 'gotHasManyRelationWithRestrictOnDelete'; // prevent infinite recursion
+                    // Relationships have no parameters.
+                    && !$method->getParameters()
+                    // Prevent infinite recursion.
+                    && $method->getName() !== 'getRelationships'
+                    // Prevent infinite recursion.
+                    && $method->getName() !== 'gotHasManyRelationWithRestrictOnDelete';
             }
         );
 
@@ -307,7 +358,7 @@ trait IsCrudModel
         $relations = [];
         foreach ($methods as $method) {
             try {
-                $methodName = $method->getName();
+                $methodName   = $method->getName();
                 $methodReturn = $instance->$methodName();
                 if (!$methodReturn instanceof Relation) {
                     continue;
@@ -316,8 +367,8 @@ trait IsCrudModel
                 continue;
             }
 
-            $type = (new \ReflectionClass($methodReturn))->getShortName();
-            $model = get_class($methodReturn->getRelated());
+            $type                   = (new \ReflectionClass($methodReturn))->getShortName();
+            $model                  = get_class($methodReturn->getRelated());
             $relations[$methodName] = [$type, $model];
         }
 
@@ -334,7 +385,7 @@ trait IsCrudModel
      * 'string' => CrudType::value()
      *
      * @return void
-     * @throws Exception
+     * @throws CrudException Is anything is wrong in configuration.
      */
     private static function assertEditablePropertiesIsCorrect(): void
     {
@@ -356,13 +407,13 @@ trait IsCrudModel
             }
             $prop = array_merge_recursive_distinct(self::$schemaCrud, $prop);
 
-            // Auto label
+            // * Auto label
             $prop['label'] = $prop['label'] ?? ucfirst($name);
             self::assertLabelIscorrect($prop);
             self::assertPlaceholderIscorrect($prop);
             self::assertTypeIscorrect($prop);
             switch ($prop['type']) {
-                    // Email auto rule
+                    // * Email auto rule
                 case CrudType::email():
                     $prop['validate'] = is_array($prop['validate']) ? $prop['validate'] : [];
                     if (!array_search('email:rfc,dns', $prop['validate'])) {
@@ -388,15 +439,30 @@ trait IsCrudModel
             self::assertGetAttributeIscorrect($prop);
             self::assertSetAttributeIscorrect($prop);
             self::assertBelongsToManyIsCorrect($prop);
-        }
+        }//end foreach
     }
 
+    /**
+     * Assert accept is correctly set.
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If accept is not correctly set.
+     */
     private static function assertAcceptIscorrect(array $prop): void
     {
         if (!isset($prop['accept']) or !is_string($prop['accept'])) {
             throw new CrudException('$editableProperties[\'accept\'] array value must be a string');
         }
     }
+
+    /**
+     * Assert label is correctly set.
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If label is not correctly set.
+     */
     private static function assertLabelIscorrect(array $prop): void
     {
         if (!isset($prop['label']) or !is_string($prop['label'])) {
@@ -404,6 +470,13 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Assert placeholder is correctly set.
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If placeholder is not correctly set.
+     */
     private static function assertPlaceholderIscorrect(array $prop): void
     {
         if (!isset($prop['placeholder']) or !is_string($prop['placeholder'])) {
@@ -411,6 +484,13 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Assert type is correctly set.
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If type is not correctly set.
+     */
     private static function assertTypeIscorrect(array $prop): void
     {
         if (!isset($prop['type']) or !is_object($prop['type']) or get_class($prop['type']) !== CrudType::class) {
@@ -418,6 +498,13 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Assert nullable is correctly set.
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If nullable is not correctly set.
+     */
     private static function assertNullableIscorrect(array $prop): void
     {
         if (!isset($prop['nullable']) or !is_bool($prop['nullable'])) {
@@ -425,6 +512,13 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Assert readonly is correctly set.
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If readonly is not correctly set.
+     */
     private static function assertReadonlyIscorrect(array $prop): void
     {
         if (
@@ -436,6 +530,13 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Assert disabled is correctly set.
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If disabled is not correctly set.
+     */
     private static function assertDisabledIscorrect(array $prop): void
     {
         if (!isset($prop['disabled']) or !is_bool($prop['disabled'])) {
@@ -443,6 +544,13 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Assert required is correctly set.
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If required is not correctly set.
+     */
     private static function assertRequiredIscorrect(array $prop): void
     {
         if (!isset($prop['required']) or !is_bool($prop['required'])) {
@@ -450,6 +558,13 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Assert validate is correctly set.
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If validate is not correctly set.
+     */
     private static function assertValidateIscorrect(array $prop): void
     {
         if (!isset($prop['validate']) or !\is_array($prop['validate'])) {
@@ -457,6 +572,13 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Assert get attribute (laravel getter) is correctly set.
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If getAttribute is not correctly set.
+     */
     private static function assertGetAttributeIscorrect(array $prop): void
     {
         if (!is_null($prop['getAttribute']) and !is_callable($prop['getAttribute'])) {
@@ -464,6 +586,13 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Assert set attribute (laravel setter) is correctly set.
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If setAttribute is not correctly set.
+     */
     private static function assertSetAttributeIscorrect(array $prop): void
     {
         if (!is_null($prop['setAttribute']) and !is_callable($prop['setAttribute'])) {
@@ -471,6 +600,13 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Assert rules are valid
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If invalid rule is detected.
+     */
     private static function assertRulesArecorrect(array $prop): void
     {
         $allowedRules = [
@@ -504,6 +640,13 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Assert actions are correctly set
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If actions are not correctly set.
+     */
     private static function assertActionsArecorrect(array $prop): void
     {
         if (!isset($prop['actions']) or !\is_array($prop['actions'])) {
@@ -519,6 +662,13 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Assert enum type is correctly set
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If enum type is not correctly set.
+     */
     private static function assertEnumIscorrect(array $prop): void
     {
         if (
@@ -532,6 +682,13 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Assert belongsTo is correctly set
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If belongsTo is not correctly set.
+     */
     private static function assertBelongsToIsCorrect(array $prop): void
     {
         if (
@@ -548,6 +705,13 @@ trait IsCrudModel
         }
     }
 
+    /**
+     * Assert belongsToMany is correctly set
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If belongsToMany is not correctly set.
+     */
     private static function assertBelongsToManyIsCorrect(array $prop): void
     {
         if (

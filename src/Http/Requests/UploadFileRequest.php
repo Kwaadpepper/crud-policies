@@ -9,11 +9,11 @@ class UploadFileRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @return bool
+     * @return boolean
      */
     public function authorize()
     {
-        // return auth()->check() and $this->ajax();
+        // TODO: check if auth is needed ?
         return $this->ajax();
     }
 

@@ -26,6 +26,11 @@ use Kwaadpepper\Enum\BaseEnumRoutable;
  */
 class CrudType extends BaseEnumRoutable
 {
+    /**
+     * Values
+     *
+     * @return array
+     */
     protected static function values(): array
     {
         return [
@@ -50,6 +55,11 @@ class CrudType extends BaseEnumRoutable
         ];
     }
 
+    /**
+     * Labels
+     *
+     * @return array
+     */
     protected static function labels(): array
     {
         return [

@@ -2,12 +2,11 @@
 
 namespace Kwaadpepper\CrudPolicies\Policies\Rules;
 
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Generic Policiy Static Rules
- *! Rules has to return boolean value
+ * ! Rules has to return boolean value
  */
 abstract class StaticRules
 {
@@ -15,13 +14,14 @@ abstract class StaticRules
      * Make a rule closure
      *
      * @param string $rulename
-     * @param mixed ...$args
+     * @param mixed  ...$args
      * @return Closure
+     * @throws \ErrorException If the rule is unknown.
      */
     public static function make(string $rulename, ...$args)
     {
         if (!method_exists(static::class, $rulename)) {
-            throw new Exception(sprintf('Unknown rule %s in Policies StaticRules', $rulename));
+            throw new \ErrorException(sprintf('Unknown rule %s in Policies StaticRules', $rulename));
         }
         return function () use ($rulename, $args) {
             return call_user_func_array([static::class, $rulename], $args);
@@ -38,8 +38,8 @@ abstract class StaticRules
     {
         return function (Model $user, Model $model = null) use ($ruleClosures) {
             $nbRules = count($ruleClosures);
-            $out = true;
-            $i = 0;
+            $out     = true;
+            $i       = 0;
             do {
                 if (!($out = (self::handle($ruleClosures[$i++], $user, $model) && $out))) {
                     break;
@@ -59,8 +59,8 @@ abstract class StaticRules
     {
         return function (Model $user, Model $model = null) use ($ruleClosures) {
             $nbRules = count($ruleClosures);
-            $out = false;
-            $i = 0;
+            $out     = false;
+            $i       = 0;
             do {
                 if ($out = (self::handle($ruleClosures[$i++], $user, $model) || $out)) {
                     break;
@@ -74,16 +74,17 @@ abstract class StaticRules
      * Handles one or multiple rules for a specific policy
      *
      * @param array|callable $rule
-     * @param Model $user
-     * @param Model $model
+     * @param Model          $user
+     * @param Model          $model
      * @return boolean
+     * @throws \ErrorException If the rule is not callable.
      */
     public static function handle($rule, Model $user, Model $model = null): bool
     {
         if (is_array($rule)) {
             $nbRule = count($rule);
-            $out = false;
-            $i = 0;
+            $out    = false;
+            $i      = 0;
             while ($i < $nbRule) {
                 if ($out = self::handle($rule[$i++], $user, $model)) {
                     break;
@@ -92,11 +93,16 @@ abstract class StaticRules
             return $out;
         }
         if (!is_callable($rule)) {
-            throw new Exception('Rule has to ba callable.');
+            throw new \ErrorException('Rule has to ba callable.');
         }
         return (bool)$rule($user, $model);
     }
 
+    /**
+     * Always allow.
+     *
+     * @return true
+     */
     protected static function anyone()
     {
         return true;

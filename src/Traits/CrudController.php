@@ -28,51 +28,113 @@ use Kwaadpepper\CrudPolicies\Http\Resources\CrudResource;
  */
 trait CrudController
 {
-    // Eloquent callbacks
+    /**
+     * Index query middleware
+     *
+     * @param Builder $query
+     * @return Builder
+     */
     public function indexQuery(Builder $query): Builder
     {
         return $query;
     }
 
+    /**
+     * Show action middleware
+     *
+     * @param Model $model
+     * @return void
+     */
     public function showModel(Model &$model)
     {
     }
 
+    /**
+     * Show create page middleware
+     *
+     * @return void
+     */
     public function createModel()
     {
     }
 
+    /**
+     * Before store model middleware
+     *
+     * @param Model $model
+     * @return void
+     */
     public function storeModel(Model &$model)
     {
     }
 
+    /**
+     * After store model middleware
+     *
+     * @param Model $model
+     * @return void
+     */
     public function storedModel(Model &$model)
     {
     }
 
+    /**
+     * Show edit model middleware
+     *
+     * @param Model $model
+     * @return void
+     */
     public function editModel(Model &$model)
     {
     }
 
+    /**
+     * Before update model middleware
+     *
+     * @param Model $model
+     * @return void
+     */
     public function updateModel(Model &$model)
     {
     }
 
+    /**
+     * After update model middleware
+     *
+     * @param Model $model
+     * @return void
+     */
     public function updatedModel(Model &$model)
     {
     }
 
+    /**
+     * Before delete model middleware
+     *
+     * @param Model $model
+     * @return void
+     */
     public function deleteModel(Model &$model)
     {
     }
 
+    /**
+     * After delete model middleware
+     *
+     * @param Model $model
+     * @return void
+     */
     public function deletedModel(Model &$model)
     {
     }
 
+    /**
+     * CrudController
+     * @throws CrudException If a model parameter is incorrect.
+     */
     public function __construct()
     {
-        // AUTH CONTROL TO ROOT POLICY
+        // * AUTH CONTROL TO ROOT POLICY
         $this->authorizeResource(static::${'modelClass'});
 
         $modelClass = static::${'modelClass'};
@@ -105,19 +167,25 @@ trait CrudController
         }
     }
 
+    /**
+     * Crud index action
+     *
+     * @param CrudIndexRequest $request
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse
+     */
     public function index(CrudIndexRequest $request)
     {
         /** @var \Illuminate\Database\Eloquent\Builder */
         $models = static::${'modelClass'}::query();
 
-        // Search on crud Label column
+        // * Search on crud Label column
         if ($request->search) {
-            $model = static::${'modelClass'};
-            $col = (new $model())->crudLabelColumn;
+            $model  = static::${'modelClass'};
+            $col    = (new $model())->crudLabelColumn;
             $models = $models->where($col, 'LIKE', "%$request->search%");
         }
 
-        // Sort columns
+        // * Sort columns
         $tableName = (new static::${'modelClass'}())->getTable();
         if ($request->sort_col) {
             Session::put("crud.$tableName.sort_col", $request->sort_col);
@@ -144,15 +212,15 @@ trait CrudController
 
         $models = $this->indexQuery($models);
 
-        // Auto orderBy first column of type order
+        // * Auto orderBy first column of type order
         if (!$models->getQuery()->orders) {
             $modelClass = static::${'modelClass'};
-            $orderProp = collect((new $modelClass())->getEditableProperties())
+            $orderProp  = collect((new $modelClass())->getEditableProperties())
                 ->filter(function ($prop) {
                     return $prop['type']->equals(CrudType::order());
                 })->take(1);
-            $propName = $orderProp->keys()->first();
-            $orderProp = $orderProp->first();
+            $propName   = $orderProp->keys()->first();
+            $orderProp  = $orderProp->first();
             if ($orderProp) {
                 Session::put("crud.$tableName.sort_col", $propName);
                 Session::put("crud.$tableName.sort_way", 'asc');
@@ -170,6 +238,13 @@ trait CrudController
         }
     }
 
+    /**
+     * Show model action
+     *
+     * @param Request $request
+     * @param mixed   ...$params
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse
+     */
     public function show(Request $request, ...$params)
     {
         $model = $this->getLastModelParam($params);
@@ -180,16 +255,27 @@ trait CrudController
         return view('crud-policies::crud.show', ['model' => $model]);
     }
 
+    /**
+     * Create model action
+     *
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
     public function create()
     {
         $this->createModel();
         return view('crud-policies::crud.create');
     }
 
+    /**
+     * Store model action
+     *
+     * @param StoreCrudModel $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(StoreCrudModel $request)
     {
         $modelClass = static::${'modelClass'};
-        $model = new $modelClass();
+        $model      = new $modelClass();
         $model->fill($request->validated());
         $this->storeModel($model);
         $model->saveOrFail();
@@ -197,7 +283,7 @@ trait CrudController
         $model->saveRelations($request);
         $this->storedModel($model);
 
-        // Try to redirect
+        // * Try to redirect
         if ($this->can('update', $model)) {
             $return = \redirect()->to(self::getRoutePrefixed(sprintf('%s.edit', $model->getTable()), $model));
         } elseif (($this->can('view', $model))) {
@@ -208,6 +294,12 @@ trait CrudController
         return $return->with('success', trans(':model a bien été enregistré.', ['model' => $model->getModelName()]));
     }
 
+    /**
+     * Edit model action
+     *
+     * @param mixed ...$params
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
     public function edit(...$params)
     {
         $model = $this->getLastModelParam($params);
@@ -215,6 +307,13 @@ trait CrudController
         return view('crud-policies::crud.edit', ['model' => $model]);
     }
 
+    /**
+     * Update model action
+     *
+     * @param UpdateCrudModel $request
+     * @param mixed           ...$params
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(UpdateCrudModel $request, ...$params)
     {
         $model = $this->getLastModelParam($params);
@@ -229,10 +328,17 @@ trait CrudController
             ->with('success', trans(':model a bien été enregistré.', ['model' => $model->getModelName()]));
     }
 
+    /**
+     * Destroy model action
+     *
+     * @param mixed ...$params
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws CrudException If delete action is denied.
+     */
     public function destroy(...$params)
     {
-        $model = $this->getLastModelParam($params);
-        $restrict = $model->gotHasManyRelationWithRestrictOnDelete();
+        $model           = $this->getLastModelParam($params);
+        $restrict        = $model->gotHasManyRelationWithRestrictOnDelete();
         $restrictedModel = '';
         try {
             if (is_array($restrict)) {
@@ -255,7 +361,7 @@ trait CrudController
             $restrict = is_array($restrict) ? false : $restrict;
         }
 
-        // Try to redirect
+        // * Try to redirect
         $return = \redirect()->to(self::getRoutePrefixed(sprintf('%s.index', $model->getTable())));
 
         if (
@@ -298,7 +404,7 @@ trait CrudController
     public static function afterSave(Model $model): void
     {
         $modelClass = \get_class($model);
-        $props = collect((new $modelClass())->getEditableProperties());
+        $props      = collect((new $modelClass())->getEditableProperties());
         DB::beginTransaction();
         foreach ($props as $propName => $prop) {
             if (
@@ -308,8 +414,8 @@ trait CrudController
                 continue;
             }
             if ($prop['type']->equals(CrudType::order())) {
-                $ids = $modelClass::orderBy($propName)->pluck('id');
-                $i = 0;
+                $ids    = $modelClass::orderBy($propName)->pluck('id');
+                $i      = 0;
                 $values = $ids->mapWithKeys(function ($id) use (&$i) {
                     return [$id => $i++];
                 })->all();
@@ -319,26 +425,34 @@ trait CrudController
         DB::commit();
     }
 
+    /**
+     * Mass update logic
+     *
+     * @param string $modelClass
+     * @param string $propName
+     * @param array  $values
+     * @return integer Number or row affected.
+     */
     private static function massUpdate(string $modelClass, string $propName, array $values)
     {
-        $counter = 0;
+        $counter   = 0;
         $tableName = $modelClass::getModel()->getTable();
-        $chunks = collect($values)->chunk(100);
+        $chunks    = collect($values)->chunk(100);
 
         foreach ($chunks as $chunkValues) {
-            $cases = [];
-            $ids = [];
+            $cases  = [];
+            $ids    = [];
             $params = [];
 
             foreach ($chunkValues as $id => $value) {
-                $id = (int)$id;
-                $cases[] = "WHEN {$id} then ?";
+                $id       = (int)$id;
+                $cases[]  = "WHEN {$id} then ?";
                 $params[] = $value;
-                $ids[] = $id;
+                $ids[]    = $id;
             }
 
-            $ids = implode(',', $ids);
-            $cases = implode(' ', $cases);
+            $ids      = implode(',', $ids);
+            $cases    = implode(' ', $cases);
             $params[] = Carbon::now();
 
             $q = "UPDATE `{$tableName}` SET `{$propName}` = CASE `id` {$cases} END";
@@ -352,7 +466,7 @@ trait CrudController
                 $q,
                 $params
             );
-        }
+        }//end foreach
         return $counter;
     }
 
@@ -383,10 +497,10 @@ trait CrudController
      *
      * Cette fonction est à retravailler
      *
-     * @param string $route
-     * @param array $parameters
+     * @param string  $route
+     * @param mixed   $parameters
      * @param boolean $absolute
-     * @param int $minus to remove a parameter from the end
+     * @param integer $minus      To remove a parameter from the end.
      * @return string
      */
     public static function getRoutePrefixed(
@@ -396,14 +510,14 @@ trait CrudController
         int $minus = 0
     ): string {
         $currentRouteName = request()->route()->getName();
-        $currentAction = collect(explode('.', $currentRouteName))->last();
-        $key = is_array($parameters) ? null : $parameters;
-        $parameters = array_merge(request()->route()->parameters, is_array($parameters) ? $parameters : []);
-        $prefix = self::getRoutePrefix();
-        $prefix = $prefix ? "$prefix." : '';
-        $routePrepend = '';
+        $currentAction    = collect(explode('.', $currentRouteName))->last();
+        $key              = is_array($parameters) ? null : $parameters;
+        $parameters       = array_merge(request()->route()->parameters, is_array($parameters) ? $parameters : []);
+        $prefix           = self::getRoutePrefix();
+        $prefix           = $prefix ? "$prefix." : '';
+        $routePrepend     = '';
 
-        // remove last parameter if we are not on a .index route
+        // Remove last parameter if we are not on a .index route .
         if (!in_array($currentAction, ['index', 'create', 'store'])) {
             \array_pop($parameters);
         }
@@ -420,10 +534,10 @@ trait CrudController
         if ($key) {
             $parameters[] = $key;
         }
-        $route = explode('.', "$prefix$routePrepend$route");
+        $route  = explode('.', "$prefix$routePrepend$route");
         $action = array_pop($route);
 
-        // Handle special cases
+        // Handle special cases .
         if ($currentAction !== 'index') {
             $minus--;
         }
@@ -467,11 +581,13 @@ trait CrudController
     }
 
     /**
+     * @phpcs:disable Generic.Files.LineLength.TooLong
      * Check if an action is autorized
      *
-     * @param string $action something in 'viewAny', 'view', 'create', 'update', 'destroy'
-     * @param string|\Illuminate\Database\Eloquent\Model $model Class name or a Model object
+     * @param string                                     $action Something in 'viewAny', 'view', 'create', 'update', 'destroy' .
+     * @param string|\Illuminate\Database\Eloquent\Model $model  Class name or a Model object .
      * @return boolean
+     * @throws CrudException If requested action is not handled.
      */
     private function can(string $action, $model): bool
     {
@@ -502,6 +618,7 @@ trait CrudController
      *
      * @param array $urlParams
      * @return Model
+     * @throws CrudException If model is not found is url.
      */
     private function getLastModelParam(array $urlParams): Model
     {
@@ -514,6 +631,11 @@ trait CrudController
         throw new CrudException('no model found in url params');
     }
 
+    /**
+     * Share $viewLayout var to views.
+     *
+     * @return void
+     */
     private function shareViewLayout(): void
     {
         View::share(

@@ -16,7 +16,7 @@ Route::group([
 ], function () {
     $routePrefix = config('crud-policies.urlPrefix');
 
-    // Assets
+    // Assets.
     Route::get(\sprintf('%s/{type}/{fileUri}', config('crud-policies.assetPath')), [AssetsController::class, 'asset'])
         ->where('type', '(js|css)')
         ->where('fileUri', '.*')
@@ -35,7 +35,7 @@ Route::group([
 ], function () {
     $routePrefix = config('crud-policies.urlPrefix');
 
-    // Order change
+    // Order change.
     Route::put('{modelTable}/{modelId}/{colName}/{newOrder}/{oldUrl}', [ModelsController::class, 'changeOrder'])
         ->where('modelTable', '[a-z_]*')
         ->where('modelId', '[0-9]*')
@@ -57,7 +57,7 @@ Route::group([
 ], function () {
     $routePrefix = config('crud-policies.urlPrefix');
 
-    // Upload image
+    // Upload image.
     Route::post('upload', [UploadController::class, 'uploadFile'])
         ->name('upload')
         ->prefix($routePrefix);

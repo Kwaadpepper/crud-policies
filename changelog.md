@@ -4,6 +4,7 @@ All notable changes to `CrudPolicies` will be documented in this file.
 
 # version 0.3.5
 - Fixed check if parent constructor exists in CrudController trait
+- Changed phpcs rules + code comment
 
 # version 0.3.4
 - Added missing assets from previous release

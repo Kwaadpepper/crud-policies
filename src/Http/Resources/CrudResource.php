@@ -9,10 +9,11 @@ class CrudResource extends JsonResource
     /**
      * Transform the resource collection into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return array
+     * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
+     * @phpcs:disable Squiz.Commenting.FunctionComment.TypeHintMissing
      */
-    // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
     public function toArray($request)
     {
         return [

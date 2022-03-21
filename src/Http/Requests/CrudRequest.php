@@ -11,7 +11,6 @@ use Kwaadpepper\CrudPolicies\Traits\CrudController;
 
 class CrudRequest extends FormRequest
 {
-
     /** @var array */
     protected $rules = [];
 
@@ -23,7 +22,7 @@ class CrudRequest extends FormRequest
      */
     public function getRulesForAction(CrudAction $action): array
     {
-        $props = $this->getCurrentModel()::getEditableProperties();
+        $props      = $this->getCurrentModel()::getEditableProperties();
         $propsRules = [];
         foreach ($this->getCurrentModel()::getRules() as $k => $rules) {
             $propsRules[$k] = [];
@@ -34,23 +33,33 @@ class CrudRequest extends FormRequest
         return $propsRules;
     }
 
+    /**
+     * Handle different types of rules.
+     *
+     * @param CrudAction $action
+     * @param array      $prop
+     * @param mixed      $rule
+     * @param mixed      $ruleName
+     * @param mixed      $out
+     * @return void
+     */
     private function handleRule(CrudAction $action, array $prop, $rule, $ruleName, &$out)
     {
-        $model = $this->getCurrentModel();
+        $model                       = $this->getCurrentModel();
         $propIsAllowedOnUpdateAction = in_array($action, $prop['actions']);
 
-        // dont copy required if prop is not allowed on update
+        // * dont copy required if prop is not allowed on update
         if (!$propIsAllowedOnUpdateAction and is_string($rule) and $rule == 'required') {
             return;
         }
-        // handle nullable
+        // * handle nullable
         if ($prop['nullable'] and !in_array('nullable', $out[$ruleName])) {
             $out[$ruleName][] = 'nullable';
         }
         if (!in_array($rule, $out[$ruleName])) {
             $out[$ruleName][] = $rule;
         }
-        // handle password
+        // * handle password
         if (
             $prop['type']->equals(CrudType::password()) and
             (!$this->{$ruleName} or
@@ -59,11 +68,11 @@ class CrudRequest extends FormRequest
         ) {
             $this->offsetUnset($ruleName);
         }
-        // handle boolean
+        // * handle boolean
         if ($prop['type']->equals(CrudType::boolean())) {
             $this->merge([$ruleName => $this->{$ruleName} ? 1 : 0]);
         }
-        // handle image and file
+        // * handle image and file
         if ($prop['type']->equals(CrudType::image()) or $prop['type']->equals(CrudType::file())) {
             $tableName = Str::singular((new $model())->getTable());
             if ($this->{$tableName} and $action->equals(CrudAction::update())) {
@@ -71,7 +80,7 @@ class CrudRequest extends FormRequest
                 unset($out[$ruleName][$i]);
             }
         }
-        // handle belongsToMany
+        // * handle belongsToMany
         if ($prop['type']->equals(CrudType::belongsToMany())) {
             $propsRules["$ruleName.*"][0] = 'exists:' .
                 (new $prop['belongsToMany']())->getTable() . ',id';
@@ -85,7 +94,7 @@ class CrudRequest extends FormRequest
      * Returns the first parameter that is a crud model
      *
      * @return string \Illuminate\Database\Eloquent\Model class name
-     * @throws \App\Exceptions\CrudException if the request does not have a crud model parameter
+     * @throws CrudException If the request does not have a crud model parameter.
      */
     protected function getCurrentModel(): string
     {

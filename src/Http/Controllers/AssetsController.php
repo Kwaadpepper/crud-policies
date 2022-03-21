@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\File;
 
 class AssetsController extends Controller
 {
+    /**
+     * Serve package assets
+     *
+     * @param string $type
+     * @param string $fileUri
+     * @return \Illuminate\Http\Response|\Illuminate\Contracts\Routing\ResponseFactory
+     */
     public function asset(string $type, string $fileUri)
     {
         $data = null;
