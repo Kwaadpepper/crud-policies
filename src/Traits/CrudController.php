@@ -99,7 +99,10 @@ trait CrudController
             $this->shareModelTableToView();
             $this->shareModelPropsToView();
         }
-        parent::__construct();
+        // * Check if parent constructor exists before call
+        if (method_exists(get_parent_class($this), '__construct')) {
+            parent::__construct();
+        }
     }
 
     public function index(CrudIndexRequest $request)
