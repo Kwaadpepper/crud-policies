@@ -48,6 +48,9 @@
             @if($prop['type']->equals(CrudType::belongsToMany()))
             @php $models->load("$fieldName"); @endphp
             @endif
+            @if($prop['type']->equals(CrudType::hasMany()))
+            @php $models->load("$fieldName"); @endphp
+            @endif
             @endforeach
 
             {{-- DISPLAY MODELS --}}

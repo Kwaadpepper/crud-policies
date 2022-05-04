@@ -50,6 +50,9 @@ $readonly = is_callable($prop['readonly']) ? $prop['readonly']() : $prop['readon
     @case(CrudType::belongsToMany())
     @include('crud-policies::crud.formfields.belongsToMany')
     @break
+    @case(CrudType::hasMany())
+    @include('crud-policies::crud.formfields.hasMany')
+    @break
     @case(CrudType::string())
     @default
     @include('crud-policies::crud.formfields.string')

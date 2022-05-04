@@ -23,6 +23,7 @@ use Kwaadpepper\Enum\BaseEnumRoutable;
  * @method static self unsignedfloat()
  * @method static self belongsTo()
  * @method static self belongsToMany()
+ * @method static self hasMany()
  */
 class CrudType extends BaseEnumRoutable
 {
@@ -51,7 +52,8 @@ class CrudType extends BaseEnumRoutable
             'file' => 14,
             'uri' => 15,
             'belongsTo' => 21,
-            'belongsToMany' => 22
+            'belongsToMany' => 22,
+            'hasMany' => 23
         ];
     }
 
@@ -80,7 +82,8 @@ class CrudType extends BaseEnumRoutable
             'unsignedint' => trans('crud-policies::crud.unsignedint'),
             'unsignedfloat' => trans('crud-policies::crud.unsignedfloat'),
             'belongsTo' => trans('crud-policies::crud.belongsTo'),
-            'belongsToMany' => trans('crud-policies::crud.belongsToMany')
+            'belongsToMany' => trans('crud-policies::crud.belongsToMany'),
+            'hasMany' => trans('crud-policies::crud.hasMany')
         ];
     }
 }

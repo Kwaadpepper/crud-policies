@@ -34,5 +34,6 @@ return [
     'file' => 'File',
     'uri' => 'Uri',
     'belongsTo' => 'Belongs to relation',
-    'belongsToMany' => 'Belongs to many relation'
+    'belongsToMany' => 'Belongs to many relation',
+    'hasMany' => 'Has many relation'
 ];

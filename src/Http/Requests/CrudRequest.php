@@ -42,6 +42,7 @@ class CrudRequest extends FormRequest
      * @param mixed      $ruleName
      * @param mixed      $out
      * @return void
+     * @phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
      */
     private function handleRule(CrudAction $action, array $prop, $rule, $ruleName, &$out)
     {
@@ -84,6 +85,14 @@ class CrudRequest extends FormRequest
         if ($prop['type']->equals(CrudType::belongsToMany())) {
             $propsRules["$ruleName.*"][0] = 'exists:' .
                 (new $prop['belongsToMany']())->getTable() . ',id';
+            if (!isset($this->{$ruleName})) {
+                $this->merge([$ruleName => []]);
+            }
+        }
+        // * handle hasMany
+        if ($prop['type']->equals(CrudType::hasMany())) {
+            $propsRules["$ruleName.*"][0] = 'exists:' .
+            (new $prop['hasMany']())->getTable() . ',id';
             if (!isset($this->{$ruleName})) {
                 $this->merge([$ruleName => []]);
             }

@@ -25,6 +25,9 @@
             @case(CrudType::belongsToMany())
                 {{ $model->{$fieldName}->implode($prop['belongsToManyLabel'], ',') }}
                 @break
+            @case(CrudType::hasMany())
+                {{ $model->{$fieldName}->implode($prop['hasManyLabel'], ',') }}
+                @break
             @case(CrudType::boolean())
                 @if($model->{$fieldName})OUI @else NON @endif
                 @break
@@ -124,6 +127,9 @@
                 @break
             @case(CrudType::belongsToMany())
                 {{ $model->{$fieldName}->implode($prop['belongsToManyLabel'], ',') }}
+                @break
+            @case(CrudType::hasMany())
+                {{ $model->{$fieldName}->implode($prop['hasManyLabel'], ',') }}
                 @break
             @default
                 {{ $field }}

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
@@ -466,7 +467,7 @@ trait CrudController
                 $q,
                 $params
             );
-        }//end foreach
+        } //end foreach
         return $counter;
     }
 
@@ -553,7 +554,19 @@ trait CrudController
 
         $route = implode('.', $route);
 
-        return route("$route.$action", $parameters, $absolute);
+        return self::routeExists("$route.$action") ?
+            route("$route.$action", $parameters, $absolute) : '#';
+    }
+
+    /**
+     * Check if route name exists.
+     *
+     * @param string $routeName
+     * @return boolean
+     */
+    private static function routeExists(string $routeName): bool
+    {
+        return Route::has($routeName);
     }
 
     /**

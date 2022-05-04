@@ -2,6 +2,7 @@
 
 namespace Kwaadpepper\CrudPolicies\Traits;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -10,6 +11,7 @@ use Kwaadpepper\CrudPolicies\Enums\CrudType;
 use Kwaadpepper\CrudPolicies\Exceptions\CrudException;
 use Kwaadpepper\CrudPolicies\Http\Requests\CrudRequest;
 use Kwaadpepper\Enum\BaseEnum;
+use Illuminate\Support\Str;
 
 /**
  * Make a model become a CRUD model
@@ -44,10 +46,11 @@ trait IsCrudModel
         'validate' => [],
         'rules' => [],
         'actions' => [],
+        'hasMany' => null,
         'belongsTo' => null,
         'belongsToMany' => null,
         'getAttribute' => null,
-        'setAttribute' => null
+        'setAttribute' => null,
     ];
 
     /**
@@ -97,7 +100,9 @@ trait IsCrudModel
         foreach ($attributes as $k => $attribute) {
             if (
                 isset(static::$editableProperties[$k]['type']) and
+                (static::$editableProperties[$k]['type']->equals(CrudType::hasMany()) or
                 static::$editableProperties[$k]['type']->equals(CrudType::belongsToMany())
+                )
             ) {
                 continue;
             }
@@ -122,6 +127,7 @@ trait IsCrudModel
      *
      * @param CrudRequest $request
      * @return void
+     * @throws CrudException If has many key is not nullable while saving or could not be resolved.
      */
     public function saveRelations(CrudRequest $request)
     {
@@ -131,7 +137,44 @@ trait IsCrudModel
             if ($prop['belongsToMany']) {
                 $this->{$k}()->sync(is_array($validated[$k]) ? $validated[$k] : []);
             }
-        }
+            if ($prop['hasMany'] and !$prop['readonly']) {
+                /** @var \Illuminate\Database\Eloquent\Model $modelClass */
+                $modelClass = (new $props[$k]['hasMany']());
+                $tableName  = $modelClass->getTable();
+                $foreignKey = sprintf('%s_id', Str::singular($this->getTable()));
+
+                /** @var object|null */
+                $fieldDesc = collect(DB::select('show columns from ' . $tableName))
+                    ->filter(function (object $columnDesc) use ($foreignKey) {
+                        return $columnDesc->Field === $foreignKey;
+                    })->first();
+                if (!$fieldDesc) {
+                    throw new CrudException("$foreignKey not found in $tableName .");
+                }
+                /** @var boolean $isNullable */
+                $isNullable = Str::lower($fieldDesc->Null) === 'yes';
+                if ($isNullable) {
+                    // * If column is nullable set null (not normal behavior of hasMany)
+                    $this->{$k}->map(function (Model $model) {
+                        $model->{sprintf('%s_id', Str::singular($this->getTable()))} = null;
+                        $model->saveOrFail();
+                    });
+                    /** @var \Illuminate\Database\Eloquent\Collection $associateModels */
+                    $associateModels = $props[$k]['hasMany']::whereIn('id', $validated)->get();
+                    // * Associate models
+                    $associateModels->map(function (Model $model) {
+                        $model->{sprintf('%s_id', Str::singular($this->getTable()))} = $this->id;
+                        $model->saveOrFail();
+                    });
+                } else {
+                    // * Normal behavior
+                    // ! Cannot do this as this would require to create or delete on the fly associated model.
+                    throw new CrudException(
+                        'It is not possible to change associated hasMany relation with a non nullable foreign key.'
+                    );
+                }
+            } //end if
+        }//end foreach
     }
 
     /**
@@ -260,6 +303,7 @@ trait IsCrudModel
                     $defaultRules[] = 'integer';
                     break;
                 case CrudType::belongsToMany():
+                case CrudType::hasMany():
                     $defaultRules[] = 'array';
                     break;
                 case CrudType::password():
@@ -439,6 +483,7 @@ trait IsCrudModel
             self::assertGetAttributeIscorrect($prop);
             self::assertSetAttributeIscorrect($prop);
             self::assertBelongsToManyIsCorrect($prop);
+            self::assertHasManyIsCorrect($prop);
         }//end foreach
     }
 
@@ -693,9 +738,7 @@ trait IsCrudModel
     {
         if (
             $prop['type']->equals(CrudType::belongsTo()) and
-            (!\is_string($prop['belongsTo']) or
-                !\class_exists($prop['belongsTo']) or
-                is_a($prop['belongsTo'], Model::class, true) or
+            (!\is_string($prop['belongsTo']) or !\class_exists($prop['belongsTo']) or !is_a($prop['belongsTo'], Model::class, true) or
                 !in_array(IsCrudModel::class, class_uses_recursive($prop['belongsTo'])))
         ) {
             throw new CrudException(sprintf(
@@ -716,9 +759,7 @@ trait IsCrudModel
     {
         if (
             $prop['type']->equals(CrudType::belongsToMany()) and
-            (!\is_string($prop['belongsToMany']) or
-                !\class_exists($prop['belongsToMany']) or
-                is_a($prop['belongsToMany'], Model::class, true) or
+            (!\is_string($prop['belongsToMany']) or !\class_exists($prop['belongsToMany']) or !is_a($prop['belongsToMany'], Model::class, true) or
                 !in_array(IsCrudModel::class, class_uses_recursive($prop['belongsToMany'])))
         ) {
             throw new CrudException(sprintf(
@@ -733,6 +774,38 @@ trait IsCrudModel
             throw new CrudException(sprintf(
                 '$editableProperties[\'belongsToManyLabel\'] must be string using belongsToMany, given: `%s`',
                 $prop['belongsToMany']
+            ));
+        }
+    }
+
+    /**
+     * Assert hasMany is correctly set
+     *
+     * @param array $prop
+     * @return void
+     * @throws CrudException If hasMany is not correctly set.
+     */
+    private static function assertHasManyIsCorrect(array $prop): void
+    {
+        if (
+            $prop['type']->equals(CrudType::hasMany()) and
+            (!\is_string($prop['hasMany']) or
+                !\class_exists($prop['hasMany']) or
+                !is_a($prop['hasMany'], Model::class, true) or
+                !in_array(IsCrudModel::class, class_uses_recursive($prop['hasMany'])))
+        ) {
+            throw new CrudException(sprintf(
+                '$editableProperties[\'hasMany\'] array value must be a CrudModel given: `%s`',
+                $prop['hasMany']
+            ));
+        }
+        if (
+            $prop['type']->equals(CrudType::hasMany()) and
+            (!\is_string($prop['hasManyLabel']))
+        ) {
+            throw new CrudException(sprintf(
+                '$editableProperties[\'hasManyLabel\'] must be string using hasMany, given: `%s`',
+                $prop['hasMany']
             ));
         }
     }

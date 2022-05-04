@@ -6,6 +6,7 @@ All notable changes to `CrudPolicies` will be documented in this file.
 - Fixed check if parent constructor exists in CrudController trait
 - Fixed npm dependencies update + audit fix
 - Changed phpcs rules + code comment
+- Added hasMany relation with possibility to save only when nullable.
 
 # version 0.3.4
 - Added missing assets from previous release

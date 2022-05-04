@@ -34,5 +34,6 @@ return [
     'file' => 'Fichier',
     'uri' => 'Uri',
     'belongsTo' => 'Relation `Appartient à`',
-    'belongsToMany' => 'Relation `Appartient à plusieurs`'
+    'belongsToMany' => 'Relation `Appartient à plusieurs`',
+    'hasMany' => 'Relation `Possède plusieurs`'
 ];

@@ -46,5 +46,11 @@
                 "Kwaadpepper\\CrudPolicies\\Providers\\CrudPoliciesServiceProvider"
             ]
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "composer/package-versions-deprecated": true
+        }
     }
 }
