@@ -137,7 +137,11 @@ trait IsCrudModel
             if ($prop['belongsToMany']) {
                 $this->{$k}()->sync(is_array($validated[$k]) ? $validated[$k] : []);
             }
-            if ($prop['hasMany'] and !$prop['readonly']) {
+            if (
+                $prop['hasMany'] and !$prop['readonly'] and
+                (\in_array(CrudAction::create(), $prop['actions']) or
+                \in_array(CrudAction::update(), $prop['actions']))
+            ) {
                 /** @var \Illuminate\Database\Eloquent\Model $modelClass */
                 $modelClass = (new $props[$k]['hasMany']());
                 $tableName  = $modelClass->getTable();
@@ -160,7 +164,7 @@ trait IsCrudModel
                         $model->saveOrFail();
                     });
                     /** @var \Illuminate\Database\Eloquent\Collection $associateModels */
-                    $associateModels = $props[$k]['hasMany']::whereIn('id', $validated)->get();
+                    $associateModels = $props[$k]['hasMany']::whereIn('id', $validated[$k])->get();
                     // * Associate models
                     $associateModels->map(function (Model $model) {
                         $model->{sprintf('%s_id', Str::singular($this->getTable()))} = $this->id;

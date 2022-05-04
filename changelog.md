@@ -7,6 +7,7 @@ All notable changes to `CrudPolicies` will be documented in this file.
 - Fix select inputs bootstrap class
 - Fix check belongsTo prop on model
 - Fix checkbox readonly is marked as disabled
+- Fix saveRelations check if hasMany update requested before throwing exception
 
 # version 0.3.5
 - Fixed check if parent constructor exists in CrudController trait
