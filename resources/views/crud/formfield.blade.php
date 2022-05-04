@@ -26,6 +26,12 @@ $readonly = is_callable($prop['readonly']) ? $prop['readonly']() : $prop['readon
     @case(CrudType::text())
     @include('crud-policies::crud.formfields.text')
     @break
+    @case(CrudType::date())
+    @include('crud-policies::crud.formfields.date')
+    @break
+    @case(CrudType::datetime())
+    @include('crud-policies::crud.formfields.datetime')
+    @break
     @case(CrudType::json())
     @include('crud-policies::crud.formfields.json')
     @break

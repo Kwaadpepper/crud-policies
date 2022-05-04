@@ -19,6 +19,8 @@ use Kwaadpepper\Enum\BaseEnumRoutable;
  * @method static self color()
  * @method static self file()
  * @method static self uri()
+ * @method static self date()
+ * @method static self datetime()
  * @method static self unsignedint()
  * @method static self unsignedfloat()
  * @method static self belongsTo()
@@ -51,6 +53,8 @@ class CrudType extends BaseEnumRoutable
             'unsignedfloat' => 13,
             'file' => 14,
             'uri' => 15,
+            'date' => 16,
+            'datetime' => 17,
             'belongsTo' => 21,
             'belongsToMany' => 22,
             'hasMany' => 23
@@ -79,6 +83,8 @@ class CrudType extends BaseEnumRoutable
             'color' => trans('crud-policies::crud.color'),
             'file' => trans('crud-policies::crud.file'),
             'uri' => trans('crud-policies::crud.uri'),
+            'date' => trans('crud-policies::crud.date'),
+            'datetime' => trans('crud-policies::crud.datetime'),
             'unsignedint' => trans('crud-policies::crud.unsignedint'),
             'unsignedfloat' => trans('crud-policies::crud.unsignedfloat'),
             'belongsTo' => trans('crud-policies::crud.belongsTo'),

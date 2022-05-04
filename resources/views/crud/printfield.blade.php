@@ -104,6 +104,12 @@
             @case(CrudType::enum())
                 {{ $model->{$fieldName}->label }}
                 @break
+            @case(CrudType::date())
+                {{ $model->{$fieldName}->format('d/m/Y') }}
+                @break
+            @case(CrudType::datetime())
+                {{ $model->{$fieldName}->format('d/m/Y H:i') }}
+                @break
             @case(CrudType::json())
                 @json($field)
                 @break

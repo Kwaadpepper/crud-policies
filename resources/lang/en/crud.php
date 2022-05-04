@@ -33,6 +33,8 @@ return [
     'color' => 'Color',
     'file' => 'File',
     'uri' => 'Uri',
+    'date' => 'Date',
+    'datetime' => 'Date time',
     'belongsTo' => 'Belongs to relation',
     'belongsToMany' => 'Belongs to many relation',
     'hasMany' => 'Has many relation'

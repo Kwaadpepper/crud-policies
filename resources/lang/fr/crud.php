@@ -33,6 +33,8 @@ return [
     'color' => 'Couleur',
     'file' => 'Fichier',
     'uri' => 'Uri',
+    'date' => 'Date',
+    'datetime' => 'Date heure',
     'belongsTo' => 'Relation `Appartient à`',
     'belongsToMany' => 'Relation `Appartient à plusieurs`',
     'hasMany' => 'Relation `Possède plusieurs`'
