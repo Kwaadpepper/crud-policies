@@ -2,7 +2,7 @@
     <label for="{{ $fieldName }}" class="form-label">{{ $prop['label'] }}</label>
 </td>
 <td>
-    <select id="{{ $fieldName }}" class="form-control" name="{{ $fieldName }}" @if($readonly) readonly @endif @if($prop['disabled']) disabled @endif>
+    <select id="{{ $fieldName }}" class="form-select" name="{{ $fieldName }}" @if($readonly) readonly @endif @if($prop['disabled']) disabled @endif>
         {{-- TODO handle enum nullable ? --}}
         {{-- @if($prop['nullable'])
         @endif --}}

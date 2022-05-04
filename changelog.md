@@ -4,6 +4,8 @@ All notable changes to `CrudPolicies` will be documented in this file.
 
 # version 0.3.6
 - Add date and datetime input types
+- Fix select inputs bootstrap class
+
 # version 0.3.5
 - Fixed check if parent constructor exists in CrudController trait
 - Fixed npm dependencies update + audit fix

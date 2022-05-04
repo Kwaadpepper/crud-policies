@@ -5,7 +5,7 @@
     <select
         id="{{ $fieldName }}"
         name="{{ $fieldName }}"
-        class="form-control"
+        class="form-select"
         @if($readonly)readonly @endif
         @if($prop['required'] or (!$prop['required'] and !$prop['nullable']))required @endif
         @if($prop['disabled'])disabled @endif>
