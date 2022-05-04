@@ -12,8 +12,7 @@
                     class="ml-2 form-check-input"
                     value="1"
                     @if(old($fieldName) ?? ((isset($model) and $model->{$fieldName}) ? $model->{$fieldName} : $prop['default'] ?? false))checked @endif
-                    @if($prop['disabled'])disabled @endif
-                    @if($readonly)readonly @endif>
+                    @if($prop['disabled'] or $readonly)disabled @endif>
             </div>
         </div>
     </label>
