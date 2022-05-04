@@ -738,7 +738,8 @@ trait IsCrudModel
     {
         if (
             $prop['type']->equals(CrudType::belongsTo()) and
-            (!\is_string($prop['belongsTo']) or !\class_exists($prop['belongsTo']) or !is_a($prop['belongsTo'], Model::class, true) or
+            (!isset($prop['belongsTo']) or !\is_string($prop['belongsTo']) or
+            !\class_exists($prop['belongsTo']) or !is_a($prop['belongsTo'], Model::class, true) or
                 !in_array(IsCrudModel::class, class_uses_recursive($prop['belongsTo'])))
         ) {
             throw new CrudException(sprintf(
