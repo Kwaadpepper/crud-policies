@@ -292,7 +292,11 @@ trait CrudController
         } else {
             $return = \redirect()->to(self::getRoutePrefixed(sprintf('%s.index', $model->getTable())));
         }
-        return $return->with('success', trans(':model a bien été enregistré.', ['model' => $model->getModelName()]));
+        return $return->with('success', trans(':model a bien été enregistré.', [
+            'model' => Str::singular(
+                transFb(sprintf('models.classes.%s', strtolower(Str::plural($model->getModelName()))))
+            )
+        ]));
     }
 
     /**
@@ -326,7 +330,11 @@ trait CrudController
         $this->updatedModel($model);
 
         return \redirect()->to(self::getRoutePrefixed(sprintf('%s.edit', $model->getTable()), $model))
-            ->with('success', trans(':model a bien été enregistré.', ['model' => $model->getModelName()]));
+            ->with('success', trans(':model a bien été enregistré.', [
+                'model' => Str::singular(
+                    transFb(sprintf('models.classes.%s', strtolower(Str::plural($model->getModelName()))))
+                )
+            ]));
     }
 
     /**
@@ -374,8 +382,10 @@ trait CrudController
                 trans(
                     ':model n\'as pas pu être supprimé car il est encore associé avec des :associated',
                     [
-                        'model' => $model->getModelName(),
-                        'associated' => Str::plural($restrictedModel)
+                        'model' => Str::singular(
+                            transFb(sprintf('models.classes.%s', strtolower(Str::plural($model->getModelName()))))
+                        ),
+                        'associated' => transFb(sprintf('models.classes.%s', strtolower(Str::plural($restrictedModel))))
                     ]
                 )
             );
@@ -385,12 +395,16 @@ trait CrudController
             $this->deletedModel($model);
             return $return->with('warning', trans(
                 ':model a bien été supprimé.',
-                ['model' => $model->getModelName()]
+                ['model' => Str::singular(
+                    transFb(sprintf('models.classes.%s', strtolower(Str::plural($model->getModelName()))))
+                )]
             ));
         } else {
             return $return->with('error', trans(
                 ':model n\'as pas pu être supprimé',
-                ['model' => $model->getModelName()]
+                ['model' => Str::singular(
+                    transFb(sprintf('models.classes.%s', strtolower(Str::plural($model->getModelName()))))
+                )]
             ));
         }
     }
