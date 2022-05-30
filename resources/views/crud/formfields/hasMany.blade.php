@@ -26,6 +26,6 @@
     if(!window.__CRUD._routes) {
         window.__CRUD._routes = {};
     }
-    window.__CRUD._routes['{{$modelTable}}.{{$fieldName}}.model.index'] = '{{ CrudController::getRoutePrefixed("$modelTable.$fieldName.index", $model) }}';
+    window.__CRUD._routes['{{$modelTable}}.{{$fieldName}}.model.index'] = '{{  CrudController::getRoutePrefixed((new $props[$fieldName]['hasMany'])->getTable().'.index') }}';
 </script>
 @endpush
