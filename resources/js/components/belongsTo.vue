@@ -30,9 +30,12 @@
 <script>
 export default {
     mounted() {
-        this.dDisabled = !!this.disabled
-        this.dReadonly = !!this.readonly
-        this.value = JSON.parse(this.dbValue)
+        let data = JSON.parse(this.$parent.$options.json)
+        this.name = data.name
+        this.tablename = data.tablename
+        this.dDisabled = !!data.disabled
+        this.dReadonly = !!data.readonly
+        this.value = data.value
         if(!this.value) {
             this.value = {
                 label: null,
@@ -41,15 +44,10 @@ export default {
         }
         this.search(false)
     },
-    props: [
-        'disabled',
-        'readonly',
-        'tablename',
-        'name',
-        'dbValue'
-    ],
     data() {
         return {
+            name: '',
+            tablename: '',
             dDisabled : false,
             dReadonly : false,
             value: {

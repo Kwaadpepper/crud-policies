@@ -33,11 +33,11 @@ class CKUploadAdaptater {
         // Prepare the form data.
         const data = new FormData();
         data.append('upload', file);
+        let headers = Object.assign({}, window.axios ? window.axios.defaults.headers.common : {})
+        headers['Content-Type'] = 'multipart/form-data'
         axios.post(this.route, data, {
             withCredentials: true,
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            },
+            headers: headers,
             onUploadProgress: (evt) => {
                 this.loader.uploadTotal = evt.total;
                 this.loader.uploaded = evt.loaded;

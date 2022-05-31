@@ -2,8 +2,16 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.4.0
+- Use vue runtime instead of vue runtime-compiler
+- updated npm deps + audit fix
+- Update CKEditor JS
+- Add Manual CSRK Token to axios boot is necessary
+- Fixed UploadFileRequest with ajax
+
 # version 0.3.7
 - Hot fixed hasMany view component
+- Added translate in CrudController message
 
 # version 0.3.6
 - Add date and datetime input types

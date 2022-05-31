@@ -13,8 +13,8 @@ class UploadFileRequest extends FormRequest
      */
     public function authorize()
     {
-        // TODO: check if auth is needed ?
-        return $this->ajax();
+        // * $this->ajax wont validate form direct file upload.
+        return $this->wantsJson() and $this->expectsJson();
     }
 
     /**

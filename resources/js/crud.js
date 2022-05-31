@@ -1,6 +1,11 @@
 if (!window.axios) {
-    window.axios = require('axios');
-    window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+    window.axios = require('axios')
+    window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+    let csrfToken = document.querySelector('meta[name="csrf-token"]')
+    if (csrfToken.getAttribute('content')) {
+        window.axios.defaults.headers.common['Authorization'] = `Bearer ${csrfToken.getAttribute('content')}`;
+        window.axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken.getAttribute('content')
+    }
 }
 if (!window.__CRUD) {
     window.__CRUD = {}
@@ -17,7 +22,10 @@ window.__CRUD.confirmDelete = (e) => {
         confirmButtonText: trans.__('crud.delete'),
         showCancelButton: true,
         cancelButtonText: trans.__('crud.cancel'),
-        confirmButtonColor: '#dc3545'
+        customClass: {
+            confirmButton: 'btn btn-danger mx-1',
+            cancelButton: 'btn btn-primary mx-1',
+        }
     }).then((result) => {
         if (result.isConfirmed) {
             self.submit()

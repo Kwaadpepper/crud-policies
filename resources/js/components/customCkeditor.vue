@@ -5,7 +5,7 @@
                 <span class="chars"><u>Caractères</u>&nbsp;:&nbsp;<b>{{ chars }}</b></span>
         </div>
         <div ref="ckeditor"></div>
-        <input :id="internalId" class="form-control" type="hidden" :name="name" :value="text" :required="internalRequired">
+        <input :id="id" class="form-control" type="hidden" :name="name" :value="text" :required="required">
     </div>
 </template>
 
@@ -13,32 +13,40 @@
     import { CKUploadAdaptater } from '../modules/CkUploadAdaptater'
 
     export default {
-        props: [
-            'id',
-            'readonly',
-            'required',
-            'name',
-            'dbtext',
-            'old'
-        ],
-        model: {
-            prop: 'text',
-            event: 'input'
-        },
         mounted() {
-            this.internalId = this.id ? this.id : ''
-            this.internalRequired = this.required ? this.required : false
-            this.text = this.dbtext
+            let data = JSON.parse(this.$parent.$options.json)
+            this.id = data.id
+            this.name = data.name
+            this.readonly = !!data.readonly
+            this.required = !!data.required
+            this.old = !!data.old
+
+            this.text = data.value
             this.makeSuperBuild()
         },
         data() {
             return {
+                id: '',
+                name: '',
+                readonly: false,
+                required: false,
+                // Use for LG paid migration
+                old: false,
                 text: '',
-                internalId: '',
-                internalRequired: false,
                 editor: null,
                 words: 0,
-                chars: 0
+                chars: 0,
+                emitTimer : null
+            }
+        },
+        watch: {
+            dbtext() {
+                if(this.internalText != this.dbtext) {
+                    this.internalText = this.dbtext
+                    if(this.editor) {
+                        this.editor.setData(this.internalText)
+                    }
+                }
             }
         },
         methods: {

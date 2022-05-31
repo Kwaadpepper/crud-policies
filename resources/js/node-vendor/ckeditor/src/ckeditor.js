@@ -24,7 +24,7 @@ import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic.js';
 import Link from '@ckeditor/ckeditor5-link/src/link.js';
 import LinkImage from '@ckeditor/ckeditor5-link/src/linkimage.js';
 import List from '@ckeditor/ckeditor5-list/src/list.js';
-import ListStyle from '@ckeditor/ckeditor5-list/src/liststyle.js';
+import ListProperties from '@ckeditor/ckeditor5-list/src/listproperties';
 import MediaEmbed from '@ckeditor/ckeditor5-media-embed/src/mediaembed.js';
 import MediaEmbedEditing from '@ckeditor/ckeditor5-media-embed/src/mediaembedediting';
 import MediaEmbedUI from '@ckeditor/ckeditor5-media-embed/src/mediaembedui';
@@ -34,9 +34,15 @@ import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefrom
 import RemoveFormat from '@ckeditor/ckeditor5-remove-format/src/removeformat.js';
 import SimpleUploadAdapter from '@ckeditor/ckeditor5-upload/src/adapters/simpleuploadadapter.js';
 import Table from '@ckeditor/ckeditor5-table/src/table.js';
+import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
+import TableProperties from '@ckeditor/ckeditor5-table/src/tableproperties';
+import TableCellProperties from '@ckeditor/ckeditor5-table/src/tablecellproperties';
+import TableCaption from '@ckeditor/ckeditor5-table/src/tablecaption';
 import TextTransformation from '@ckeditor/ckeditor5-typing/src/texttransformation.js';
 import Underline from '@ckeditor/ckeditor5-basic-styles/src/underline.js';
+import Undo from '@ckeditor/ckeditor5-undo/src/undo.js';
 import WordCount from '@ckeditor/ckeditor5-word-count/src/wordcount.js';
+import SourceEditing from '@ckeditor/ckeditor5-source-editing/src/sourceediting.js';
 
 class Editor extends ClassicEditor { }
 
@@ -63,7 +69,7 @@ Editor.builtinPlugins = [
     Link,
     LinkImage,
     List,
-    ListStyle,
+    ListProperties,
     MediaEmbed,
     MediaEmbedEditing,
     MediaEmbedUI,
@@ -73,9 +79,15 @@ Editor.builtinPlugins = [
     RemoveFormat,
     SimpleUploadAdapter,
     Table,
+    TableToolbar,
+    TableProperties,
+    TableCellProperties,
+    TableCaption,
     TextTransformation,
     Underline,
-    WordCount
+    Undo,
+    WordCount,
+    SourceEditing
 ];
 
 export default Editor;

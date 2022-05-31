@@ -35,23 +35,22 @@
 <script>
 export default {
     mounted() {
-        this.dDisabled = !!this.disabled
-        this.dReadonly = !!this.readonly
-        let values = JSON.parse(this.dbValue)
+        let data = JSON.parse(this.$parent.$options.json)
+        this.name = data.name
+        this.tablename = data.tablename
+
+        this.dDisabled = !!data.disabled
+        this.dReadonly = !!data.readonly
+        let values = data.values
         for(let k in values) {
             this.values.push(values[k])
         }
         this.search(false)
     },
-    props: [
-        'disabled',
-        'readonly',
-        'tablename',
-        'name',
-        'dbValue'
-    ],
     data() {
         return {
+            name: '',
+            tablename: '',
             dDisabled : false,
             dReadonly : false,
             values: [],

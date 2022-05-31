@@ -9,13 +9,18 @@
 <td>
     <label class="form-label">{{ $prop['label'] }}</label>
 </td>
-<td class="crud-vuesjs">
-    <belongs-to-many
-        readonly="{{ $readonly }}"
-        tablename="{{ $modelTable }}"
-        name="{{ $fieldName }}"
-        db-value='@json($related)'>
-    </belongs-to-many>
+<td>
+    @php
+    $dataVue = [
+        'readonly' => $readonly,
+        'tablename' => $modelTable,
+        'name' => $fieldName,
+        'values' => $related
+    ];
+    @endphp
+    <div
+        class="belongs-to-many"
+        data-json='@json($dataVue)'></div>
 </td>
 
 @push('scriptsConstants')

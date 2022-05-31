@@ -10,13 +10,18 @@
 <td>
     <label class="form-label">{{ $prop['label'] }}</label>
 </td>
-<td class="crud-vuesjs">
-    <belongs-to
-        readonly="{{ $readonly }}"
-        tablename="{{ $modelTable }}"
-        name="{{ $fieldName }}"
-        db-value='@json($related)'>
-    </belongs-to>
+<td>
+    @php
+    $dataVue = [
+        'readonly' => $readonly,
+        'tablename' => $modelTable,
+        'name' => $fieldName,
+        'value' => $related
+    ];
+    @endphp
+    <div
+        class="belongs-to"
+        data-json='@json($dataVue)'></div>
 </td>
 
 @push('scriptsConstants')
