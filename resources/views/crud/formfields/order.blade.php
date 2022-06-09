@@ -1,7 +1,7 @@
-<td>
+<div class="col-3 border border-primary">
     <label for="{{ $fieldName }}" class="form-label">{{ $prop['label'] }}</label>
-</td>
-<td>
+</div>
+<div class="col-9 border border-primary">
     <select
         id="{{ $fieldName }}"
         name="{{ $fieldName }}"
@@ -16,4 +16,4 @@
     <option value="{{ $modelClass::pluck($fieldName)->max() +1 }}" selected>{{ $modelClass::pluck($fieldName)->max() +1 }}</option>
     @endif
     </select>
-</td>
+</div>

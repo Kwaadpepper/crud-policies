@@ -15,23 +15,19 @@
         <form action="{{ CrudController::getRoutePrefixed("$modelTable.update", $model) }}" method="POST" @if($hasFile) enctype="multipart/form-data" @endif>
             @method('put')
             @csrf
-            <table class="table table-sm table-bordered border-primary align-middle table-striped text-center">
-                <thead class="thead-dark">
-                <tr>
-                    <th scope="col" class="w-25">{{ __('crud-policies::crud.property') }}</th>
-                    <th scope="col" class="w-75">{{ __('crud-policies::crud.value') }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                    @foreach ($modelClass::getEditableProperties() as $fieldName => $prop)
-                    @if(in_array(CrudAction::update(), $prop['actions']))
-                    <tr>
-                    @include('crud-policies::crud.formfield')
-                    </tr>
-                    @endif
-                    @endforeach
-                </tbody>
-            </table>
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col-3 border border-primary">{{ __('crud-policies::crud.property') }}</div>
+                    <div class="col-9 border border-primary">{{ __('crud-policies::crud.value') }}</div>
+                </div>
+                @foreach ($modelClass::getEditableProperties() as $fieldName => $prop)
+                @if(in_array(CrudAction::update(), $prop['actions']))
+                <div class="row">
+                @include('crud-policies::crud.formfield')
+                </div>
+                @endif
+                @endforeach
+            </div>
             <div class="col text-center">
                 <button class="btn btn-info" type="submit">{{ __('crud-policies::crud.update') }}</button>
             </div>

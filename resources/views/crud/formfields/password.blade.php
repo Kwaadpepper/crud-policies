@@ -1,7 +1,7 @@
-<td>
+<div class="col-3 border border-primary">
     <label for="{{ $fieldName }}" class="form-label">{{ $prop['label'] }}</label>
-</td>
-<td>
+</div>
+<div class="col-9 border border-primary">
     @if(strlen($prop['placeholder']))
     <div class="form-floating">
         <input
@@ -30,7 +30,7 @@
         @if($readonly)readonly @endif
         @if($prop['required'] or !$prop['nullable'])required @endif>
     @endif
-</td>
+</div>
 </tr><tr>
 <td>
     <label for="{{ $fieldName }}-confirm" class="form-label">{{ __('Confirmation')}}&nbsp;{{ $prop['label'] }}</label>

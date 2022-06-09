@@ -2,6 +2,9 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.4.3
+- Fixed CSP using CkEditor and SweetAlert2 (no require of unsafe inline)
+
 # version 0.4.2
 - Make package CSP compliant
 # version 0.4.1

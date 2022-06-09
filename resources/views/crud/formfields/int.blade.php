@@ -1,7 +1,7 @@
-<td>
+<div class="col-3 border border-primary">
     <label for="{{ $fieldName }}" class="form-label">{{ $prop['label'] }}</label>
-</td>
-<td>
+</div>
+<div class="col-9 border border-primary">
     <input
         id="{{ $fieldName }}"
         class="form-control"
@@ -18,4 +18,4 @@
         @if($prop['disabled'])disabled @endif
         @if($readonly)readonly @endif
         @if($prop['required'] or (!$prop['required'] and !$prop['nullable']))required @endif>
-</td>
+</div>

@@ -9,7 +9,7 @@
  * if ( ! $this->config->get('purifier.finalize')) {
  *     $config->autoFinalize = false;
  * }
- * $config->loadArray($this->getConfig());
+ * $config->load [$this->getConfig());
  *
  * You must NOT delete the default settings
  * anything in settings should be compacted with params that needed to instance HTMLPurifier_Config.
@@ -25,25 +25,22 @@ return [
     'cacheFileMode' => 0755,
     'settings'      => [
         'default' => [
-            'HTML.SafeIframe'          => true, // For iframes
-            'URI.SafeIframeRegexp'     => "%^(http://|https://|//)(vimeo.com)%",
+            'HTML.SafeIframe'          => true,
+            // * For iframes
+            'URI.SafeIframeRegexp'     => "%^(http://|https://|//)(www.youtube.com/embed/|player.vimeo.com/video/|vimeo.com/)%",
             'HTML.Doctype'             => 'HTML 4.01 Transitional',
-            'HTML.Allowed'             => 'h1[style],h2[style],h3[style],h4[style],h5[style],h6[style],figure[class|style],oembed[url],div[style],b,strong,i,em,u,a[href|title],ul[style],ol[style],dl[style],li,p[style],br,span[style|class],img[width|height|alt|src|style|class],iframe[src|width|height|class|frameborder|style],table[style],thead,tbody,th,tr,td,hr',
-            'CSS.AllowedProperties'    => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align,list-style-type,float,width,height',
+            'HTML.Allowed'             => 'h1[style],h2[style],h3[style],h4[style],h5[style],h6[style],figure[class|style],oembed[url],div[style],b,strong,i,em,u,a[href|title|target|rel],ul[style],ol[style],dl[style],li,p[style],br,span[style|class],img[width|height|alt|src|style|class|title],iframe[src|width|height|class|frameborder|style],table[style|align|border|cellspacing|cellpadding|width],thead,tbody,th[colspan|align|valign|style],tr[align|valign|style],td[style|colspan|rowspan|scope|align|valign],hr,dl,dt',
+            'CSS.AllowedProperties'    => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align,list-style-type,float,width,height,vertical-align,border-color',
             'AutoFormat.AutoParagraph' => false,
             'AutoFormat.RemoveEmpty'   => false,
             'AutoFormat.RemoveEmpty.RemoveNbsp' => false,
-        ],
-        "youtube" => [
-            "HTML.SafeIframe"      => 'true',
-            "URI.SafeIframeRegexp" => "%^(http://|https://|//)(www.youtube.com/embed/|player.vimeo.com/video/|vimeo.com/)%",
         ],
         'custom_definition' => [
             'id'  => 'html5-definitions',
             'rev' => 1,
             'debug' => true,
             'elements' => [
-                // http://developers.whatwg.org/sections.html
+                // * http://developers.whatwg.org/sections.html
                 ['section', 'Block', 'Flow', 'Common'],
                 ['nav',     'Block', 'Flow', 'Common'],
                 ['article', 'Block', 'Flow', 'Common'],
@@ -51,16 +48,16 @@ return [
                 ['header',  'Block', 'Flow', 'Common'],
                 ['footer',  'Block', 'Flow', 'Common'],
 
-                // Content model actually excludes several tags, not modelled here
+                // * Content model actually excludes several tags, not modelled here
                 ['address', 'Block', 'Flow', 'Common'],
                 ['hgroup', 'Block', 'Required: h1 | h2 | h3 | h4 | h5 | h6', 'Common'],
 
-                // http://developers.whatwg.org/grouping-content.html
+                // * http://developers.whatwg.org/grouping-content.html
                 ['figure', 'Block', 'Optional: (figcaption, Flow) | (Flow, figcaption) | Flow', 'Common'],
                 ['figcaption', 'Inline', 'Flow', 'Common'],
                 ['oembed', 'Inline', 'Flow', 'Common'],
 
-                // http://developers.whatwg.org/the-video-element.html#the-video-element
+                // * http://developers.whatwg.org/the-video-element.html#the-video-element
                 ['video', 'Block', 'Optional: (source, Flow) | (Flow, source) | Flow', 'Common', [
                     'src' => 'URI',
                     'type' => 'Text',
@@ -75,7 +72,7 @@ return [
                     'type' => 'Text',
                 ]],
 
-                // http://developers.whatwg.org/text-level-semantics.html
+                // * http://developers.whatwg.org/text-level-semantics.html
                 ['s',    'Inline', 'Inline', 'Common'],
                 ['var',  'Inline', 'Inline', 'Common'],
                 ['sub',  'Inline', 'Inline', 'Common'],
@@ -83,7 +80,7 @@ return [
                 ['mark', 'Inline', 'Inline', 'Common'],
                 ['wbr',  'Inline', 'Empty', 'Core'],
 
-                // http://developers.whatwg.org/edits.html
+                // * http://developers.whatwg.org/edits.html
                 ['ins', 'Block', 'Flow', 'Common', ['cite' => 'URI', 'datetime' => 'CDATA']],
                 ['del', 'Block', 'Flow', 'Common', ['cite' => 'URI', 'datetime' => 'CDATA']],
             ],
@@ -115,5 +112,4 @@ return [
             ['oembed', 'Inline', 'Inline', 'Common'],
         ],
     ],
-
 ];

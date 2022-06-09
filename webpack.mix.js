@@ -1,6 +1,13 @@
-const mix = require('laravel-mix');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-require('laravel-mix-polyfill');
+const mix = require('laravel-mix')
+require('laravel-mix-clean')
+require('laravel-mix-polyfill')
+
+const polyfill = {
+    enabled: true,
+    useBuiltIns: "usage",
+    // legacy targets from gulp file
+    targets: ['last 3 version', 'safari 5', 'ie 8', 'opera 12.1', 'ios 6', 'android 4']
+}
 
 mix.webpackConfig({
     mode: process.env.NODE_ENV,
@@ -12,15 +19,21 @@ mix.webpackConfig({
     output: {
         publicPath: '/crud-policies/vendor/',
     },
-    plugins: [
-        new CleanWebpackPlugin({
-            cleanOnceBeforeBuildPatterns: [
-                'css/*',
-                'js/*'
-            ]
-        })
-    ],
-});
+    // Pour debug compilation errors
+    // stats: {
+    //     children: true,
+    //     warningsFilter: [
+    //         /\-\-underline\-color/,
+    //     ]
+    // },
+})
+
+mix.clean({
+    cleanOnceBeforeBuildPatterns: [
+        'css/*',
+        'js/*'
+    ]
+})
 
 mix.options({
     postCss: [

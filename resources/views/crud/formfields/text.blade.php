@@ -1,7 +1,7 @@
-<td>
+<div class="col-3 border border-primary">
     <label class="form-label">{{ $prop['label'] }}</label>
-</td>
-<td>
+</div>
+<div class="col-9 border border-primary">
     @php
     $dataVue = [
         'id' => $fieldName,
@@ -15,7 +15,7 @@
     <div
         class="custom-ckeditor"
         data-json='@json($dataVue)'></div>
-</td>
+</div>
 @include('crud-policies::crud.modules.ckeditor', [
     'fieldName' => $fieldName
 ])

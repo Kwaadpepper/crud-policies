@@ -43,6 +43,7 @@ import Underline from '@ckeditor/ckeditor5-basic-styles/src/underline.js';
 import Undo from '@ckeditor/ckeditor5-undo/src/undo.js';
 import WordCount from '@ckeditor/ckeditor5-word-count/src/wordcount.js';
 import SourceEditing from '@ckeditor/ckeditor5-source-editing/src/sourceediting.js';
+import ImageInsert from '@ckeditor/ckeditor5-image/src/imageinsert.js';
 
 class Editor extends ClassicEditor { }
 
@@ -87,7 +88,8 @@ Editor.builtinPlugins = [
     Underline,
     Undo,
     WordCount,
-    SourceEditing
+    SourceEditing,
+    ImageInsert
 ];
 
 export default Editor;

@@ -1,7 +1,7 @@
-<td>
+<div class="col-3 border border-primary">
     <label for="{{ $fieldName }}" class="form-label">{{ $prop['label'] }}</label>
-</td>
-<td>
+</div>
+<div class="col-9 border border-primary">
     <label for="{{ $fieldName }}" class="row">
         <div class="col">
             <div class="form-check form-switch ms-2">
@@ -16,4 +16,4 @@
             </div>
         </div>
     </label>
-</td>
+</div>

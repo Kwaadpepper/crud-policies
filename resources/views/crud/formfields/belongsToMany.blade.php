@@ -6,10 +6,10 @@
         ]];
     }) : [];
 @endphp
-<td>
+<div class="col-3 border border-primary">
     <label class="form-label">{{ $prop['label'] }}</label>
-</td>
-<td>
+</div>
+<div class="col-9 border border-primary">
     @php
     $dataVue = [
         'readonly' => $readonly,
@@ -21,7 +21,7 @@
     <div
         class="belongs-to-many"
         data-json='@json($dataVue)'></div>
-</td>
+</div>
 
 @push('scriptsConstants')
 <script @if(isset($nonce) and is_string($nonce)) nonce="{{ $nonce }}" @endif>

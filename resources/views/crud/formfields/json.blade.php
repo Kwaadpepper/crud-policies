@@ -7,15 +7,15 @@ $jsonValue = old($fieldName) ?? (
     ) : $prop['default']
 );
 @endphp
-<td>
+<div class="col-3 border border-primary">
     <label for="{{ $fieldName }}" class="form-label">{{ $prop['label'] }}</label>
-</td>
-<td>
+</div>
+<div class="col-9 border border-primary">
     <div class="mb-3">
         <div id="{{ $fieldName }}jsoneditor"></div>
         <textarea id="{{ $fieldName }}" name="{{ $fieldName }}" rows="3" class="form-control d-none" @if($readonly) readonly @endif>{!! $jsonValue !!}</textarea>
     </div>
-</td>
+</div>
 @include('crud-policies::crud.modules.jsoneditor', [
     'fieldName' => $fieldName,
     'value' => $jsonValue,

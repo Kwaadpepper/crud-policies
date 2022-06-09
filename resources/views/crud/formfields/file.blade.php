@@ -1,7 +1,7 @@
-<td>
+<div class="col-3 border border-primary">
     <label for="{{ $fieldName }}" class="form-label">{{ $prop['label'] }}</label>
-</td>
-<td>
+</div>
+<div class="col-9 border border-primary">
     @if(strlen($prop['placeholder']))
     <div class="form-floating">
     @endif
@@ -22,4 +22,4 @@
     @if(isset($model) and $model->{$fieldName})
     <img class="img-responsive" src="{{ sprintf('/storage/%s', $model->{$fieldName}) }}" alt="{{ sprintf('/storage/%s', $model->{$fieldName}) }}">
     @endif
-</td>
+</div>
