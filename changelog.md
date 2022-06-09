@@ -1,6 +1,8 @@
 # Changelog
 
 All notable changes to `CrudPolicies` will be documented in this file.
+# version 0.4.1
+- Fixed vue compile
 
 # version 0.4.0
 - Use vue runtime instead of vue runtime-compiler

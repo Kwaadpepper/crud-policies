@@ -1,9 +1,14 @@
-const path = require('path');
 const mix = require('laravel-mix');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 require('laravel-mix-polyfill');
 
 mix.webpackConfig({
+    mode: process.env.NODE_ENV,
+    resolve: {
+        alias: {
+            'vue$': 'vue/dist/vue.runtime.esm.js',
+        }
+    },
     output: {
         publicPath: '/crud-policies/vendor/',
     },
@@ -27,7 +32,7 @@ mix.options({
 
 mix.js("resources/js/crud.js", "crud-policies/js/crud.js")
     .sass("resources/sass/crud.scss", "crud-policies/css/crud.css")
-    .vue()
+    .vue({ runtimeOnly: true })
     .polyfill({
         enabled: true,
         useBuiltIns: "usage",
