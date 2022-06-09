@@ -9,6 +9,11 @@ Resizes an image on the fly and returns the new link
 
    composer require kwaadpepper/crud-policies
 
+
+## CSP
+If you wish to make this package CSP compliant you shall
+share to all views a `$nonce` variable.
+
 ## Usage
 
 1. <a href="#create-a-model-iscrudmodel">Create a model</a> that will use the ```Kwaadpepper\CrudPolicies\IsCrudModel``` trait

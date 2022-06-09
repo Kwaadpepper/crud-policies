@@ -9,7 +9,7 @@
 @endif
 
 @push('scripts')
-<script>
+<script @if(isset($nonce) and is_string($nonce)) nonce="{{ $nonce }}" @endif>
 document.addEventListener("DOMContentLoaded", function(event) {
     let container = document.getElementById('{{ $fieldName.'jsoneditor' }}');
     let input = document.getElementById('{{ $fieldName }}');

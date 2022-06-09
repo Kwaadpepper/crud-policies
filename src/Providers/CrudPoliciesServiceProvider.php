@@ -6,6 +6,7 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Kwaadpepper\CrudPolicies\Enums\CrudAction;
@@ -64,6 +65,9 @@ class CrudPoliciesServiceProvider extends ServiceProvider
             static::ROOTPATH . 'crud-policies/js' => public_path($publicPath . '/js'),
             static::ROOTPATH . 'crud-policies/css' => public_path($publicPath . '/css')
         ], 'assetsCompiled');
+
+        // * Used For CSP compliance
+        View::share('nonce', \uniqid());
 
         // * Directives for assets
         Blade::directive(

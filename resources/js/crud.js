@@ -11,24 +11,35 @@ if (!window.__CRUD) {
     window.__CRUD = {}
 }
 require('./vuejs')
-const trans = require('./modules/trans.js').default.methods;
+const trans = require('./modules/trans.js').default.methods
+const confirmJS = require('./modules/confirm.js').default.methods.confirm
 window.__CRUD.confirmDelete = (e) => {
     let self = e.target
-    e.preventDefault();
-    Swal.fire({
-        title: trans.__('crud.confirm'),
-        text: trans.__('crud.confirm_ask'),
-        icon: 'question',
-        confirmButtonText: trans.__('crud.delete'),
-        showCancelButton: true,
-        cancelButtonText: trans.__('crud.cancel'),
-        customClass: {
-            confirmButton: 'btn btn-danger mx-1',
-            cancelButton: 'btn btn-primary mx-1',
+    e.preventDefault()
+    confirmJS(
+        trans.__('crud.confirm'),
+        trans.__('crud.confirm_ask'),
+        self,
+        (result) => {
+            if (result.isConfirmed) {
+                self.submit()
+            }
+        },
+        {
+            icon: 'question',
+            confirmButtonText: trans.__('crud.delete'),
+            showCancelButton: true,
+            cancelButtonText: trans.__('crud.cancel'),
+            customClass: {
+                confirmButton: 'btn btn-danger mx-1',
+                cancelButton: 'btn btn-primary mx-1',
+            }
         }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            self.submit()
-        }
-    })
+    )
 }
+window.addEventListener('DOMContentLoaded', () => {
+    let elements = document.getElementsByClassName('CrudConfirmDelete')
+    for (let element of elements) {
+        element.addEventListener('submit', window.__CRUD.confirmDelete)
+    }
+})

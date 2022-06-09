@@ -1,5 +1,5 @@
 @push('scriptsConstants')
-<script>
+<script @if(isset($nonce) and is_string($nonce)) nonce="{{ $nonce }}" @endif>
     if (!window.__CRUD) {
         window.__CRUD = {};
     }

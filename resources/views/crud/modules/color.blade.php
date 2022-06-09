@@ -7,7 +7,7 @@
 @if(isset($crudColorShow) and !isset($colorizedScript))
 @php View::share('colorizedScript', true) @endphp
 @push('scripts')
-<script>
+<script @if(isset($nonce) and is_string($nonce)) nonce="{{ $nonce }}" @endif>
 window.addEventListener("DOMContentLoaded", (event) => {
     // https://stackoverflow.com/a/35970186/4355295
     let __invertColor = function(hex, bw) {
