@@ -2,6 +2,11 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.4.4
+- Make package CSP more compliant (extract vue styles)
+- CSP style inline is still needed for CKEditor to work
+- Added sources Maps
+
 # version 0.4.3
 - Fixed CSP using CkEditor and SweetAlert2 (no require of unsafe inline)
 

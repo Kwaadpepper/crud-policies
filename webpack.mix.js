@@ -41,13 +41,17 @@ mix.options({
             removeAll: true
         })
     ]
-});
+})
 
 mix.js("resources/js/crud.js", "crud-policies/js/crud.js")
+    .vue({
+        runtimeOnly: true,
+        extractStyles: true,
+        globalStyles: false
+    })
     .sass("resources/sass/crud.scss", "crud-policies/css/crud.css")
-    .vue({ runtimeOnly: true })
     .polyfill({
         enabled: true,
         useBuiltIns: "usage",
         targets: { "firefox": "50", "ie": 11 }
-    });
+    }).sourceMaps(true)

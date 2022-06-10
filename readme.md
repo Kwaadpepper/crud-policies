@@ -13,6 +13,7 @@ Resizes an image on the fly and returns the new link
 ## CSP
 If you wish to make this package CSP compliant you shall
 share to all views a `$nonce` variable.
+Note that ckeditor will require unsafe-inline style anyway.
 
 ## Usage
 
