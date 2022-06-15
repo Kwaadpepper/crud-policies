@@ -1,7 +1,7 @@
-<div class="col-3 border border-primary">
+<div class="col-3 border border-secondary py-1 px-1">
     <label for="{{ $fieldName }}" class="form-label">{{ $prop['label'] }}</label>
 </div>
-<div class="col-9 border border-primary">
+<div class="col-9 border border-secondary py-1 px-1">
     @if(strlen($prop['placeholder']))
     <div class="form-floating">
         <input

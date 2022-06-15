@@ -1,7 +1,7 @@
-<div class="col-3 border border-primary">
+<div class="col-3 border border-secondary py-1 px-1">
     <label class="form-label">{{ $prop['label'] }}</label>
 </div>
-<div class="col-9 border border-primary">
+<div class="col-9 border border-secondary py-1 px-1">
     @php
     $dataVue = [
         'id' => $fieldName,

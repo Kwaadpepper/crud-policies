@@ -17,8 +17,8 @@
             @csrf
             <div class="container text-center">
                 <div class="row">
-                    <div class="col-3 border border-primary">{{ __('crud-policies::crud.property') }}</div>
-                    <div class="col-9 border border-primary">{{ __('crud-policies::crud.value') }}</div>
+                    <div class="col-3 border border-secondary py-1 px-1">{{ __('crud-policies::crud.property') }}</div>
+                    <div class="col-9 border border-secondary py-1 px-1">{{ __('crud-policies::crud.value') }}</div>
                 </div>
                 @foreach ($modelClass::getEditableProperties() as $fieldName => $prop)
                 @if(in_array(CrudAction::update(), $prop['actions']))
