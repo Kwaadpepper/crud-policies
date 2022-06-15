@@ -15,11 +15,11 @@
                 {{ $model->{$fieldName}->label }}
                 @break
             @case(CrudType::belongsTo())
-            @php
-                $obj = null;
-                $obj = $model->{Str::singular((new $prop['belongsTo']())->getTable())} ??
-                    $prop['belongsTo']::find($model->{$fieldName});
-            @endphp
+                @php
+                    $obj = null;
+                    $obj = $model->{Str::singular((new $prop['belongsTo']())->getTable())} ??
+                    $prop['belongsTo']::find($model->{$fieldName})->first();
+                @endphp
                 {{ $obj->{(new $prop['belongsTo']())->crudLabelColumn} }}
                 @break
             @case(CrudType::belongsToMany())

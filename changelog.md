@@ -4,6 +4,7 @@ All notable changes to `CrudPolicies` will be documented in this file.
 
 # version 0.4.5
 - Fix layout without table
+- Fix printfield belongsTo
 
 # version 0.4.4
 - Make package CSP more compliant (extract vue styles)
