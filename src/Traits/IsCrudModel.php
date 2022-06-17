@@ -186,12 +186,12 @@ trait IsCrudModel
      *
      * @return boolean|string
      */
-    public function gotHasManyRelationWithRestrictOnDelete()
+    public function gotHasManyOrBelongsToRelationWithRestrictOnDelete()
     {
         $relations = [];
         $sm        = DB::getDoctrineSchemaManager();
         foreach (self::getRelationships() as $relation => $type) {
-            if ($type[0] === 'HasMany') {
+            if ($type[0] === 'HasMany' or $type[0] === 'BelongsToMany') {
                 $table = (new $type[1]())->getTable();
                 /** @var \Doctrine\DBAL\Schema\ForeignKeyConstraint $foreignKey */
                 foreach ($sm->listTableForeignKeys($table) as $foreignKey) {
@@ -396,8 +396,8 @@ trait IsCrudModel
                     && !$method->getParameters()
                     // Prevent infinite recursion.
                     && $method->getName() !== 'getRelationships'
-                    // Prevent infinite recursion.
-                    && $method->getName() !== 'gotHasManyRelationWithRestrictOnDelete';
+                // Prevent infinite recursion.
+                && $method->getName() !== 'gotHasManyOrBelongsToRelationWithRestrictOnDelete';
             }
         );
 

@@ -347,7 +347,7 @@ trait CrudController
     public function destroy(...$params)
     {
         $model           = $this->getLastModelParam($params);
-        $restrict        = $model->gotHasManyRelationWithRestrictOnDelete();
+        $restrict        = $model->gotHasManyOrBelongsToRelationWithRestrictOnDelete();
         $restrictedModel = '';
         try {
             if (is_array($restrict)) {
