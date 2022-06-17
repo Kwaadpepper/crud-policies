@@ -9,13 +9,13 @@ if (!function_exists('transFb')) {
      * @param null|string $locale
      * @param array|null  $replace
      *
-     * @return array|\Illuminate\Contracts\Translation\Translator|null|string
+     * @return array|\Illuminate\Contracts\Translation\Translator|string
      */
     function transFb(string $key, ?string $fallback = null, ?string $locale = null, ?array $replace = [])
     {
         if (\Illuminate\Support\Facades\Lang::has($key, $locale)) {
             return trans($key, $replace, $locale);
         }
-        return $fallback;
+        return $fallback ?? $key;
     }
 }
