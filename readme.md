@@ -3,8 +3,6 @@
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Resizes an image on the fly and returns the new link
-
 ## Installation
 
    composer require kwaadpepper/crud-policies

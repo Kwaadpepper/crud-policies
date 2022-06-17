@@ -2,6 +2,10 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.4.6
+- Fix transFb fallback always return string
+- Check belongsToMany cascade restrict on delete
+
 # version 0.4.5
 - Fix layout without table
 - Fix printfield belongsTo
