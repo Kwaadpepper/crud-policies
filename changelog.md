@@ -2,6 +2,9 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.4.7
+- Fix show nullable dates and datetimes
+
 # version 0.4.6
 - Fix transFb fallback always return string
 - Check belongsToMany cascade restrict on delete
