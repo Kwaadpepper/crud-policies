@@ -105,10 +105,10 @@
                 {{ $model->{$fieldName}->label }}
                 @break
             @case(CrudType::date())
-                {{ $model->{$fieldName}->format('d/m/Y') }}
+                {{ $model->{$fieldName} ? $model->{$fieldName}->isoFormat('D/MM/YYYY') : '' }}
                 @break
             @case(CrudType::datetime())
-                {{ $model->{$fieldName}->format('d/m/Y H:i') }}
+                {{ $model->{$fieldName} ? $model->{$fieldName}->isoFormat('D/MM/YYYY HH:mm') : '' }}
                 @break
             @case(CrudType::json())
                 @json($field)
