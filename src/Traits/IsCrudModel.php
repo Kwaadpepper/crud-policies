@@ -341,7 +341,7 @@ trait IsCrudModel
      * @param UploadedFile $file
      * @return void
      */
-    private function moveUploadedFile(string $propName, UploadedFile &$file): void
+    protected function moveUploadedFile(string $propName, UploadedFile &$file): void
     {
         /** @var \Illuminate\Database\Eloquent\Model */
         $self              = $this;

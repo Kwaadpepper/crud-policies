@@ -2,6 +2,9 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.4.8
+- Change moveUploadedFile as protected to allow overload
+
 # version 0.4.7
 - Fix show nullable dates and datetimes
 
