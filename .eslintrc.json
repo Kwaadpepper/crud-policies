@@ -1,0 +1,41 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:vue/vue3-strongly-recommended",
+        "@vue/eslint-config-typescript"
+    ],
+    "overrides": [
+        {
+            "files": ["*.ts", "*.vue"],
+            "rules": {
+                "no-undef": "off"
+            }
+        },
+        {
+            "files": ["*.vue"],
+            "rules": {
+                "indent": "off"
+            }
+        }
+    ],
+    "parser": "vue-eslint-parser",
+    "parserOptions": {
+        "parser": "@typescript-eslint/parser",
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": ["vue", "@typescript-eslint"],
+    "ignorePatterns": ["webpack.mix.js", "**/vendor/*.js", "**/vendor/**/*.js"],
+    "rules": {
+        "indent": ["error", 4, { "SwitchCase": 1 }],
+        "linebreak-style": ["error", "unix"],
+        "quotes": ["error", "double"],
+        "semi": ["error", "always"],
+        "vue/script-indent": ["error", 2, { "baseIndent": 0, "switchCase": 1 }],
+        "vue/one-component-per-file": "off"
+    }
+}

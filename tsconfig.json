@@ -1,0 +1,23 @@
+{
+    "sourceMap": true,
+    "compilerOptions": {
+        "target": "esnext",
+        "lib": ["es5", "es6", "es2021", "dom", "dom.iterable"],
+        "module": "esnext",
+        // "isolatedModules": false,
+        // "experimentalDecorators": true,
+        // "strictNullChecks": true,
+        // "removeComments": true,
+        // "allowSyntheticDefaultImports": true,
+
+        // this enables stricter inference for data properties on `this`
+        "strict": true,
+        "jsx": "preserve",
+        "moduleResolution": "node",
+        "typeRoots": ["resources/ts/@types", "node_modules/@types"]
+    },
+    "include": ["resources/**/*.js", "resources/**/*.ts", "resources/**/*.vue"],
+    "exclude": ["node_modules"],
+    "compileOnSave": false,
+    "experimentalDecorators": true
+}

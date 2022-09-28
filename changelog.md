@@ -2,6 +2,13 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.5.0
+- Added ESLINT
+- Added STYLELINT
+- Changed scripts to Typescript
+- Changed Lazyloading of CKEDITOR only if window.CLassicEditor is undetected
+
+
 # version 0.4.8
 - Change moveUploadedFile as protected to allow overload
 

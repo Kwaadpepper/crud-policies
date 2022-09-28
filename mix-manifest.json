@@ -1,4 +1,5 @@
 {
     "/crud-policies/js/crud.js": "/crud-policies/js/crud.js",
+    "/crud-policies/js/ckeditor.js": "/crud-policies/js/ckeditor.js",
     "/crud-policies/css/crud.css": "/crud-policies/css/crud.css"
 }

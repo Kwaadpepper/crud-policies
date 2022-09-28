@@ -1,0 +1,24 @@
+{
+    "extends": [
+        "stylelint-config-sass-guidelines",
+        "stylelint-config-idiomatic-order"
+    ],
+    "ignoreFiles": [
+        "**/vendor/*.css",
+        "**/vendor/**/*.css",
+        "**/vendor/*.scss",
+        "**/vendor/**/*.scss",
+        "**/vendor/*.sass",
+        "**/vendor/**/*.sass",
+        "**/vendor/*.less",
+        "**/vendor/**/*.less"
+    ],
+    "customSyntax": "postcss-scss",
+    "rules": {
+        "indentation": 4,
+        "string-quotes": "double",
+        "selector-max-id": null,
+        "color-no-invalid-hex": true,
+        "order/properties-alphabetical-order": null
+    }
+}
