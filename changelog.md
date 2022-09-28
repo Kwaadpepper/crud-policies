@@ -2,6 +2,9 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.5.1
+- Changed Asset response now sends cache-control header
+
 # version 0.5.0
 - Added ESLINT
 - Added STYLELINT

@@ -23,8 +23,10 @@ class AssetsController extends Controller
         } catch (FileNotFoundException $e) {
             abort(404);
         }
-        return response($data, 200, [
-            'Content-Type' => $type === 'js' ? 'text/javascript' : 'text/css'
-        ]);
+        $responseArray = [
+            'Content-Type' => $type === 'js' ? 'text/javascript' : 'text/css',
+            'Cache-Control' => 'private, max-age=86400'
+        ];
+        return response($data, 200, $responseArray);
     }
 }
