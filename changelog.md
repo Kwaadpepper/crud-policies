@@ -2,6 +2,9 @@
 
 All notable changes to `CrudPolicies` will be documented in this file.
 
+# version 0.5.2
+- Changed Pass all parameters to evaluating class from RootPolicy
+
 # version 0.5.1
 - Changed Asset response now sends cache-control header
 

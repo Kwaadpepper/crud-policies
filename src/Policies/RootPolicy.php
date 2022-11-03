@@ -27,33 +27,37 @@ class RootPolicy
     /**
      * Policy logic to apply.
      *
-     * @param string     $method
-     * @param string     $policy
-     * @param Model      $user
-     * @param Model|null $model
+     * @param string                                   $method
+     * @param string                                   $policy
+     * @param \Illuminate\Database\Eloquent\Model      $user
+     * @param \Illuminate\Database\Eloquent\Model|null $model
      * @return Response
      */
-    protected function actionPolicy(string $method, string $policy, Model $user, Model $model = null): Response
-    {
-        $this->setPolicies($user, $model);
-        $ctx = [$policy, $user, $model];
+    protected function actionPolicy(
+        string $method,
+        string $policy,
+        Model $user,
+        Model $model = null
+    ): Response {
+        $fnArgs = \func_get_args();
+        \call_user_func_array([$this, 'setPolicies'], \collect($fnArgs)->slice(2)->all());
 
         if (!$this->hasPolicy($policy)) {
             $m = __('Unhandled policy ":policy"', ['policy' => $policy]);
-            Log::critical($m, $ctx);
+            Log::critical($m, $fnArgs);
             return $this->deny($m);
         }
 
         if (!is_array($this->policies[$policy])) {
             $m = __('Policy ":policy" has to be array', ['policy' => $policy]);
-            Log::critical($m, $ctx);
+            Log::critical($m, $fnArgs);
             return $this->deny($m);
         }
 
         // * Policy method exists
         if (!array_key_exists($method, $this->policies[$policy])) {
             $m = __('Unhandled policy ":policy" for action ":action"', ['policy' => $policy, 'action' => $method]);
-            Log::critical($m, $ctx);
+            Log::critical($m, $fnArgs);
             return $this->deny($m);
         }
 
@@ -67,13 +71,18 @@ class RootPolicy
                 'onmodel' => $model ? get_class($model) : ''
             ]);
             if (config('app.policyDebug')) {
-                Log::debug(sprintf("%s user => %s model => %s", $m, $user, $model), $ctx);
+                Log::debug(sprintf(
+                    "'%s' user => '%s' model => '%s'",
+                    $m,
+                    $user,
+                    $model
+                ), $fnArgs);
             }
             return $this->deny($m);
         }
 
         $m = __('Unhandled policy case on resource ":method"', ['method' => $method]);
-        Log::critical($m, $ctx);
+        Log::critical($m, $fnArgs);
         return $this->deny();
     }
 
