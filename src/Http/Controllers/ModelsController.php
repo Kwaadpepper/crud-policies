@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kwaadpepper\CrudPolicies\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
 use Kwaadpepper\CrudPolicies\Traits\CrudController;
 
@@ -10,18 +13,13 @@ class ModelsController extends Controller
     /**
      * Provides ordering function for model
      *
-     * @param string  $modelTable
-     * @param integer $modelId
-     * @param string  $colName
-     * @param integer $newOrder
-     * @param string  $oldUrl
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function changeOrder(string $modelTable, int $modelId, string $colName, int $newOrder, string $oldUrl)
     {
-        $oldUrl = \base64_decode(str_replace(array('-', '_'), array('+', '/'), $oldUrl));
+        $oldUrl = \base64_decode(str_replace(['-', '_'], ['+', '/'], $oldUrl));
 
-        if (!$oldUrl) {
+        if (! $oldUrl) {
             abort(404);
         }
         $modelClass = null;
@@ -31,11 +29,11 @@ class ModelsController extends Controller
                 break;
             }
         }
-        if (!$modelClass) {
+        if (! $modelClass) {
             abort(404);
         }
         $model = $modelClass::whereId($modelId)->firstOrFail();
-        if (is_null($model->{$colName}) or !is_int($model->{$colName})) {
+        if (is_null($model->{$colName}) or ! is_int($model->{$colName})) {
             abort(404);
         }
         /**
@@ -58,6 +56,7 @@ class ModelsController extends Controller
         $model->{$colName} = $newOrder;
         $model->saveOrFail();
         CrudController::afterSave($model);
+
         return redirect()->to($oldUrl);
     }
 }

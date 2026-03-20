@@ -13,16 +13,17 @@ abstract class StaticRules
     /**
      * Make a rule closure
      *
-     * @param string $rulename
-     * @param mixed  ...$args
+     * @param  mixed  ...$args
      * @return Closure
+     *
      * @throws \ErrorException If the rule is unknown.
      */
     public static function make(string $rulename, ...$args)
     {
-        if (!method_exists(static::class, $rulename)) {
+        if (! method_exists(static::class, $rulename)) {
             throw new \ErrorException(sprintf('Unknown rule %s in Policies StaticRules', $rulename));
         }
+
         return function () use ($rulename, $args) {
             return call_user_func_array([static::class, $rulename], $args);
         };
@@ -30,34 +31,29 @@ abstract class StaticRules
 
     /**
      * Provides AND function for policies rules usage
-     *
-     * @param array $ruleClosures
-     * @return callable
      */
     public static function and(array $ruleClosures): callable
     {
-        return function (Model $user, Model $model = null) use ($ruleClosures) {
+        return function (Model $user, ?Model $model = null) use ($ruleClosures) {
             $nbRules = count($ruleClosures);
             $out     = true;
             $i       = 0;
             do {
-                if (!($out = (self::handle($ruleClosures[$i++], $user, $model) && $out))) {
+                if (! ($out = (self::handle($ruleClosures[$i++], $user, $model) && $out))) {
                     break;
                 }
             } while ($i < $nbRules);
+
             return $out;
         };
     }
 
     /**
      * Provides OR function for policies rules usage
-     *
-     * @param array $ruleClosures
-     * @return callable
      */
     public static function or(array $ruleClosures): callable
     {
-        return function (Model $user, Model $model = null) use ($ruleClosures) {
+        return function (Model $user, ?Model $model = null) use ($ruleClosures) {
             $nbRules = count($ruleClosures);
             $out     = false;
             $i       = 0;
@@ -66,6 +62,7 @@ abstract class StaticRules
                     break;
                 }
             } while ($i < $nbRules);
+
             return $out;
         };
     }
@@ -73,13 +70,11 @@ abstract class StaticRules
     /**
      * Handles one or multiple rules for a specific policy
      *
-     * @param array|callable $rule
-     * @param Model          $user
-     * @param Model          $model
-     * @return boolean
+     * @param  array|callable  $rule
+     *
      * @throws \ErrorException If the rule is not callable.
      */
-    public static function handle($rule, Model $user, Model $model = null): bool
+    public static function handle($rule, Model $user, ?Model $model = null): bool
     {
         if (is_array($rule)) {
             $nbRule = count($rule);
@@ -90,12 +85,14 @@ abstract class StaticRules
                     break;
                 }
             }
+
             return $out;
         }
-        if (!is_callable($rule)) {
+        if (! is_callable($rule)) {
             throw new \ErrorException('Rule has to ba callable.');
         }
-        return (bool)$rule($user, $model);
+
+        return (bool) $rule($user, $model);
     }
 
     /**

@@ -12,7 +12,6 @@ use Kwaadpepper\CrudPolicies\Policies\Rules\StaticRules;
  */
 abstract class UserRoleRules extends StaticRules
 {
-
     protected static function userIsAdmin(User $user)
     {
         return $user->role->equals(Role::admin());

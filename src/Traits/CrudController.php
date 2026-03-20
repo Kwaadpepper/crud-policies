@@ -1,12 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kwaadpepper\CrudPolicies\Traits;
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -21,9 +27,11 @@ use Kwaadpepper\CrudPolicies\Http\Requests\CrudIndexRequest;
 use Kwaadpepper\CrudPolicies\Http\Requests\StoreCrudModel;
 use Kwaadpepper\CrudPolicies\Http\Requests\UpdateCrudModel;
 use Kwaadpepper\CrudPolicies\Http\Resources\CrudResource;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * You need to define $modelClass with a Model::class
+ *
  * @var public static $modelClass
  * @var public static $layout
  */
@@ -31,9 +39,6 @@ trait CrudController
 {
     /**
      * Index query middleware
-     *
-     * @param Builder $query
-     * @return Builder
      */
     public function indexQuery(Builder $query): Builder
     {
@@ -43,7 +48,6 @@ trait CrudController
     /**
      * Show action middleware
      *
-     * @param Model $model
      * @return void
      */
     public function showModel(Model &$model)
@@ -62,7 +66,6 @@ trait CrudController
     /**
      * Before store model middleware
      *
-     * @param Model $model
      * @return void
      */
     public function storeModel(Model &$model)
@@ -72,7 +75,6 @@ trait CrudController
     /**
      * After store model middleware
      *
-     * @param Model $model
      * @return void
      */
     public function storedModel(Model &$model)
@@ -82,7 +84,6 @@ trait CrudController
     /**
      * Show edit model middleware
      *
-     * @param Model $model
      * @return void
      */
     public function editModel(Model &$model)
@@ -92,7 +93,6 @@ trait CrudController
     /**
      * Before update model middleware
      *
-     * @param Model $model
      * @return void
      */
     public function updateModel(Model &$model)
@@ -102,7 +102,6 @@ trait CrudController
     /**
      * After update model middleware
      *
-     * @param Model $model
      * @return void
      */
     public function updatedModel(Model &$model)
@@ -112,7 +111,6 @@ trait CrudController
     /**
      * Before delete model middleware
      *
-     * @param Model $model
      * @return void
      */
     public function deleteModel(Model &$model)
@@ -122,7 +120,6 @@ trait CrudController
     /**
      * After delete model middleware
      *
-     * @param Model $model
      * @return void
      */
     public function deletedModel(Model &$model)
@@ -131,6 +128,7 @@ trait CrudController
 
     /**
      * CrudController
+     *
      * @throws CrudException If a model parameter is incorrect.
      */
     public function __construct()
@@ -139,7 +137,7 @@ trait CrudController
         $this->authorizeResource(static::${'modelClass'});
 
         $modelClass = static::${'modelClass'};
-        if (is_null($modelClass) or !class_exists($modelClass)) {
+        if (is_null($modelClass) or ! class_exists($modelClass)) {
             throw new CrudException(sprintf(
                 '%s needs the modelClass prop to be a class, %s %s given',
                 __CLASS__,
@@ -147,14 +145,14 @@ trait CrudController
                 $modelClass
             ));
         }
-        if (!is_subclass_of($modelClass, Model::class)) {
+        if (! is_subclass_of($modelClass, Model::class)) {
             throw new CrudException(sprintf(
                 '%s needs the model prop to be a class the extends %s',
                 __CLASS__,
                 Model::class
             ));
         }
-        if (!request()->ajax() and !app()->runningInConsole()) {
+        if (! request()->ajax() and ! app()->runningInConsole()) {
             $this->shareViewLayout();
             $this->shareCrudModelsClassesToView();
             $this->shareModelClassToView();
@@ -171,12 +169,11 @@ trait CrudController
     /**
      * Crud index action
      *
-     * @param CrudIndexRequest $request
-     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse
+     * @return \Illuminate\Contracts\View\View|Factory|JsonResponse
      */
     public function index(CrudIndexRequest $request)
     {
-        /** @var \Illuminate\Database\Eloquent\Builder */
+        /** @var Builder */
         $models = static::${'modelClass'}::query();
 
         // * Search on crud Label column
@@ -214,7 +211,7 @@ trait CrudController
         $models = $this->indexQuery($models);
 
         // * Auto orderBy first column of type order
-        if (!$models->getQuery()->orders) {
+        if (! $models->getQuery()->orders) {
             $modelClass = static::${'modelClass'};
             $orderProp  = collect((new $modelClass())->getEditableProperties())
                 ->filter(function ($prop) {
@@ -229,12 +226,13 @@ trait CrudController
             }
         }
 
-        /** @var \Illuminate\Pagination\AbstractPaginator */
+        /** @var AbstractPaginator */
         $models = $models->paginate(config('crud.paginate', 15));
         if ($request->ajax()) {
             return response()->json(CrudResource::collection($models));
         } else {
             $models = $models->withQueryString();
+
             return view('crud-policies::crud.index', compact('models'));
         }
     }
@@ -242,9 +240,8 @@ trait CrudController
     /**
      * Show model action
      *
-     * @param Request $request
-     * @param mixed   ...$params
-     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse
+     * @param  mixed  ...$params
+     * @return \Illuminate\Contracts\View\View|Factory|JsonResponse
      */
     public function show(Request $request, ...$params)
     {
@@ -253,25 +250,26 @@ trait CrudController
         if ($request->ajax()) {
             return response()->json(new CrudResource($model));
         }
+
         return view('crud-policies::crud.show', ['model' => $model]);
     }
 
     /**
      * Create model action
      *
-     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     * @return \Illuminate\Contracts\View\View|Factory
      */
     public function create()
     {
         $this->createModel();
+
         return view('crud-policies::crud.create');
     }
 
     /**
      * Store model action
      *
-     * @param StoreCrudModel $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function store(StoreCrudModel $request)
     {
@@ -292,32 +290,33 @@ trait CrudController
         } else {
             $return = \redirect()->to(self::getRoutePrefixed(sprintf('%s.index', $model->getTable())));
         }
+
         return $return->with('success', trans(':model a bien été enregistré.', [
             'model' => Str::singular(
                 transFb(sprintf('models.classes.%s', strtolower(Str::plural($model->getModelName()))))
-            )
+            ),
         ]));
     }
 
     /**
      * Edit model action
      *
-     * @param mixed ...$params
-     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     * @param  mixed  ...$params
+     * @return \Illuminate\Contracts\View\View|Factory
      */
     public function edit(...$params)
     {
         $model = $this->getLastModelParam($params);
         $this->editModel($model);
+
         return view('crud-policies::crud.edit', ['model' => $model]);
     }
 
     /**
      * Update model action
      *
-     * @param UpdateCrudModel $request
-     * @param mixed           ...$params
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  mixed  ...$params
+     * @return RedirectResponse
      */
     public function update(UpdateCrudModel $request, ...$params)
     {
@@ -333,15 +332,16 @@ trait CrudController
             ->with('success', trans(':model a bien été enregistré.', [
                 'model' => Str::singular(
                     transFb(sprintf('models.classes.%s', strtolower(Str::plural($model->getModelName()))))
-                )
+                ),
             ]));
     }
 
     /**
      * Destroy model action
      *
-     * @param mixed ...$params
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  mixed  ...$params
+     * @return RedirectResponse
+     *
      * @throws CrudException If delete action is denied.
      */
     public function destroy(...$params)
@@ -357,8 +357,8 @@ trait CrudController
                     if (
                         (\is_countable($model->{$res['relation']}) and
                             count($model->{$res['relation']})) or
-                        (!is_null($model->{$res['relation']}) and
-                            !\is_countable($model->{$res['relation']}))
+                        (! is_null($model->{$res['relation']}) and
+                            ! \is_countable($model->{$res['relation']}))
                     ) {
                         throw new CrudException('retrict delete');
                     }
@@ -374,7 +374,7 @@ trait CrudController
         $return = \redirect()->to(self::getRoutePrefixed(sprintf('%s.index', $model->getTable())));
 
         if (
-            !in_array(SoftDeletes::class, class_uses_recursive($model), true) and
+            ! in_array(SoftDeletes::class, class_uses_recursive($model), true) and
             $restrict
         ) {
             return $return->with(
@@ -385,7 +385,7 @@ trait CrudController
                         'model' => Str::singular(
                             transFb(sprintf('models.classes.%s', strtolower(Str::plural($model->getModelName()))))
                         ),
-                        'associated' => transFb(sprintf('models.classes.%s', strtolower(Str::plural($restrictedModel))))
+                        'associated' => transFb(sprintf('models.classes.%s', strtolower(Str::plural($restrictedModel)))),
                     ]
                 )
             );
@@ -393,6 +393,7 @@ trait CrudController
         $this->deleteModel($model);
         if ($model->delete()) {
             $this->deletedModel($model);
+
             return $return->with('warning', trans(
                 ':model a bien été supprimé.',
                 ['model' => Str::singular(
@@ -412,9 +413,6 @@ trait CrudController
     /**
      * After save hook
      * For now used to handle order columns
-     *
-     * @param Model $model
-     * @return void
      */
     public static function afterSave(Model $model): void
     {
@@ -423,8 +421,8 @@ trait CrudController
         DB::beginTransaction();
         foreach ($props as $propName => $prop) {
             if (
-                !$model->wasRecentlyCreated and
-                !in_array($propName, array_keys($model->getChanges()))
+                ! $model->wasRecentlyCreated and
+                ! in_array($propName, array_keys($model->getChanges()))
             ) {
                 continue;
             }
@@ -443,10 +441,7 @@ trait CrudController
     /**
      * Mass update logic
      *
-     * @param string $modelClass
-     * @param string $propName
-     * @param array  $values
-     * @return integer Number or row affected.
+     * @return int Number or row affected.
      */
     private static function massUpdate(string $modelClass, string $propName, array $values)
     {
@@ -460,7 +455,7 @@ trait CrudController
             $params = [];
 
             foreach ($chunkValues as $id => $value) {
-                $id       = (int)$id;
+                $id       = (int) $id;
                 $cases[]  = "WHEN {$id} then ?";
                 $params[] = $value;
                 $ids[]    = $id;
@@ -481,14 +476,13 @@ trait CrudController
                 $q,
                 $params
             );
-        } //end foreach
+        } // end foreach
+
         return $counter;
     }
 
     /**
      * Get the current controller crud model class name
-     *
-     * @return string
      */
     public function getModelClass(): string
     {
@@ -504,6 +498,7 @@ trait CrudController
     {
         /** @var \Illuminate\Routing\Route */
         $route = request()->route();
+
         return trim($route->getPrefix() ?? '', '/');
     }
 
@@ -512,11 +507,8 @@ trait CrudController
      *
      * Cette fonction est à retravailler
      *
-     * @param string  $route
-     * @param mixed   $parameters
-     * @param boolean $absolute
-     * @param integer $minus      To remove a parameter from the end.
-     * @return string
+     * @param  mixed  $parameters
+     * @param  int  $minus  To remove a parameter from the end.
      */
     public static function getRoutePrefixed(
         string $route,
@@ -533,7 +525,7 @@ trait CrudController
         $routePrepend     = '';
 
         // Remove last parameter if we are not on a .index route .
-        if (!in_array($currentAction, ['index', 'create', 'store'])) {
+        if (! in_array($currentAction, ['index', 'create', 'store'])) {
             \array_pop($parameters);
         }
 
@@ -542,7 +534,7 @@ trait CrudController
                 is_object($parameter) and
                 in_array(Model::class, class_parents($parameter))
             ) {
-                /** @var \Illuminate\Database\Eloquent\Model $parameter */
+                /** @var Model $parameter */
                 $routePrepend .= sprintf('%s.', $parameter->getTable());
             }
         }
@@ -574,9 +566,6 @@ trait CrudController
 
     /**
      * Check if route name exists.
-     *
-     * @param string $routeName
-     * @return boolean
      */
     private static function routeExists(string $routeName): bool
     {
@@ -585,13 +574,11 @@ trait CrudController
 
     /**
      * Get All Crud Models
-     *
-     * @return array
      */
     public static function getCrudModels(): array
     {
         $models = [];
-        /** @var \Symfony\Component\Finder\SplFileInfo */
+        /** @var SplFileInfo */
         foreach (File::allFiles(\app_path('Http/Controllers')) as $file) {
             $class = sprintf(
                 'App\Http\Controllers\%s',
@@ -604,6 +591,7 @@ trait CrudController
                 $models[] = $class::${'modelClass'};
             }
         }
+
         return $models;
     }
 
@@ -611,18 +599,18 @@ trait CrudController
      * @phpcs:disable Generic.Files.LineLength.TooLong
      * Check if an action is autorized
      *
-     * @param string                                     $action Something in 'viewAny', 'view', 'create', 'update', 'destroy' .
-     * @param string|\Illuminate\Database\Eloquent\Model $model  Class name or a Model object .
-     * @return boolean
+     * @param  string  $action  Something in 'viewAny', 'view', 'create', 'update', 'destroy' .
+     * @param  string|Model  $model  Class name or a Model object .
+     *
      * @throws CrudException If requested action is not handled.
      */
     private function can(string $action, $model): bool
     {
         $actions = [
-            'index' => 'viewAny', 'show' => 'view', 'store' => 'create', 'edit' => 'update', 'destroy' => 'delete'
+            'index' => 'viewAny', 'show' => 'view', 'store' => 'create', 'edit' => 'update', 'destroy' => 'delete',
         ];
         if (
-            !in_array(
+            ! in_array(
                 $action,
                 $actions
             )
@@ -633,18 +621,18 @@ trait CrudController
             if (request()->user()) {
                 return $this->authorizeForUser(request()->user(), $action, $model)->allowed();
             }
+
             return $this->authorize($action, $model)->allowed();
         } catch (AuthorizationException $e) {
             return false;
         }
+
         return true;
     }
 
     /**
      * Get the last model from the url params
      *
-     * @param array $urlParams
-     * @return Model
      * @throws CrudException If model is not found is url.
      */
     private function getLastModelParam(array $urlParams): Model
@@ -660,8 +648,6 @@ trait CrudController
 
     /**
      * Share $viewLayout var to views.
-     *
-     * @return void
      */
     private function shareViewLayout(): void
     {
@@ -673,8 +659,6 @@ trait CrudController
 
     /**
      * Get the current model class
-     *
-     * @return void
      */
     private function shareCrudModelsClassesToView(): void
     {
@@ -684,8 +668,6 @@ trait CrudController
 
     /**
      * Get the current model class
-     *
-     * @return void
      */
     private function shareModelClassToView(): void
     {
@@ -694,27 +676,23 @@ trait CrudController
 
     /**
      * Get the current model class
-     *
-     * @return void
      */
     private function shareModelHasFileToView(): void
     {
-        /** @var \Illuminate\Database\Eloquent\Model $model */
+        /** @var Model $model */
         $model = static::${'modelClass'};
 
-        View::share('hasFile', (bool)collect((new $model())->getEditableProperties())->filter(function ($prop) {
+        View::share('hasFile', (bool) collect((new $model())->getEditableProperties())->filter(function ($prop) {
             return $prop['type']->equals(CrudType::image()) or $prop['type']->equals(CrudType::file());
         })->count());
     }
 
     /**
      * Get the current model table
-     *
-     * @return void
      */
     private function shareModelTableToView(): void
     {
-        /** @var \Illuminate\Database\Eloquent\Model $model */
+        /** @var Model $model */
         $model = static::${'modelClass'};
 
         View::share('modelTable', (new $model())->getTable());
@@ -722,8 +700,6 @@ trait CrudController
 
     /**
      * Get the current model properties
-     *
-     * @return void
      */
     private function shareModelPropsToView(): void
     {

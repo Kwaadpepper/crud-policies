@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kwaadpepper\CrudPolicies\Http\Requests;
 
 use Kwaadpepper\CrudPolicies\Enums\CrudAction;
@@ -9,7 +11,7 @@ class StoreCrudModel extends CrudRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @return boolean
+     * @return bool
      */
     public function authorize()
     {
@@ -17,6 +19,7 @@ class StoreCrudModel extends CrudRequest
         if ($authorized) {
             $this->rules = $this->getRulesForAction(CrudAction::create());
         }
+
         return $authorized;
     }
 

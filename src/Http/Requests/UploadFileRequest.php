@@ -9,7 +9,7 @@ class UploadFileRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @return boolean
+     * @return bool
      */
     public function authorize()
     {
@@ -25,7 +25,7 @@ class UploadFileRequest extends FormRequest
     public function rules()
     {
         return [
-            'upload' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+            'upload' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 }

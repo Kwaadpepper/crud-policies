@@ -1,5 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Http\Middleware\PreventRequestsDuringMaintenance;
+use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
+
 return [
 
     /**
@@ -14,8 +19,8 @@ return [
      * These are applied to crud routes directly as middlewares
      */
     'middlewares' => [
-        \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
-        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class
+        PreventRequestsDuringMaintenance::class,
+        ValidatePostSize::class,
     ],
 
     /**
@@ -46,5 +51,5 @@ return [
     /**
      * Controls whether to show delete button on index routes
      */
-    'deleteOnIndex' => true
+    'deleteOnIndex' => true,
 ];

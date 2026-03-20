@@ -3,6 +3,8 @@
 namespace Kwaadpepper\CrudPolicies\Http\Controllers;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
 
@@ -11,9 +13,7 @@ class AssetsController extends Controller
     /**
      * Serve package assets
      *
-     * @param string $type
-     * @param string $fileUri
-     * @return \Illuminate\Http\Response|\Illuminate\Contracts\Routing\ResponseFactory
+     * @return Response|ResponseFactory
      */
     public function asset(string $type, string $fileUri)
     {
@@ -24,9 +24,10 @@ class AssetsController extends Controller
             abort(404);
         }
         $responseArray = [
-            'Content-Type' => $type === 'js' ? 'text/javascript' : 'text/css',
-            'Cache-Control' => 'private, max-age=86400'
+            'Content-Type'  => $type === 'js' ? 'text/javascript' : 'text/css',
+            'Cache-Control' => 'private, max-age=86400',
         ];
+
         return response($data, 200, $responseArray);
     }
 }

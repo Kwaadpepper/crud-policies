@@ -2,8 +2,8 @@
 
 namespace Kwaadpepper\CrudPolicies\Http\Requests;
 
-use Illuminate\Support\Str;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Kwaadpepper\CrudPolicies\Enums\CrudAction;
 use Kwaadpepper\CrudPolicies\Enums\CrudType;
 use Kwaadpepper\CrudPolicies\Exceptions\CrudException;
@@ -16,9 +16,6 @@ class CrudRequest extends FormRequest
 
     /**
      * Get rules for a specific action
-     *
-     * @param CrudAction $action
-     * @return array
      */
     public function getRulesForAction(CrudAction $action): array
     {
@@ -30,18 +27,18 @@ class CrudRequest extends FormRequest
                 $this->handleRule($action, $props[$k], $rule, $k, $propsRules);
             }
         }
+
         return $propsRules;
     }
 
     /**
      * Handle different types of rules.
      *
-     * @param CrudAction $action
-     * @param array      $prop
-     * @param mixed      $rule
-     * @param mixed      $ruleName
-     * @param mixed      $out
+     * @param  mixed  $rule
+     * @param  mixed  $ruleName
+     * @param  mixed  $out
      * @return void
+     *
      * @phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
      */
     private function handleRule(CrudAction $action, array $prop, $rule, $ruleName, &$out)
@@ -50,22 +47,22 @@ class CrudRequest extends FormRequest
         $propIsAllowedOnUpdateAction = in_array($action, $prop['actions']);
 
         // * dont copy required if prop is not allowed on update
-        if (!$propIsAllowedOnUpdateAction and is_string($rule) and $rule == 'required') {
+        if (! $propIsAllowedOnUpdateAction and is_string($rule) and $rule == 'required') {
             return;
         }
         // * handle nullable
-        if ($prop['nullable'] and !in_array('nullable', $out[$ruleName])) {
+        if ($prop['nullable'] and ! in_array('nullable', $out[$ruleName])) {
             $out[$ruleName][] = 'nullable';
         }
-        if (!in_array($rule, $out[$ruleName])) {
+        if (! in_array($rule, $out[$ruleName])) {
             $out[$ruleName][] = $rule;
         }
         // * handle password
         if (
             $prop['type']->equals(CrudType::password()) and
-            (!$this->{$ruleName} or
+            (! $this->{$ruleName} or
                 (is_string($this->{$ruleName}) and
-                    !\strlen($this->{$ruleName})))
+                    ! \strlen($this->{$ruleName})))
         ) {
             $this->offsetUnset($ruleName);
         }
@@ -85,7 +82,7 @@ class CrudRequest extends FormRequest
         if ($prop['type']->equals(CrudType::belongsToMany())) {
             $propsRules["$ruleName.*"][0] = 'exists:' .
                 (new $prop['belongsToMany']())->getTable() . ',id';
-            if (!isset($this->{$ruleName})) {
+            if (! isset($this->{$ruleName})) {
                 $this->merge([$ruleName => []]);
             }
         }
@@ -93,7 +90,7 @@ class CrudRequest extends FormRequest
         if ($prop['type']->equals(CrudType::hasMany())) {
             $propsRules["$ruleName.*"][0] = 'exists:' .
             (new $prop['hasMany']())->getTable() . ',id';
-            if (!isset($this->{$ruleName})) {
+            if (! isset($this->{$ruleName})) {
                 $this->merge([$ruleName => []]);
             }
         }
@@ -103,19 +100,21 @@ class CrudRequest extends FormRequest
      * Returns the first parameter that is a crud model
      *
      * @return string \Illuminate\Database\Eloquent\Model class name
+     *
      * @throws CrudException If the request does not have a crud model parameter.
      */
     protected function getCurrentModel(): string
     {
         if (
-            !is_object($this->route()->controller) or
-            !in_array(CrudController::class, class_uses_recursive($this->route()->controller))
+            ! is_object($this->route()->controller) or
+            ! in_array(CrudController::class, class_uses_recursive($this->route()->controller))
         ) {
             throw new CrudException(sprintf(
                 'Request `%s` needs to be bound on route that use a CrudController trait',
                 get_class($this)
             ));
         }
+
         return $this->route()->controller->getModelClass();
     }
 }

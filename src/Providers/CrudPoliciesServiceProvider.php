@@ -3,6 +3,7 @@
 namespace Kwaadpepper\CrudPolicies\Providers;
 
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
@@ -15,7 +16,6 @@ use Kwaadpepper\CrudPolicies\Traits\CrudController;
 
 class CrudPoliciesServiceProvider extends ServiceProvider
 {
-
     protected const ROOTPATH = __DIR__ . '/../../';
 
     /** @var array */
@@ -37,7 +37,7 @@ class CrudPoliciesServiceProvider extends ServiceProvider
             // * Suported locales
             Cache::rememberForever(sprintf('crud-policies.translations.%s', $locale), function () use ($locale) {
                 return [
-                    'php' => $this->phpTranslations($locale)->all(),
+                    'php'  => $this->phpTranslations($locale)->all(),
                     'json' => $this->jsonTranslations($locale)->all(),
                 ];
             });
@@ -48,22 +48,22 @@ class CrudPoliciesServiceProvider extends ServiceProvider
         ], 'config');
 
         $this->publishes([
-            static::ROOTPATH . 'resources/views' => resource_path('views/vendor/crud-policies/')
+            static::ROOTPATH . 'resources/views' => resource_path('views/vendor/crud-policies/'),
         ], 'views');
 
         $this->publishes([
-            static::ROOTPATH . 'resources/lang/' => resource_path('lang/vendor/crud-policies/')
+            static::ROOTPATH . 'resources/lang/' => resource_path('lang/vendor/crud-policies/'),
         ], 'lang');
 
         $publicPath = config('crud-policies.assetPath');
         $this->publishes([
-            static::ROOTPATH . 'resources/js' => resource_path($publicPath . '/js'),
-            static::ROOTPATH . 'resources/sass' => resource_path($publicPath . '/css')
+            static::ROOTPATH . 'resources/js'   => resource_path($publicPath . '/js'),
+            static::ROOTPATH . 'resources/sass' => resource_path($publicPath . '/css'),
         ], 'assetsSource');
 
         $this->publishes([
-            static::ROOTPATH . 'crud-policies/js' => public_path($publicPath . '/js'),
-            static::ROOTPATH . 'crud-policies/css' => public_path($publicPath . '/css')
+            static::ROOTPATH . 'crud-policies/js'  => public_path($publicPath . '/js'),
+            static::ROOTPATH . 'crud-policies/css' => public_path($publicPath . '/css'),
         ], 'assetsCompiled');
 
         // * Used For CSP compliance
@@ -76,8 +76,8 @@ class CrudPoliciesServiceProvider extends ServiceProvider
                 return sprintf(
                     '<link rel="stylesheet" href=\'%s\'/>',
                     route('crud-policies.httpFileSend.asset', [
-                        'type' => 'css',
-                        'fileUri' => 'crud.css'
+                        'type'    => 'css',
+                        'fileUri' => 'crud.css',
                     ])
                 );
             }
@@ -88,8 +88,8 @@ class CrudPoliciesServiceProvider extends ServiceProvider
                 return sprintf(
                     '<script src=\'%s\'></script>',
                     route('crud-policies.httpFileSend.asset', [
-                        'type' => 'js',
-                        'fileUri' => 'crud.js'
+                        'type'    => 'js',
+                        'fileUri' => 'crud.js',
                     ])
                 );
             }
@@ -123,10 +123,8 @@ class CrudPoliciesServiceProvider extends ServiceProvider
 
     /**
      * Get all available locales name
-     *
-     * @return \Illuminate\Support\Collection
      */
-    private function collectLocalesStrings(): \Illuminate\Support\Collection
+    private function collectLocalesStrings(): Collection
     {
         return collect(File::allFiles(static::ROOTPATH . 'resources/lang'))
             ->flatMap(function ($file) {
@@ -138,31 +136,28 @@ class CrudPoliciesServiceProvider extends ServiceProvider
 
     /**
      * Get all php translations
-     *
-     * @param string $locale
-     * @return \Illuminate\Support\Collection
      */
-    private function phpTranslations(string $locale): \Illuminate\Support\Collection
+    private function phpTranslations(string $locale): Collection
     {
         $path = static::ROOTPATH . "resources/lang/$locale";
+
         return collect(File::allFiles($path))->flatMap(function ($file) {
             $key = $file->getBasename('.php');
+
             return [$key => include $file];
         });
     }
 
     /**
      * Get all json translations
-     *
-     * @param string $locale
-     * @return \Illuminate\Support\Collection
      */
-    private function jsonTranslations(string $locale): \Illuminate\Support\Collection
+    private function jsonTranslations(string $locale): Collection
     {
         $path = static::ROOTPATH . "resources/lang/$locale.json";
         if (is_string($path) && is_readable($path)) {
             return collect(json_decode(file_get_contents($path), true));
         }
+
         return collect([]);
     }
 }

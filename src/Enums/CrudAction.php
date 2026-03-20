@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kwaadpepper\CrudPolicies\Enums;
 
 use Kwaadpepper\Enum\BaseEnumRoutable;
 
 /**
- *
  * https://laravel.com/docs/8.x/authorization
  * Controller Method    Policy Method
  * index                viewAny
@@ -26,33 +27,29 @@ class CrudAction extends BaseEnumRoutable
 {
     /**
      * Values
-     *
-     * @return array
      */
     protected static function values(): array
     {
         return [
             'viewAny' => 0,
-            'view' => 1,
-            'create' => 2,
-            'update' => 3,
-            'delete' => 4,
+            'view'    => 1,
+            'create'  => 2,
+            'update'  => 3,
+            'delete'  => 4,
         ];
     }
 
     /**
      * Labels
-     *
-     * @return array
      */
     protected static function labels(): array
     {
         return [
             'viewAny' => trans('crud-policies::crud.viewAny'),
-            'view' => trans('crud-policies::crud.view'),
-            'create' => trans('crud-policies::crud.create'),
-            'update' => trans('crud-policies::crud.update'),
-            'delete' => trans('crud-policies::crud.delete'),
+            'view'    => trans('crud-policies::crud.view'),
+            'create'  => trans('crud-policies::crud.create'),
+            'update'  => trans('crud-policies::crud.update'),
+            'delete'  => trans('crud-policies::crud.delete'),
         ];
     }
 }

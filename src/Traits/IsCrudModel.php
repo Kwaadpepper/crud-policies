@@ -1,17 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kwaadpepper\CrudPolicies\Traits;
 
+use Doctrine\DBAL\Schema\ForeignKeyConstraint;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Kwaadpepper\CrudPolicies\Enums\CrudAction;
 use Kwaadpepper\CrudPolicies\Enums\CrudType;
 use Kwaadpepper\CrudPolicies\Exceptions\CrudException;
 use Kwaadpepper\CrudPolicies\Http\Requests\CrudRequest;
 use Kwaadpepper\Enum\BaseEnum;
-use Illuminate\Support\Str;
 
 /**
  * Make a model become a CRUD model
@@ -31,32 +35,32 @@ trait IsCrudModel
      * @var array
      */
     private static $schemaCrud = [
-        'label' => null,
-        'placeholder' => '',
-        'default' => null,
-        'type' => null,
-        'enum' => null,
-        'nullable' => false,
-        'mode' => 'code',
-        'modes' => ['form', 'code', 'text'],
-        'readonly' => false,
-        'disabled' => false,
-        'required' => false,
-        'accept' => '',
-        'validate' => [],
-        'rules' => [],
-        'actions' => [],
-        'hasMany' => null,
-        'belongsTo' => null,
+        'label'         => null,
+        'placeholder'   => '',
+        'default'       => null,
+        'type'          => null,
+        'enum'          => null,
+        'nullable'      => false,
+        'mode'          => 'code',
+        'modes'         => ['form', 'code', 'text'],
+        'readonly'      => false,
+        'disabled'      => false,
+        'required'      => false,
+        'accept'        => '',
+        'validate'      => [],
+        'rules'         => [],
+        'actions'       => [],
+        'hasMany'       => null,
+        'belongsTo'     => null,
         'belongsToMany' => null,
-        'getAttribute' => null,
-        'setAttribute' => null,
+        'getAttribute'  => null,
+        'setAttribute'  => null,
     ];
 
     /**
      * OVERLOAD MODEL FUNCTION getter
      *
-     * @param mixed $key
+     * @param  mixed  $key
      * @return mixed
      */
     public function __get($key)
@@ -67,14 +71,15 @@ trait IsCrudModel
         ) {
             return static::$editableProperties[$key]['getAttribute']($this);
         }
+
         return parent::__get($key);
     }
 
     /**
      * OVERLOAD MODEL FUNCTION setter
      *
-     * @param mixed $key
-     * @param mixed $value
+     * @param  mixed  $key
+     * @param  mixed  $value
      * @return mixed
      */
     public function __set($key, $value)
@@ -85,13 +90,13 @@ trait IsCrudModel
         ) {
             return $this::$editableProperties[$key]['setAttribute']($this, $value);
         }
+
         return parent::__set($key, $value);
     }
 
     /**
      * OVERLOAD MODEL FUNCTION Laravel fill method
      *
-     * @param array $attributes
      * @return void
      */
     public function fill(array $attributes)
@@ -125,8 +130,8 @@ trait IsCrudModel
     /**
      * Save model relations
      *
-     * @param CrudRequest $request
      * @return void
+     *
      * @throws CrudException If has many key is not nullable while saving or could not be resolved.
      */
     public function saveRelations(CrudRequest $request)
@@ -138,11 +143,11 @@ trait IsCrudModel
                 $this->{$k}()->sync(is_array($validated[$k]) ? $validated[$k] : []);
             }
             if (
-                $prop['hasMany'] and !$prop['readonly'] and
+                $prop['hasMany'] and ! $prop['readonly'] and
                 (\in_array(CrudAction::create(), $prop['actions']) or
                 \in_array(CrudAction::update(), $prop['actions']))
             ) {
-                /** @var \Illuminate\Database\Eloquent\Model $modelClass */
+                /** @var Model $modelClass */
                 $modelClass = (new $props[$k]['hasMany']());
                 $tableName  = $modelClass->getTable();
                 $foreignKey = sprintf('%s_id', Str::singular($this->getTable()));
@@ -152,10 +157,10 @@ trait IsCrudModel
                     ->filter(function (object $columnDesc) use ($foreignKey) {
                         return $columnDesc->Field === $foreignKey;
                     })->first();
-                if (!$fieldDesc) {
+                if (! $fieldDesc) {
                     throw new CrudException("$foreignKey not found in $tableName .");
                 }
-                /** @var boolean $isNullable */
+                /** @var bool $isNullable */
                 $isNullable = Str::lower($fieldDesc->Null) === 'yes';
                 if ($isNullable) {
                     // * If column is nullable set null (not normal behavior of hasMany)
@@ -163,7 +168,7 @@ trait IsCrudModel
                         $model->{sprintf('%s_id', Str::singular($this->getTable()))} = null;
                         $model->saveOrFail();
                     });
-                    /** @var \Illuminate\Database\Eloquent\Collection $associateModels */
+                    /** @var Collection $associateModels */
                     $associateModels = $props[$k]['hasMany']::whereIn('id', $validated[$k])->get();
                     // * Associate models
                     $associateModels->map(function (Model $model) {
@@ -177,14 +182,14 @@ trait IsCrudModel
                         'It is not possible to change associated hasMany relation with a non nullable foreign key.'
                     );
                 }
-            } //end if
-        }//end foreach
+            } // end if
+        }// end foreach
     }
 
     /**
      * Has this model Has many relations with delete restrict ?
      *
-     * @return boolean|string
+     * @return bool|string
      */
     public function gotHasManyOrBelongsToRelationWithRestrictOnDelete()
     {
@@ -193,7 +198,7 @@ trait IsCrudModel
         foreach (self::getRelationships() as $relation => $type) {
             if ($type[0] === 'HasMany' or $type[0] === 'BelongsToMany') {
                 $table = (new $type[1]())->getTable();
-                /** @var \Doctrine\DBAL\Schema\ForeignKeyConstraint $foreignKey */
+                /** @var ForeignKeyConstraint $foreignKey */
                 foreach ($sm->listTableForeignKeys($table) as $foreignKey) {
                     // /vendor/doctrine/dbal/src/Schema/ForeignKeyConstraint.php onEvent()
                     if ($foreignKey->onDelete() === 'CASCADE') {
@@ -201,12 +206,13 @@ trait IsCrudModel
                         continue;
                     }
                     $relations[] = [
-                        'relation' => $relation,
-                        'className' => class_basename($type[1])
+                        'relation'  => $relation,
+                        'className' => class_basename($type[1]),
                     ];
                 }
             }
         }
+
         return count($relations) ? $relations : false;
     }
 
@@ -224,6 +230,7 @@ trait IsCrudModel
      * Get the crud value
      *
      * @return mixed
+     *
      * @throws CrudException If belongsTo property is not set.
      */
     public function getCrudValueAttribute()
@@ -235,6 +242,7 @@ trait IsCrudModel
                 CrudAction::class
             ));
         }
+
         return $this->{$this->crudValueColumn};
     }
 
@@ -242,6 +250,7 @@ trait IsCrudModel
      * Get the crud label column
      *
      * @return mixed
+     *
      * @throws CrudException If belongsTo property is not set.
      */
     public function getCrudLabelColumnAttribute()
@@ -253,6 +262,7 @@ trait IsCrudModel
                 CrudAction::class
             ));
         }
+
         return $this->crudLabelColumn;
     }
 
@@ -269,7 +279,6 @@ trait IsCrudModel
     /**
      * Get the model validation rules
      *
-     * @return array
      * @phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
      */
     public static function getRules(): array
@@ -277,7 +286,7 @@ trait IsCrudModel
         return collect(static::$editableProperties)->mapWithKeys(function ($item, $key) {
             $item         = \array_merge(self::$schemaCrud, $item);
             $defaultRules = [];
-            if (!$item['nullable'] === true) {
+            if (! $item['nullable'] === true) {
                 $defaultRules[] = 'required';
             } elseif ($item['required'] === true) {
                 $defaultRules[] = 'required';
@@ -319,15 +328,14 @@ trait IsCrudModel
                 default:
                     $defaultRules[] = 'string';
                     break;
-            }//end switch
+            }// end switch
+
             return [$key => array_merge($defaultRules, $item['validate'] ?? self::$schemaCrud['validate'])];
         })->all();
     }
 
     /**
      * Get the model Name
-     *
-     * @return string
      */
     public function getModelName(): string
     {
@@ -336,14 +344,10 @@ trait IsCrudModel
 
     /**
      * moveUploadedFile helper
-     *
-     * @param string       $propName
-     * @param UploadedFile $file
-     * @return void
      */
     protected function moveUploadedFile(string $propName, UploadedFile &$file): void
     {
-        /** @var \Illuminate\Database\Eloquent\Model */
+        /** @var Model */
         $self              = $this;
         $this->{$propName} = $file->storePubliclyAs(
             $self->getTable(),
@@ -354,13 +358,12 @@ trait IsCrudModel
 
     /**
      * Get the Editable Properties
-     *
-     * @return array
      */
     public static function getEditableProperties(): array
     {
         $rules = self::getRules();
         static::assertEditablePropertiesIsCorrect();
+
         return \collect(static::$editableProperties)->mapWithKeys(function ($prop, $key) use ($rules) {
             if (isset($rules[$key])) {
                 if (is_array($rules[$key])) {
@@ -370,6 +373,7 @@ trait IsCrudModel
                     $prop['rules'] = $rules[$key];
                 }
             }
+
             return [$key => $prop];
         })->all();
     }
@@ -378,8 +382,6 @@ trait IsCrudModel
      * Get eloquent relationships
      *
      * @url https://laracasts.com/discuss/channels/eloquent/get-all-model-relationships
-     *
-     * @return array
      */
     private static function getRelationships(): array
     {
@@ -393,7 +395,7 @@ trait IsCrudModel
             function ($method) use ($class) {
                 return $method->class === $class
                     // Relationships have no parameters.
-                    && !$method->getParameters()
+                    && ! $method->getParameters()
                     // Prevent infinite recursion.
                     && $method->getName() !== 'getRelationships'
                 // Prevent infinite recursion.
@@ -408,7 +410,7 @@ trait IsCrudModel
             try {
                 $methodName   = $method->getName();
                 $methodReturn = $instance->$methodName();
-                if (!$methodReturn instanceof Relation) {
+                if (! $methodReturn instanceof Relation) {
                     continue;
                 }
             } catch (\Throwable $th) {
@@ -432,7 +434,6 @@ trait IsCrudModel
      *
      * 'string' => CrudType::value()
      *
-     * @return void
      * @throws CrudException Is anything is wrong in configuration.
      */
     private static function assertEditablePropertiesIsCorrect(): void
@@ -441,13 +442,13 @@ trait IsCrudModel
             throw new CrudException('$editableProperties must be defined in ' . __CLASS__);
         }
         foreach (static::$editableProperties as $name => &$prop) {
-            if (!is_string($name)) {
+            if (! is_string($name)) {
                 throw new CrudException(sprintf(
                     'editableProperties array value must be an array given: %s',
                     print_r($prop, true) // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Found
                 ));
             }
-            if (!is_array($prop)) {
+            if (! is_array($prop)) {
                 throw new CrudException(sprintf(
                     'editableProperties array value must be an array given: %s',
                     print_r($prop, true) // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Found
@@ -461,16 +462,16 @@ trait IsCrudModel
             self::assertPlaceholderIscorrect($prop);
             self::assertTypeIscorrect($prop);
             switch ($prop['type']) {
-                    // * Email auto rule
+                // * Email auto rule
                 case CrudType::email():
                     $prop['validate'] = is_array($prop['validate']) ? $prop['validate'] : [];
-                    if (!array_search('email:rfc,dns', $prop['validate'])) {
+                    if (! array_search('email:rfc,dns', $prop['validate'])) {
                         $prop['validate'][] = 'email:rfc,dns';
                     }
                     break;
                 case CrudType::json():
                     $prop['validate'] = is_array($prop['validate']) ? $prop['validate'] : [];
-                    if (!array_search('json', $prop['validate'])) {
+                    if (! array_search('json', $prop['validate'])) {
                         $prop['validate'][] = 'json';
                     }
                     break;
@@ -488,19 +489,17 @@ trait IsCrudModel
             self::assertSetAttributeIscorrect($prop);
             self::assertBelongsToManyIsCorrect($prop);
             self::assertHasManyIsCorrect($prop);
-        }//end foreach
+        }// end foreach
     }
 
     /**
      * Assert accept is correctly set.
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If accept is not correctly set.
      */
     private static function assertAcceptIscorrect(array $prop): void
     {
-        if (!isset($prop['accept']) or !is_string($prop['accept'])) {
+        if (! isset($prop['accept']) or ! is_string($prop['accept'])) {
             throw new CrudException('$editableProperties[\'accept\'] array value must be a string');
         }
     }
@@ -508,13 +507,11 @@ trait IsCrudModel
     /**
      * Assert label is correctly set.
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If label is not correctly set.
      */
     private static function assertLabelIscorrect(array $prop): void
     {
-        if (!isset($prop['label']) or !is_string($prop['label'])) {
+        if (! isset($prop['label']) or ! is_string($prop['label'])) {
             throw new CrudException('$editableProperties[\'label\'] array value must be a string');
         }
     }
@@ -522,13 +519,11 @@ trait IsCrudModel
     /**
      * Assert placeholder is correctly set.
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If placeholder is not correctly set.
      */
     private static function assertPlaceholderIscorrect(array $prop): void
     {
-        if (!isset($prop['placeholder']) or !is_string($prop['placeholder'])) {
+        if (! isset($prop['placeholder']) or ! is_string($prop['placeholder'])) {
             throw new CrudException('$editableProperties[\'placeholder\'] array value must be a string');
         }
     }
@@ -536,13 +531,11 @@ trait IsCrudModel
     /**
      * Assert type is correctly set.
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If type is not correctly set.
      */
     private static function assertTypeIscorrect(array $prop): void
     {
-        if (!isset($prop['type']) or !is_object($prop['type']) or get_class($prop['type']) !== CrudType::class) {
+        if (! isset($prop['type']) or ! is_object($prop['type']) or get_class($prop['type']) !== CrudType::class) {
             throw new CrudException('$editableProperties[\'type\'] value must be a CrudType enum');
         }
     }
@@ -550,13 +543,11 @@ trait IsCrudModel
     /**
      * Assert nullable is correctly set.
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If nullable is not correctly set.
      */
     private static function assertNullableIscorrect(array $prop): void
     {
-        if (!isset($prop['nullable']) or !is_bool($prop['nullable'])) {
+        if (! isset($prop['nullable']) or ! is_bool($prop['nullable'])) {
             throw new CrudException('$editableProperties[\'nullable\'] array value must be a boolean');
         }
     }
@@ -564,15 +555,13 @@ trait IsCrudModel
     /**
      * Assert readonly is correctly set.
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If readonly is not correctly set.
      */
     private static function assertReadonlyIscorrect(array $prop): void
     {
         if (
-            !isset($prop['readonly']) or
-            (!is_bool($prop['readonly']) and !\is_callable($prop['readonly']))
+            ! isset($prop['readonly']) or
+            (! is_bool($prop['readonly']) and ! \is_callable($prop['readonly']))
         ) {
             // phpcs:ignore Generic.Files.LineLength.TooLong
             throw new CrudException('$editableProperties[\'readonly\'] array value must be a boolean or a function returnning a boolean');
@@ -582,13 +571,11 @@ trait IsCrudModel
     /**
      * Assert disabled is correctly set.
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If disabled is not correctly set.
      */
     private static function assertDisabledIscorrect(array $prop): void
     {
-        if (!isset($prop['disabled']) or !is_bool($prop['disabled'])) {
+        if (! isset($prop['disabled']) or ! is_bool($prop['disabled'])) {
             throw new CrudException('$editableProperties[\'disabled\'] array value must be a boolean');
         }
     }
@@ -596,13 +583,11 @@ trait IsCrudModel
     /**
      * Assert required is correctly set.
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If required is not correctly set.
      */
     private static function assertRequiredIscorrect(array $prop): void
     {
-        if (!isset($prop['required']) or !is_bool($prop['required'])) {
+        if (! isset($prop['required']) or ! is_bool($prop['required'])) {
             throw new CrudException('$editableProperties[\'required\'] array value must be a boolean');
         }
     }
@@ -610,13 +595,11 @@ trait IsCrudModel
     /**
      * Assert validate is correctly set.
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If validate is not correctly set.
      */
     private static function assertValidateIscorrect(array $prop): void
     {
-        if (!isset($prop['validate']) or !\is_array($prop['validate'])) {
+        if (! isset($prop['validate']) or ! \is_array($prop['validate'])) {
             throw new CrudException('$editableProperties[\'validate\'] array value must be an array');
         }
     }
@@ -624,13 +607,11 @@ trait IsCrudModel
     /**
      * Assert get attribute (laravel getter) is correctly set.
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If getAttribute is not correctly set.
      */
     private static function assertGetAttributeIscorrect(array $prop): void
     {
-        if (!is_null($prop['getAttribute']) and !is_callable($prop['getAttribute'])) {
+        if (! is_null($prop['getAttribute']) and ! is_callable($prop['getAttribute'])) {
             throw new CrudException('$editableProperties[\'getAttribute\'] array value must be callable');
         }
     }
@@ -638,13 +619,11 @@ trait IsCrudModel
     /**
      * Assert set attribute (laravel setter) is correctly set.
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If setAttribute is not correctly set.
      */
     private static function assertSetAttributeIscorrect(array $prop): void
     {
-        if (!is_null($prop['setAttribute']) and !is_callable($prop['setAttribute'])) {
+        if (! is_null($prop['setAttribute']) and ! is_callable($prop['setAttribute'])) {
             throw new CrudException('$editableProperties[\'setAttribute\'] array value must be callable');
         }
     }
@@ -652,8 +631,6 @@ trait IsCrudModel
     /**
      * Assert rules are valid
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If invalid rule is detected.
      */
     private static function assertRulesArecorrect(array $prop): void
@@ -669,7 +646,7 @@ trait IsCrudModel
                 return \is_numeric($v);
             },
         ];
-        if (!isset($prop['rules']) or !\is_array($prop['rules'])) {
+        if (! isset($prop['rules']) or ! \is_array($prop['rules'])) {
             throw new CrudException('$editableProperties[\'rules\'] array value must be an array');
         }
         if (count(array_diff_key($prop['rules'], $allowedRules))) {
@@ -679,7 +656,7 @@ trait IsCrudModel
             ));
         }
         foreach ($allowedRules as $k => $f) {
-            if (array_key_exists($k, $prop['rules']) and !$f($prop['rules'][$k])) {
+            if (array_key_exists($k, $prop['rules']) and ! $f($prop['rules'][$k])) {
                 throw new CrudException(sprintf(
                     '$editableProperties[\'rules\'] rule `%s` does not validate with value `%s`',
                     $k,
@@ -692,17 +669,15 @@ trait IsCrudModel
     /**
      * Assert actions are correctly set
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If actions are not correctly set.
      */
     private static function assertActionsArecorrect(array $prop): void
     {
-        if (!isset($prop['actions']) or !\is_array($prop['actions'])) {
+        if (! isset($prop['actions']) or ! \is_array($prop['actions'])) {
             throw new CrudException('$editableProperties[\'actions\'] array value must be an array');
         }
         foreach ($prop['actions'] as $action) {
-            if (!is_object($action) or get_class($action) !== CrudAction::class) {
+            if (! is_object($action) or get_class($action) !== CrudAction::class) {
                 throw new CrudException(sprintf(
                     '$editableProperties[\'actions\'] array value must contain `%s` objects',
                     CrudAction::class
@@ -714,15 +689,13 @@ trait IsCrudModel
     /**
      * Assert enum type is correctly set
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If enum type is not correctly set.
      */
     private static function assertEnumIscorrect(array $prop): void
     {
         if (
             $prop['type']->equals(CrudType::enum()) and (is_null($prop['enum']) or
-                !\is_subclass_of($prop['enum'], BaseEnum::class))
+                ! \is_subclass_of($prop['enum'], BaseEnum::class))
         ) {
             throw new CrudException(sprintf(
                 '$editableProperties[\'enum\'] array value must be an enum `%s`',
@@ -734,17 +707,15 @@ trait IsCrudModel
     /**
      * Assert belongsTo is correctly set
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If belongsTo is not correctly set.
      */
     private static function assertBelongsToIsCorrect(array $prop): void
     {
         if (
             $prop['type']->equals(CrudType::belongsTo()) and
-            (!isset($prop['belongsTo']) or !\is_string($prop['belongsTo']) or
-            !\class_exists($prop['belongsTo']) or !is_a($prop['belongsTo'], Model::class, true) or
-                !in_array(IsCrudModel::class, class_uses_recursive($prop['belongsTo'])))
+            (! isset($prop['belongsTo']) or ! \is_string($prop['belongsTo']) or
+            ! \class_exists($prop['belongsTo']) or ! is_a($prop['belongsTo'], Model::class, true) or
+                ! in_array(IsCrudModel::class, class_uses_recursive($prop['belongsTo'])))
         ) {
             throw new CrudException(sprintf(
                 '$editableProperties[\'belongsTo\'] array value must be a CrudModel given: `%s`',
@@ -756,16 +727,14 @@ trait IsCrudModel
     /**
      * Assert belongsToMany is correctly set
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If belongsToMany is not correctly set.
      */
     private static function assertBelongsToManyIsCorrect(array $prop): void
     {
         if (
             $prop['type']->equals(CrudType::belongsToMany()) and
-            (!\is_string($prop['belongsToMany']) or !\class_exists($prop['belongsToMany']) or !is_a($prop['belongsToMany'], Model::class, true) or
-                !in_array(IsCrudModel::class, class_uses_recursive($prop['belongsToMany'])))
+            (! \is_string($prop['belongsToMany']) or ! \class_exists($prop['belongsToMany']) or ! is_a($prop['belongsToMany'], Model::class, true) or
+                ! in_array(IsCrudModel::class, class_uses_recursive($prop['belongsToMany'])))
         ) {
             throw new CrudException(sprintf(
                 '$editableProperties[\'belongsToMany\'] array value must be a CrudModel given: `%s`',
@@ -774,7 +743,7 @@ trait IsCrudModel
         }
         if (
             $prop['type']->equals(CrudType::belongsToMany()) and
-            (!\is_string($prop['belongsToManyLabel']))
+            (! \is_string($prop['belongsToManyLabel']))
         ) {
             throw new CrudException(sprintf(
                 '$editableProperties[\'belongsToManyLabel\'] must be string using belongsToMany, given: `%s`',
@@ -786,18 +755,16 @@ trait IsCrudModel
     /**
      * Assert hasMany is correctly set
      *
-     * @param array $prop
-     * @return void
      * @throws CrudException If hasMany is not correctly set.
      */
     private static function assertHasManyIsCorrect(array $prop): void
     {
         if (
             $prop['type']->equals(CrudType::hasMany()) and
-            (!\is_string($prop['hasMany']) or
-                !\class_exists($prop['hasMany']) or
-                !is_a($prop['hasMany'], Model::class, true) or
-                !in_array(IsCrudModel::class, class_uses_recursive($prop['hasMany'])))
+            (! \is_string($prop['hasMany']) or
+                ! \class_exists($prop['hasMany']) or
+                ! is_a($prop['hasMany'], Model::class, true) or
+                ! in_array(IsCrudModel::class, class_uses_recursive($prop['hasMany'])))
         ) {
             throw new CrudException(sprintf(
                 '$editableProperties[\'hasMany\'] array value must be a CrudModel given: `%s`',
@@ -806,7 +773,7 @@ trait IsCrudModel
         }
         if (
             $prop['type']->equals(CrudType::hasMany()) and
-            (!\is_string($prop['hasManyLabel']))
+            (! \is_string($prop['hasManyLabel']))
         ) {
             throw new CrudException(sprintf(
                 '$editableProperties[\'hasManyLabel\'] must be string using hasMany, given: `%s`',

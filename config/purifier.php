@@ -27,18 +27,18 @@ return [
         'default' => [
             'HTML.SafeIframe'          => true,
             // * For iframes
-            'URI.SafeIframeRegexp'     => "%^(http://|https://|//)(www.youtube.com/embed/|player.vimeo.com/video/|vimeo.com/)%",
-            'HTML.Doctype'             => 'HTML 4.01 Transitional',
-            'HTML.Allowed'             => 'h1[style],h2[style],h3[style],h4[style],h5[style],h6[style],figure[class|style],oembed[url],div[style],b,strong,i,em,u,a[href|title|target|rel],ul[style],ol[style],dl[style],li,p[style],br,span[style|class],img[width|height|alt|src|style|class|title],iframe[src|width|height|class|frameborder|style],table[style|align|border|cellspacing|cellpadding|width],thead,tbody,th[colspan|align|valign|style],tr[align|valign|style],td[style|colspan|rowspan|scope|align|valign],hr,dl,dt',
-            'CSS.AllowedProperties'    => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align,list-style-type,float,width,height,vertical-align,border-color',
-            'AutoFormat.AutoParagraph' => false,
-            'AutoFormat.RemoveEmpty'   => false,
+            'URI.SafeIframeRegexp'              => '%^(http://|https://|//)(www.youtube.com/embed/|player.vimeo.com/video/|vimeo.com/)%',
+            'HTML.Doctype'                      => 'HTML 4.01 Transitional',
+            'HTML.Allowed'                      => 'h1[style],h2[style],h3[style],h4[style],h5[style],h6[style],figure[class|style],oembed[url],div[style],b,strong,i,em,u,a[href|title|target|rel],ul[style],ol[style],dl[style],li,p[style],br,span[style|class],img[width|height|alt|src|style|class|title],iframe[src|width|height|class|frameborder|style],table[style|align|border|cellspacing|cellpadding|width],thead,tbody,th[colspan|align|valign|style],tr[align|valign|style],td[style|colspan|rowspan|scope|align|valign],hr,dl,dt',
+            'CSS.AllowedProperties'             => 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align,list-style-type,float,width,height,vertical-align,border-color',
+            'AutoFormat.AutoParagraph'          => false,
+            'AutoFormat.RemoveEmpty'            => false,
             'AutoFormat.RemoveEmpty.RemoveNbsp' => false,
         ],
         'custom_definition' => [
-            'id'  => 'html5-definitions',
-            'rev' => 1,
-            'debug' => true,
+            'id'       => 'html5-definitions',
+            'rev'      => 1,
+            'debug'    => true,
             'elements' => [
                 // * http://developers.whatwg.org/sections.html
                 ['section', 'Block', 'Flow', 'Common'],
@@ -59,16 +59,16 @@ return [
 
                 // * http://developers.whatwg.org/the-video-element.html#the-video-element
                 ['video', 'Block', 'Optional: (source, Flow) | (Flow, source) | Flow', 'Common', [
-                    'src' => 'URI',
-                    'type' => 'Text',
-                    'width' => 'Length',
-                    'height' => 'Length',
-                    'poster' => 'URI',
-                    'preload' => 'Enum#auto,metadata,none',
+                    'src'      => 'URI',
+                    'type'     => 'Text',
+                    'width'    => 'Length',
+                    'height'   => 'Length',
+                    'poster'   => 'URI',
+                    'preload'  => 'Enum#auto,metadata,none',
                     'controls' => 'Bool',
                 ]],
                 ['source', 'Block', 'Flow', 'Common', [
-                    'src' => 'URI',
+                    'src'  => 'URI',
                     'type' => 'Text',
                 ]],
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Kwaadpepper\CrudPolicies\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -9,7 +11,7 @@ class CrudIndexRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @return boolean
+     * @return bool
      */
     public function authorize()
     {
@@ -24,7 +26,7 @@ class CrudIndexRequest extends FormRequest
     public function rules()
     {
         return [
-            'search' => 'nullable|string'
+            'search' => 'nullable|string',
         ];
     }
 }
