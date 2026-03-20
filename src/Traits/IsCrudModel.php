@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Kwaadpepper\CrudPolicies\Traits;
 
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;

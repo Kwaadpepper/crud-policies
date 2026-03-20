@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Kwaadpepper\CrudPolicies\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;

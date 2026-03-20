@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Kwaadpepper\CrudPolicies\Enums;
 
 use Kwaadpepper\Enum\BaseEnumRoutable;
