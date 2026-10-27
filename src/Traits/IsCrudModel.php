@@ -2,12 +2,12 @@
 
 namespace Kwaadpepper\CrudPolicies\Traits;
 
-use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Kwaadpepper\CrudPolicies\Enums\CrudAction;
 use Kwaadpepper\CrudPolicies\Enums\CrudType;
@@ -192,14 +192,11 @@ trait IsCrudModel
     public function gotHasManyOrBelongsToRelationWithRestrictOnDelete()
     {
         $relations = [];
-        $sm        = DB::getDoctrineSchemaManager();
         foreach (self::getRelationships() as $relation => $type) {
             if ($type[0] === 'HasMany' or $type[0] === 'BelongsToMany') {
                 $table = (new $type[1]())->getTable();
-                /** @var ForeignKeyConstraint $foreignKey */
-                foreach ($sm->listTableForeignKeys($table) as $foreignKey) {
-                    // /vendor/doctrine/dbal/src/Schema/ForeignKeyConstraint.php onEvent()
-                    if ($foreignKey->onDelete() === 'CASCADE') {
+                foreach (Schema::getForeignKeys($table) as $foreignKey) {
+                    if (Str::upper($foreignKey['on_delete'] ?? '') === 'CASCADE') {
                         // Allow only CASCADE action, otherwise it would break the app .
                         continue;
                     }
